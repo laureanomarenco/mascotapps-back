@@ -2,7 +2,7 @@
   "name": "express-api-typescript",
   "version": "1.0.0",
   "description": "",
-  "main": "./build/index.js",
+  "main": "index.ts",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
     "lint": "ts-standard",
