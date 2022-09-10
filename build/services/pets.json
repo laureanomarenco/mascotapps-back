@@ -1,0 +1,50 @@
+[
+    {
+        "id": 10,
+        "name": "Loki",
+        "race": "mestizo",
+        "age": "adulto",
+        "gender": "macho",
+        "lookingForTheOriginalOwner": true,
+        "missing": false,
+        "forAdoption": false,
+        "vaccinationSchemeStatus": "completo",
+        "comments": "Es algo miedoso cuando no entró en confianza."
+    },
+    {
+        "id": 4,
+        "name": "Gabo",
+        "race": "Labrador",
+        "age": "adulto",
+        "gender": "macho",
+        "lookingForTheOriginalOwner": false,
+        "missing": true,
+        "forAdoption": false,
+        "vaccinationSchemeStatus": "incompleto",
+        "comments": "El perro más bueno del mundo."
+    },
+    {
+        "id": 13,
+        "name": "Tuta",
+        "race": "otro",
+        "age": "cachorro",
+        "gender": "hembra",
+        "lookingForTheOriginalOwner": false,
+        "missing": false,
+        "forAdoption": true,
+        "vaccinationSchemeStatus": "desconocido",
+        "comments": "Varios comments de lo que sea."
+    },
+    {
+        "id": 20,
+        "name": "Pipu",
+        "race": "mestizo",
+        "age": "adulto",
+        "gender": "macho",
+        "lookingForTheOriginalOwner": true,
+        "missing": false,
+        "forAdoption": false,
+        "vaccinationSchemeStatus": "completo",
+        "comments": "Un perro super random."
+    }
+]

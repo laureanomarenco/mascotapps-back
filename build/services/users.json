@@ -1,0 +1,34 @@
+[
+    {
+        "id": 3,
+        "name": "juan",
+        "lastName": "perez",
+        "age": 36,
+        "relationState": "married",
+        "privateHobbies": ["escalar", "coleccionar autos", "caminar"]
+    },
+    {
+        "id": 5,
+        "name": "carla",
+        "lastName": "perez",
+        "age": 38,
+        "relationState": "single",
+        "privateHobbies": ["dormir", "coleccionar motos"]
+    },
+    {
+        "id": 6,
+        "name": "Ramiro José",
+        "lastName": "Durinho",
+        "age": 66,
+        "relationState": "single",
+        "privateHobbies": ["jugar rugby"]
+    },
+    {
+        "id": 9,
+        "name": "Sofía",
+        "lastName": "García",
+        "age": 35,
+        "relationState": "single",
+        "privateHobbies": []
+    }
+]
