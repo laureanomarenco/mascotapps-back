@@ -7,7 +7,7 @@
     "dev": "ts-node-dev src/index.ts",
     "lint": "ts-standard",
     "tsc": "tsc",
-    "start": "node build/index.js",
+    "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
