@@ -2,12 +2,12 @@
   "name": "api-sqlz-ts",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
-  "type": "module",
+  "main": "index.js",
   "scripts": {
     "dev": "tsnd --respawn index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --experimental-modules ."
+    "postinstall": "tsc",
+    "start": "node build/index.js"
   },
   "keywords": [],
   "author": "",
