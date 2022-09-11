@@ -1,6 +1,5 @@
-const port = process.env.PORT || 3001;
-
 import db from "./src/models";
+const config = require(__dirname + "../../../config/config.js");
 
 const app = require("./src/app");
 
@@ -44,7 +43,7 @@ const app = require("./src/app");
 // !-------comento lo de arriba ---------
 
 db.sequelize.sync().then(() => {
-  app.listen(port, () => {
-    console.log(`App listening on port ${port}`);
+  app.listen(config.server.port, () => {
+    console.log(`App listening on port ${config.server.port}`);
   });
 });
