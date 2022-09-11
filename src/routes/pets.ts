@@ -1,41 +1,30 @@
-import express from "express";
-import * as petServices from "../services/petServices";
-// import { Pet } from "../types";
-import { toNewPetEntry } from "../petUtils";
+import { Router } from "express";
+import db from "../models/index";
+// import axios from "axios";
 
-const router = express.Router();
+const router = Router();
 
-router.get("/", (_req, res) => {
-  console.log("Entré al get de pets");
+const getAllPets = async () => {
   try {
-    let allPets = petServices.getAllPets();
-    return res.status(200).send(allPets);
+    const allPets = await db.Pet.findAll();
+    // console.log(allPets);
+    return allPets;
+  } catch (error: any) {
+    console.log(error.message);
+    return error;
+  }
+};
+
+router.get("/", async (req, res) => {
+  console.log("entré al get de pets!");
+
+  try {
+    let allThePets = await getAllPets();
+    // console.log(allThePets);
+
+    return res.status(200).send(allThePets);
   } catch (error: any) {
     return res.status(404).send(error.message);
-  }
-});
-
-router.get("/:id", (req, res) => {
-  console.log("entré al get por params id");
-  try {
-    let id = req.params.id;
-    let petById = petServices.getPetById(id);
-    return res.status(200).send(petById);
-  } catch (error: any) {
-    return res.status(404).send(error.message);
-  }
-});
-
-router.post("/", (req, res) => {
-  console.log("entré al post de pets");
-  console.log("req.body: ");
-  console.log(req.body);
-  try {
-    const newPetEntry = toNewPetEntry(req.body);
-    const addedPetEntry = petServices.addNewPet(newPetEntry);
-    return res.status(200).send(addedPetEntry);
-  } catch (error: any) {
-    return res.status(400).send(error.message);
   }
 });
 

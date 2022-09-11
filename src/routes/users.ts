@@ -1,24 +1,28 @@
-import express from "express";
-import * as userServices from "../services/userServices";
+import { Router } from "express";
+import db from "../models/index";
+// import axios from "axios";
 
-const router = express.Router();
+const router = Router();
 
-router.get("/", (_req, res) => {
-  console.log("entré al get de users");
+const getAllUsers = async () => {
   try {
-    let allUsers = userServices.getUsers();
-    return res.status(200).send(allUsers);
+    const allUsers = await db.User.findAll();
+    // console.log(allUsers);
+    return allUsers;
   } catch (error: any) {
-    return res.status(401).send(error.message);
+    console.log(error.message);
+    return error;
   }
-});
+};
 
-router.get("/allpublicdata", (_req, res) => {
-  console.log("entré al publicdata");
+router.get("/", async (req, res) => {
+  console.log("entré al get de Users!");
+
   try {
-    let onlyPublicDataOfUsers = userServices.getOnlyPublicDataFromAllUsers();
-    // console.log(onlyPublicDataOfUsers);
-    return res.status(200).send(onlyPublicDataOfUsers);
+    let allTheUsers = await getAllUsers();
+    // console.log(allTheUsers);
+
+    return res.status(200).send(allTheUsers);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
