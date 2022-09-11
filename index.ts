@@ -1,5 +1,5 @@
 import db from "./src/models";
-const config = require(__dirname + "../../../config/config.js");
+const config = require(__dirname + "/config/config.js");
 
 const app = require("./src/app");
 
