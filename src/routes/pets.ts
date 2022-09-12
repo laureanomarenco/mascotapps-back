@@ -2,6 +2,9 @@ import { Router } from "express";
 import db from "../models/index";
 // import axios from "axios";
 
+//importar interfaces y types de las mascotas:
+// import { Pet, Dog, Cat } from "../types/petTypes";
+
 const router = Router();
 
 const getAllPets = async () => {
