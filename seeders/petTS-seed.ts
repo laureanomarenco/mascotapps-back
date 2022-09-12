@@ -39,7 +39,7 @@ export const petTS = [
     comments: "Es un amor y en casa lo extrañamos mucho",
   },
   {
-    id: 1,
+    id: uuidv4(),
     name: "Chalita",
     specie: "perro",
     race: "labrador",
@@ -99,7 +99,7 @@ export const petTS = [
     comments: "Matilda estaba muy vueltera el otro día en la plaza y despues no la vimos más :(",
   },
   {
-    id: 55,
+    id: uuidv4(),
     name: "Toti",
     specie: "perro",
     race: "labrador",
@@ -231,6 +231,7 @@ export const petTS = [
     comments: "un boxer super amable y bien criado, responde al nombre de Roco, sabemos que es viejito pero nos vamos de viaje y necesitamos ponerlo en adopcion en una famila que lo quiera",
   },
   {
+    id: uuidv4(),
     name: "Esteban",
     specie: "otra especie",
     race: "Loro",
@@ -254,6 +255,7 @@ export const petTS = [
   {
     id:uuidv4(),
     name: "daenerys",
+    race: "otro",
     specie: "perro",
     age: "muy joven",
     gender: "hembra",
@@ -265,6 +267,7 @@ export const petTS = [
   {
     name: "Señor Gato",
     specie: "gato",
+    race: "otro",
     age: "joven",
     gender: "macho",
     status: "en adopción",
@@ -308,6 +311,7 @@ export const petTS = [
   {
     name: "Michi",
     specie: "gato",
+    race: "otro",
     age: "joven",
     gender: "macho",
     status: "en adopción",
