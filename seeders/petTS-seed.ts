@@ -218,8 +218,6 @@ export const petTS = [
     comments: "muy arizca",
     image: "https://2.bp.blogspot.com/-RKxVXO2Kfbo/V7wmJsvWcXI/AAAAAAAABF4/v_cSlNuZWQ0poZvvS56B1VrVnJ1FOlYzwCLcB/s1600/Gato%2Bbengala%2B1.jpg"
   },
-<<<<<<< HEAD
-
   {
     id: uuidv4(),
     name:"Roco",
@@ -327,7 +325,7 @@ export const petTS = [
     vaccinationSchemeStatus: "incompleto",
     image: "https://www.lavanguardia.com/files/content_image_mobile_filter/uploads/2020/07/28/5f2002eab1cef.jpeg",
     comments: "Hachiko está sentado en una estacion de tren esperando que lo adoptes!",
-=======
+  },
   {
     id: uuidv4(),
     name: "Homero",
@@ -399,6 +397,5 @@ export const petTS = [
     vaccinationSchemeStatus: "completo",
     comments: "rey de las croquetas",
     image: "https://www.schnauzi.com/wp-content/uploads/2012/01/perro-disfraz-leon.jpg"
->>>>>>> 9351d2e9a59cddbf187594b10d27a8ac5ea3a925
   },
 ];
