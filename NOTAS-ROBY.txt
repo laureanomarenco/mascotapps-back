@@ -1,0 +1,33 @@
+Sobre modelos y flexibilidad a pesar de TS:
+
+specie: perro | gato | otro  ---> Vamos a hacer que el dato de "specie" sea obligatorio. Y que las opciones puedan ser 3: perro, gato u otro.
+ Si el dato ingresado por el post no es ninguna de las 3 opciones, se devuelve un error.
+
+ status: perdido | posiblemente perdido | encontrado | en adopción  ----> el status es obligatorio. 
+
+race: string  --> acá el cliente puede escribir "cruza entre mastín inglés y labrador". Con esto logramos que sea más facil buscar o filtrar por razas, ya que podemos hacer búsquedas que incluya alguna de las palabras a buscar, por lo que si el cliente busca "labrador" le aparecerían también los perros que tienen cruza con "labrador", lo cual puede ser útil del lado del cliente. Si queremos hacer una búsqueda exacta o que incluya la palabra, lo pueden decidir del front. Pero la raza puede ser un string así damos lugar a que describan con más presición la raza y lo podemos mostrar en las cards de los animales en vez de mostrar un "Raza: otro /mestizo/mezcla." Es mejor que el cliente vea "Raza: mezcla entre tal raza y tal otra".
+
+* id, name, race, image y comments  ---> pueden ser un string (restringidos los length dependiendo de la propiedad) que escriba el cliente, o directamente puede ser undefined | null.  No se aceptan otros datos que no sean string u undefined | null.
+
+
+* image ---> inicialmente lo seteamos para que el cliente postee una url en forma de string. Podríamos pensar de que el cliente pueda postear un imagen de cierto formato y tamaño permitido. Tendríamos que averiguar cómo hacer esto bien.
+
+
+---- Resumen 11/09 20:45hs: -----------------
+
+* PENSAMIENTO SOBRE TAMAÑOS / SIZES:  
+// El tamaño depende de la raza. Aunque si es raza "otro" o "mestizo", no podríamos definir el tamaño.
+// Cómo hacemos para poder filtrar por tamaño en perros? Para gatos no importa.
+Si esta propiedad es necesaria, lo que podríamos hacer es crear un enum Sizes, con algunos pocos tamaños: muy chico | chico | mediano | grande | muy grande.
+Y que el usuario elija si quiere agregar el tamaño o no. Le damos la opción de que ingrese alguna de esas 5 opciones, o que no ingrese nada.
+ Por lo que la propiedad podría ser null / undefined, o algún enum Sizes.
+
+**11/09 2017hs: Queda hacer un buen modelo del usuario. Deberíamos estudiar bien los temas de los login, datos a guardar del usuario que hagan falta para los login y autenticaciones., cómo guardar los datos para que sean privados / protegidos. Hace falta crear una clase de TS para poner propiedades en privado o protegido y agregar métodos para manipular esas propiedades privadas / protegidas?
+
+** Creé el archivo /routes/petTS.ts que es la versión de rutas mejorada de pet.ts. Dejo pet.ts igualmente para tener algo para testear o probar algunas cosas.
+
+** Creé el archivo /models/petts.ts IDEM comentario de arriba.
+
+** Creé el archivo /seeders/petTS-seed IDEM comentario de arriba.
+
+** Retoqué el petTypes. Cambié propiedades de interfaces y demás types para que podamos hacer mejores Models. Borré código viejo.
