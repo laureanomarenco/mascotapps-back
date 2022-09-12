@@ -24,7 +24,7 @@ Repositorio
 https://github.com/laureanomarenco/mascotapps-front
 
 Producción(main)          
-https://mascotapps-prod.herokuapp.com/ping
+https://mascotapps.vercel.app/
 
 Stagging(dev)             
 (pendiente de definición del template)
