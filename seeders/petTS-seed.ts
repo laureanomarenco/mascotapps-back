@@ -209,7 +209,7 @@ export const petTS = [
   {
     id: uuidv4(),
     name: "maira",
-    specie: "Gato",
+    specie: "gato",
     race: "bengala",
     age: "adulto",
     gender: "hembra",
@@ -218,6 +218,7 @@ export const petTS = [
     comments: "muy arizca",
     image: "https://2.bp.blogspot.com/-RKxVXO2Kfbo/V7wmJsvWcXI/AAAAAAAABF4/v_cSlNuZWQ0poZvvS56B1VrVnJ1FOlYzwCLcB/s1600/Gato%2Bbengala%2B1.jpg"
   },
+<<<<<<< HEAD
 
   {
     id: uuidv4(),
@@ -326,5 +327,78 @@ export const petTS = [
     vaccinationSchemeStatus: "incompleto",
     image: "https://www.lavanguardia.com/files/content_image_mobile_filter/uploads/2020/07/28/5f2002eab1cef.jpeg",
     comments: "Hachiko está sentado en una estacion de tren esperando que lo adoptes!",
+=======
+  {
+    id: uuidv4(),
+    name: "Homero",
+    specie: "perro",
+    race: "pitbull",
+    age: "adulto",
+    gender: "macho",
+    status: "encontrado",
+    vaccinationSchemeStatus: "completo",
+    comments: "rosquillas",
+    image: "https://cnwebsite.blob.core.windows.net/files/2021/01/WhatsApp-Image-2021-01-15-at-13.49.25.jpeg"
+  },
+  {
+    id: uuidv4(),
+    name: "thor",
+    specie: "gato",
+    race: "otro",
+    age: "adulto",
+    gender: "macho",
+    status: "encontrado",
+    vaccinationSchemeStatus: "incompleto",
+    comments: "es muy rapido",
+    image: "https://i.pinimg.com/originals/1a/94/86/1a948614d9f9d3e6dc4b6b742b86c730.jpg"
+  },
+  {
+    id: uuidv4(),
+    name: "thor",
+    specie: "gato",
+    race: "otro",
+    age: "adulto",
+    gender: "macho",
+    status: "encontrado",
+    vaccinationSchemeStatus: "incompleto",
+    comments: "es muy rapido",
+    image: "https://i.pinimg.com/originals/1a/94/86/1a948614d9f9d3e6dc4b6b742b86c730.jpg"
+  },
+  {
+    id: uuidv4(),
+    name: "superman",
+    specie: "perro",
+    race: "pitbull",
+    age: "adulto",
+    gender: "macho",
+    status: "encontrado",
+    vaccinationSchemeStatus: "completo",
+    comments: "puede volar",
+    image: "https://images.unsplash.com/photo-1532202802379-df93d543bac3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8ZGlzZnJheiUyMGRlJTIwcGVycm98ZW58MHx8MHx8&w=1000&q=80"
+  },
+  {
+    id: uuidv4(),
+    name: "akita trump",
+    specie: "perro",
+    race: "akita",
+    age: "adulto",
+    gender: "macho",
+    status: "encontrado",
+    vaccinationSchemeStatus: "completo",
+    comments: "dueño de un hotel de perros",
+    image: "https://viapais.com.ar/resizer/TXjDSl_CamriDPdbL6RWFLJ8ZQ8=/1023x663/smart/cloudfront-us-east-1.images.arcpublishing.com/grupoclarin/G5SDIZJYMIYTAMRZGU4TANJXGM.jpg"
+  },
+  {
+    id: uuidv4(),
+    name: "Mufasa",
+    specie: "perro",
+    race: "pitbull",
+    age: "adulto",
+    gender: "hembra",
+    status: "encontrado",
+    vaccinationSchemeStatus: "completo",
+    comments: "rey de las croquetas",
+    image: "https://www.schnauzi.com/wp-content/uploads/2012/01/perro-disfraz-leon.jpg"
+>>>>>>> 9351d2e9a59cddbf187594b10d27a8ac5ea3a925
   },
 ];
