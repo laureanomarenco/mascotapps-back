@@ -15,12 +15,6 @@ import { petTS } from "./seeders/petTS-seed";
 // };
 // createUsers();
 
-const createPets = () => {
-  petTS.map((pet) => {
-    db.Pet.create(pet);
-  });
-};
-createPets();
 
 // let rex = db.Pet.findByPk("cd2fe99d-24d6-4d9a-983b-8cb8a1888a74")
 //   .then((result: any) => console.log(result))
@@ -47,3 +41,10 @@ db.sequelize.sync().then(() => {
     console.log(`App listening on port ${config.server.port}`);
   });
 });
+
+const createPets = () => {
+  petTS.map((pet) => {
+    db.Pet.create(pet);
+  });
+};
+createPets();
