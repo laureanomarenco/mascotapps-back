@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../models/index"));
 // import axios from "axios";
+//importar interfaces y types de las mascotas:
+// import { Pet, Dog, Cat } from "../types/petTypes";
 const router = (0, express_1.Router)();
 const getAllPets = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
