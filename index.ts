@@ -36,7 +36,7 @@ import { petTS }  from "./seeders/petTS-seed";
 // ---------------------------------------------
 // !-------comento lo de arriba ---------
 
-db.sequelize.sync({alter: true}).then(() => {
+db.sequelize.sync().then(() => {
   app.listen(config.server.port, () => {
     console.log(`App listening on port ${config.server.port}`);
   });
@@ -44,6 +44,7 @@ db.sequelize.sync({alter: true}).then(() => {
 
 const createPets = () => {
   petTS.map(async(pet) => {
+    console.log('in')
     await db.PetTS.create(pet);
   });
 };
