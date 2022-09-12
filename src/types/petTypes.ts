@@ -80,6 +80,8 @@ export enum DogRaces {
   Mestizo = "mestizo",
   Salchicha = "salchicha",
   Callejero = "callejero",
+  Akita = "akita",
+  Chiguagua = "chiguagua",
   Otro = "otro",
 }
 
