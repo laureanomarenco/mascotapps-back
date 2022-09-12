@@ -44,7 +44,7 @@ db.sequelize.sync().then(() => {
 
 const createPets = () => {
   petTS.map((pet) => {
-    db.Pet.create(pet);
+    db.PetTS.create(pet);
   });
 };
 createPets();
