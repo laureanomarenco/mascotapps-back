@@ -1,0 +1,61 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.petTS = void 0;
+const uuid_1 = require("uuid");
+exports.petTS = [
+    {
+        id: (0, uuid_1.v4)(),
+        name: "LOKIII",
+        specie: "perro",
+        race: "labrador",
+        age: "joven",
+        gender: "macho",
+        status: "perdido",
+        vaccinationSchemeStatus: "completo",
+        comments: "un gran perro con pelo pincho!",
+    },
+    {
+        id: (0, uuid_1.v4)(),
+        name: "REX",
+        specie: "perro",
+        race: "labrador",
+        age: "joven",
+        gender: "macho",
+        status: "perdido",
+        vaccinationSchemeStatus: "completo",
+        comments: "un ovejero aleman",
+    },
+    {
+        // id: uuidv4(),
+        name: "UNO SIN ID",
+        specie: "perro",
+        race: "labrador",
+        age: "joven",
+        gender: "macho",
+        status: "perdido",
+        vaccinationSchemeStatus: "completo",
+        comments: "un ovejero aleman",
+    },
+    {
+        // id: 1,
+        // name: undefined,
+        specie: "perro",
+        race: "labrador",
+        age: "joven",
+        gender: "macho",
+        status: "perdido",
+        vaccinationSchemeStatus: "completo",
+        comments: "un ovejero aleman",
+    },
+    {
+        // id: uuidv4(),
+        name: "UNO SIN ID",
+        specie: "perro",
+        race: "labrador",
+        age: "viejitooo",
+        gender: "macho",
+        status: "perdido",
+        vaccinationSchemeStatus: "completo",
+        comments: "un ovejero aleman",
+    },
+];

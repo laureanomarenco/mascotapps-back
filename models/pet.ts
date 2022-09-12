@@ -1,7 +1,7 @@
 "use strict";
 
 import { Model, UUIDV4 } from "sequelize";
-import { Pet } from "../types/petTypes";
+import { Pet } from "../src/types/petTypes";
 
 //------ Types e interfaces para modelo Pet : ------
 

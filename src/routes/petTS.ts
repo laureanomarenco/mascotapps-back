@@ -1,5 +1,5 @@
 import { Router } from "express";
-import db from "../models/index";
+import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/PetTSValidators";
 import { Pet } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";

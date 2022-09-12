@@ -7,12 +7,12 @@ import {
   Species,
   Status,
   VaccinationStatus,
-} from "../types/petTypes";
+} from "../src/types/petTypes";
 
 module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
   class PetTS extends Model<Pet> implements Pet {
-    id: string | undefined; //! le damos la opción al cliente de setear el id como el string que quiera.
-    name: string | undefined;
+    id: string | undefined; //! le damos la opción al cliente de setear el id como el string que quiera. Si no ingresa nada, se genera un id UUIDV4 por default
+    name: string | undefined; //! acá pueden enviar un string >= 1 && <= 100 chars; || null || undefined que sería no enviar la propiedad name. Muy similar en todas las string | undefined. Dependiendo del largo del string nada más.
     specie!: Species; //! OBLIGATORIO
     race: string | undefined;
     age: Ages | undefined;

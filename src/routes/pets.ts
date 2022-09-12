@@ -1,5 +1,5 @@
 import { Router } from "express";
-import db from "../models/index";
+import db from "../../models/index";
 // import axios from "axios";
 
 //importar interfaces y types de las mascotas:
