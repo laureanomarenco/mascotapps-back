@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const models_1 = __importDefault(require("./src/models"));
+const models_1 = __importDefault(require("./models"));
 const config = require(__dirname + "/config/config.js");
 const app = require("./src/app");
 // Dejo comentado el código de abajo que sirve para cargar Pets y Users a la DB, y varios console.logs para chequear lo que está fetcheando.:
