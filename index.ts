@@ -42,10 +42,10 @@ db.sequelize.sync().then(() => {
   });
 });
 
-const createPets = () => {
-  petTS.map(async(pet) => {
-    console.log('in')
-    await db.PetTS.create(pet);
-  });
-};
-createPets();
+// const createPets = () => {
+//   petTS.map(async(pet) => {
+//     console.log('in')
+//     await db.PetTS.create(pet);
+//   });
+// };
+// createPets();
