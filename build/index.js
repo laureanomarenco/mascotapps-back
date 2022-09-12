@@ -8,7 +8,7 @@ const config = require(__dirname + "/config/config.js");
 const app = require("./src/app");
 // Dejo comentado el código de abajo que sirve para cargar Pets y Users a la DB, y varios console.logs para chequear lo que está fetcheando.:
 // import { users } from "./seeders/users-seed";
-// import { pets } from "./seeders/pets-seed";
+const petTS_seed_1 = require("./seeders/petTS-seed");
 // //----------------------------------------
 // const createUsers = () => {
 //   users.map((user) => {
@@ -16,12 +16,6 @@ const app = require("./src/app");
 //   });
 // };
 // createUsers();
-// const createPets = () => {
-//   pets.map((pet) => {
-//     db.Pet.create(pet);
-//   });
-// };
-// createPets();
 // let rex = db.Pet.findByPk("cd2fe99d-24d6-4d9a-983b-8cb8a1888a74")
 //   .then((result: any) => console.log(result))
 //   .catch((error: { message: any }) => console.log(error.message));
@@ -43,3 +37,9 @@ models_1.default.sequelize.sync().then(() => {
         console.log(`App listening on port ${config.server.port}`);
     });
 });
+const createPets = () => {
+    petTS_seed_1.petTS.map((pet) => {
+        models_1.default.Pet.create(pet);
+    });
+};
+createPets();
