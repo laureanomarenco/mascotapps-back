@@ -41,7 +41,7 @@ db.sequelize.sync().then(() => {
     console.log(`App listening on port ${config.server.port}`);
   });
 });
-
+debugger
 const createPets = () => {
   petTS.map(async(pet) => {
     console.log('in')
@@ -50,3 +50,4 @@ const createPets = () => {
   });
 };
 createPets();
+debugger
