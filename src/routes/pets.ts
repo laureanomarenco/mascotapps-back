@@ -31,6 +31,40 @@ async function getPetById(id: string | undefined) {
   }
 }
 
+async function getAllDogs(): Promise<Pet[]> {
+  console.log("entré a la fn getAllDogs");
+  let allDogsFromDB = await db.Animal.findAll({
+    where: {
+      specie: "perro",
+    },
+  });
+  console.log(`length de allDogsFromDB: ${allDogsFromDB.length}`);
+  return allDogsFromDB;
+}
+
+async function getAllCats(): Promise<Pet[]> {
+  console.log("entré a la fn getAllCats");
+  let allCatsFromDB = await db.Animal.findAll({
+    where: {
+      specie: "gato",
+    },
+  });
+  console.log(`length de allCatsFromDB: ${allCatsFromDB.length}`);
+  return allCatsFromDB;
+}
+
+async function getAllOtherSpecie(): Promise<Pet[]> {
+  console.log("entré a la fn getAllOtherSpecie");
+  let allOtherSpeciesFromDB = await db.Animal.findAll({
+    where: {
+      specie: "otra especie",
+    },
+  });
+  console.log(
+    `length de allOtherSpeciesFromDB: ${allOtherSpeciesFromDB.length}`
+  );
+  return allOtherSpeciesFromDB;
+}
 // ----- ------ ------- RUTAS :  ------ ------- -------
 
 //POST A PET:
@@ -56,6 +90,42 @@ router.get("/", async (_req, res) => {
     let allThePets = await getAllPets();
     // console.log(allThePets);
     return res.status(200).send(allThePets);
+  } catch (error: any) {
+    return res.status(404).send(error.message);
+  }
+});
+
+//GET ALL DOGS
+router.get("/perros", async (req, res) => {
+  console.log(`Entré al GET /perros`);
+  try {
+    let dogsFromDB = await getAllDogs();
+    console.log(`dogsFromDB.length = ${dogsFromDB.length}`);
+    return res.status(200).send(dogsFromDB);
+  } catch (error: any) {
+    return res.status(404).send(error.message);
+  }
+});
+
+//GET ALL CATS
+router.get("/gatos", async (req, res) => {
+  console.log(`Entré al GET /gatos`);
+  try {
+    let catsFromDB = await getAllCats();
+    console.log(`catsFromDB.length = ${catsFromDB.length}`);
+    return res.status(200).send(catsFromDB);
+  } catch (error: any) {
+    return res.status(404).send(error.message);
+  }
+});
+
+//GET ALL OTHER SPECIES
+router.get("/otra", async (req, res) => {
+  console.log(`Entré al GET /otra`);
+  try {
+    let otherSpeciesFromDB = await getAllOtherSpecie();
+    console.log(`otherSpeciesFromDB.length = ${otherSpeciesFromDB.length}`);
+    return res.status(200).send(otherSpeciesFromDB);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
