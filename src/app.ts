@@ -1,8 +1,11 @@
 import express from "express";
-import petsRouter from "./routes/pets";
 import usersRouter from "./routes/users";
+<<<<<<< HEAD
 import petTSRouter from "./routes/petTS";
 import searchBar from "./routes/searchBar"
+=======
+import animalRouter from "./routes/pets";
+>>>>>>> d530d909595d073e8f75bca01d80b90d0cb5a677
 // import db from "./src/models";
 const app = express();
 
@@ -26,9 +29,13 @@ app.get("/ping", (_req, res) => {
 });
 
 app.use("/users", usersRouter);
+<<<<<<< HEAD
 app.use("/pets", petsRouter);
 app.use("/petts", petTSRouter);
 app.use("/searchBar",searchBar);
+=======
+app.use("/pets", animalRouter);
+>>>>>>> d530d909595d073e8f75bca01d80b90d0cb5a677
 
 module.exports = app;
 

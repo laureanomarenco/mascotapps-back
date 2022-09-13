@@ -4,6 +4,8 @@ import db from "../../models/index";
 
 const router = Router();
 
+// ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
+
 const getAllUsers = async () => {
   try {
     const allUsers = await db.User.findAll();
@@ -14,6 +16,8 @@ const getAllUsers = async () => {
     return error;
   }
 };
+
+// ----- ------ ------- RUTAS :  ------ ------- -------
 
 router.get("/", async (req, res) => {
   console.log("entré al get de Users!");

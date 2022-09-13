@@ -1,6 +1,6 @@
 import { Router } from "express";
 import db from "../../models/index";
-import { validateNewPet } from "../auxiliary/PetTSValidators";
+import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet } from "../types/petTypes";
 import { Op } from "sequelize";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";

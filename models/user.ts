@@ -22,8 +22,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     password!: string;
     static associate(models: any) {
       // define association here
-      User.hasMany(models.Pet);
-      User.hasMany(models.PetTS);
+      User.hasMany(models.Animal);
     }
   }
   User.init(
