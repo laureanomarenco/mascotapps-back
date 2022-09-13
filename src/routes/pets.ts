@@ -65,6 +65,18 @@ async function getAllOtherSpecie(): Promise<Pet[]> {
   );
   return allOtherSpeciesFromDB;
 }
+
+async function getAllLost(): Promise<Pet[]> {
+  console.log("entré a la fn getAllLost");
+  let allLostFromDB = await db.Animal.findAll({
+    where: {
+      status: "perdido",
+    },
+  });
+  console.log(`length de allLostFromDB: ${allLostFromDB.length}`);
+  return allLostFromDB;
+}
+
 // ----- ------ ------- RUTAS :  ------ ------- -------
 
 //POST A PET:
@@ -126,6 +138,18 @@ router.get("/otra", async (req, res) => {
     let otherSpeciesFromDB = await getAllOtherSpecie();
     console.log(`otherSpeciesFromDB.length = ${otherSpeciesFromDB.length}`);
     return res.status(200).send(otherSpeciesFromDB);
+  } catch (error: any) {
+    return res.status(404).send(error.message);
+  }
+});
+
+//GET ALL LOST
+router.get("/perdido", async (req, res) => {
+  console.log(`Entré al GET /perdido`);
+  try {
+    let allLostFromDB = await getAllLost();
+    console.log(`allLostFromDB.length = ${allLostFromDB.length}`);
+    return res.status(200).send(allLostFromDB);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
