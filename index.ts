@@ -36,12 +36,12 @@ import { petTS }  from "./seeders/petTS-seed";
 // ---------------------------------------------
 // !-------comento lo de arriba ---------
 
-db.sequelize.sync().then(() => {
+db.sequelize.sync({force: true}).then(() => {
   app.listen(config.server.port, () => {
     console.log(`App listening on port ${config.server.port}`);
   });
 });
-debugger
+
 const createPets = () => {
   petTS.map(async(pet) => {
     console.log('in')
@@ -50,4 +50,3 @@ const createPets = () => {
   });
 };
 createPets();
-debugger
