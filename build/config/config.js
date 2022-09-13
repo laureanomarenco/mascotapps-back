@@ -27,6 +27,9 @@ module.exports = {
         seederStorageTableName: "SequelizeData",
         logging: false,
         native: false,
+        migrations: {
+            directory: '../migrations'
+        },
         dialectOptions: {
             ssl: true,
             rejectUnauthorized: false
