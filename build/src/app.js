@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const pets_1 = __importDefault(require("./routes/pets"));
 const users_1 = __importDefault(require("./routes/users"));
 const petTS_1 = __importDefault(require("./routes/petTS"));
+const searchBar_1 = __importDefault(require("./routes/searchBar"));
 // import db from "./src/models";
 const app = (0, express_1.default)();
 app.use(express_1.default.json()); // middleware que transforma la req.body a un json
@@ -25,5 +26,6 @@ app.get("/ping", (_req, res) => {
 app.use("/users", users_1.default);
 app.use("/pets", pets_1.default);
 app.use("/petts", petTS_1.default);
+app.use("/searchBar", searchBar_1.default);
 module.exports = app;
 //! este archivo está siendo importado en index.ts de la raíz
