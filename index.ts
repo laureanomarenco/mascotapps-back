@@ -4,6 +4,7 @@ const app = require("./src/app");
 
 import { validateNewPet } from "./src/auxiliary/AnimalValidators";
 import { animalSeeds } from "./seeders/animal-seeds";
+import { users } from "./seeders/users-seed";
 
 // sync({ alter: true })
 // sync({ force: true })
@@ -28,6 +29,10 @@ db.sequelize.sync({ force: true }).then(() => {
       let validatedPet = validateNewPet(pet);
       await db.Animal.create(validatedPet);
     });
+    // users.forEach(async (user) => {
+    //   agregar validate
+    //   await db.User.create(user)
+    // })
   });
 });
 

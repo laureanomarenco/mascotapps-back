@@ -34,7 +34,7 @@ router.get("/", async (_req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res) => { // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
   console.log("entré al POST de Animal!");
   try {
     let validatedPet: Pet = validateNewPet(req.body);
