@@ -5,10 +5,9 @@ import db from "../../models/index";
 const router = Router();
 
 router.get("/", async (req,res)=>{
-    console.log("soy serachbar")
     const {input} = req.body
     try {
-      const searchedPets = db.petTS.findAll({
+      const searchedPets = db.animal.findAll({
         where:{
           name:{
             [Op.iLike]: '%' + input + '%'

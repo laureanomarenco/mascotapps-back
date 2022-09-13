@@ -1,6 +1,7 @@
 import express from "express";
 import usersRouter from "./routes/users";
 import animalRouter from "./routes/pets";
+import searchBar from "./routes/searchBar"
 // import db from "./src/models";
 const app = express();
 
@@ -25,6 +26,7 @@ app.get("/ping", (_req, res) => {
 
 app.use("/users", usersRouter);
 app.use("/pets", animalRouter);
+app.use("/searchBar", searchBar)
 
 module.exports = app;
 
