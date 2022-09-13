@@ -5,17 +5,24 @@ import db from "../../models/index";
 const router = Router();
 
 router.get("/", async (req,res)=>{
-    const {name} = req.body
-    console.log(name)
+    const {input} = req.body
     try {
       const searchedPets = await db.Animal.findAll({
         where:{
           name:{
-            [Op.iLike]: '%' + name + '%'
+            [Op.iLike]: '%' +  input + '%'
           },
         }
       })
-      res.send(searchedPets)
+      const searchedPetsRace = await db.Animal.findAll({
+        where:{
+          race:{
+            [Op.iLike]: '%' + input + '%'
+          },
+        }
+      })
+      const allPets = searchedPets.concat(searchedPetsRace)
+      res.send(allPets)
     } catch (error: any) {
       return res.status(400).send(error)
     }
