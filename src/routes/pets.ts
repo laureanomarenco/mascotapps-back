@@ -33,6 +33,21 @@ async function getPetById(id: string | undefined) {
 
 // ----- ------ ------- RUTAS :  ------ ------- -------
 
+//POST A PET:
+router.post("/", async (req, res) => {
+  console.log("entré al POST de Animal!");
+  try {
+    let validatedPet: Pet = validateNewPet(req.body);
+    console.log("SOY VALIDATED PET: ");
+    console.log(validatedPet);
+
+    let createdPet = await db.Animal.create(validatedPet);
+    return res.status(200).send(createdPet);
+  } catch (error: any) {
+    return res.status(404).send(error.message);
+  }
+});
+
 //GET ALL PETS:
 router.get("/", async (_req, res) => {
   console.log("entré al get de pets!");
@@ -47,27 +62,12 @@ router.get("/", async (_req, res) => {
 });
 
 //GET BY ID:
-
 router.get("/:id", async (req, res) => {
   let paramsID = req.params.id;
   console.log(`entré a get by id con params.id = ${req.params.id}`);
   try {
     let petFoundById = await getPetById(paramsID);
     return res.status(200).send(petFoundById);
-  } catch (error: any) {
-    return res.status(404).send(error.message);
-  }
-});
-
-router.post("/", async (req, res) => {
-  console.log("entré al POST de Animal!");
-  try {
-    let validatedPet: Pet = validateNewPet(req.body);
-    console.log("SOY VALIDATED PET: ");
-    console.log(validatedPet);
-
-    let createdPet = await db.Animal.create(validatedPet);
-    return res.status(200).send(createdPet);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
