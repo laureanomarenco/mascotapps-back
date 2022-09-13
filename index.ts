@@ -36,7 +36,7 @@ import { petTS }  from "./seeders/petTS-seed";
 // ---------------------------------------------
 // !-------comento lo de arriba ---------
 
-db.sequelize.sync().then(() => {
+db.sequelize.sync({force: true}).then(() => {
   app.listen(config.server.port, () => {
     console.log(`App listening on port ${config.server.port}`);
   });
