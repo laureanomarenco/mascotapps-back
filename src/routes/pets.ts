@@ -90,6 +90,7 @@ async function getAllFound(): Promise<Pet[]> {
 
 // ----- ------ ------- RUTAS :  ------ ------- -------
 
+// aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
 router.post("/", async (req, res) => {
   console.log("entré al POST de Animal!");

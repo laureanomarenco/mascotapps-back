@@ -20,19 +20,6 @@ if (config.use_env_variable) {
   );
 }
 
-// fs.readdirSync(__dirname)
-//   .filter((file: string) => {
-//     return (
-//       file.indexOf(".") !== 0 && file !== basename
-//     );
-//   })
-//   .forEach((file: any) => {
-//     const model = require(path.join(__dirname, file))(
-//       sequelize,
-//       Sequelize.DataTypes
-//     );
-//     db[model.name] = model;
-//   });
 fs.readdirSync(__dirname)
   .filter((file: string) => {
     let extensionDeArchivo = "";
