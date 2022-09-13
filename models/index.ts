@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const Sequelize = require("sequelize");
+const { Sequelize } = require("sequelize");
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../config/config.js")[env];
@@ -22,8 +22,26 @@ if (config.use_env_variable) {
 
 fs.readdirSync(__dirname)
   .filter((file: string) => {
+    let extensionDeArchivo = "";
+    if (
+      file.indexOf(".") !== 0 &&
+      file !== basename &&
+      file.slice(-3) === ".ts"
+    ) {
+      extensionDeArchivo = ".ts";
+    }
+    if (
+      file.indexOf(".") !== 0 &&
+      file !== basename &&
+      file.slice(-3) === ".js"
+    ) {
+      extensionDeArchivo = ".js";
+    }
+
     return (
-      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".ts"
+      file.indexOf(".") !== 0 &&
+      file !== basename &&
+      file.slice(-3) === extensionDeArchivo
     );
   })
   .forEach((file: any) => {
@@ -44,5 +62,4 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 export default db;
-
 //! este archivo representa las conecciones de los models y sequelize. Se exporta y lo importa el archivo index.ts de la carpeta raíz.

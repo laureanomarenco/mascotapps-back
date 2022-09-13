@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const index_1 = __importDefault(require("../models/index"));
+const index_1 = __importDefault(require("../../models/index"));
 // import axios from "axios";
 //importar interfaces y types de las mascotas:
 // import { Pet, Dog, Cat } from "../types/petTypes";

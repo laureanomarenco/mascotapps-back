@@ -7,6 +7,9 @@ interface UserAttributes {
   name: string;
   email: string;
   password: string;
+  city: string;
+  contact: string;
+  image: string | undefined;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -20,10 +23,12 @@ module.exports = (sequelize: any, DataTypes: any) => {
     name!: string;
     email!: string;
     password!: string;
+    city!: string;
+    contact!: string;
+    image: string | undefined;
     static associate(models: any) {
       // define association here
-      User.hasMany(models.Pet);
-      User.hasMany(models.PetTS);
+      User.hasMany(models.Animal);
     }
   }
   User.init(
@@ -47,6 +52,18 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      city: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      contact: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      image: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      }
     },
     {
       sequelize,

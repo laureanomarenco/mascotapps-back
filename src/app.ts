@@ -1,14 +1,13 @@
 import express from "express";
-import petsRouter from "./routes/pets";
 import usersRouter from "./routes/users";
-import petTSRouter from "./routes/petTS";
+import animalRouter from "./routes/pets";
 // import db from "./src/models";
 const app = express();
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 
 app.use((_req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
   res.header("Access-Control-Allow-Credentials", "true");
   res.header(
     "Access-Control-Allow-Headers",
@@ -25,8 +24,7 @@ app.get("/ping", (_req, res) => {
 });
 
 app.use("/users", usersRouter);
-app.use("/pets", petsRouter);
-app.use("/petts", petTSRouter);
+app.use("/pets", animalRouter);
 
 module.exports = app;
 
