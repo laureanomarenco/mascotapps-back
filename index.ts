@@ -41,11 +41,11 @@ db.sequelize.sync({ force: true }).then(() => {
   });
 });
 
-const createPets = () => {
-  petTS.map(async (pet) => {
-    console.log("in");
-    await db.Animal.create(pet);
-    console.log("out");
-  });
-};
-createPets();
+// const createPets = () => {
+//   petTS.map(async (pet) => {
+//     console.log("in");
+//     await db.Animal.create(pet);
+//     console.log("out");
+//   });
+// };
+// createPets();
