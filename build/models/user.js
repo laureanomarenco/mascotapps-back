@@ -5,8 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     class User extends sequelize_1.Model {
         static associate(models) {
             // define association here
-            User.hasMany(models.Pet);
-            User.hasMany(models.PetTS);
+            User.hasMany(models.Animal);
         }
     }
     User.init({
@@ -29,6 +28,18 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        city: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        contact: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        image: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        }
     }, {
         sequelize,
         modelName: "User",

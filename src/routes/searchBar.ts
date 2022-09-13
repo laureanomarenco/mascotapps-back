@@ -5,16 +5,14 @@ import db from "../../models/index";
 const router = Router();
 
 router.get("/", async (req,res)=>{
-    const {input} = req.body
+    const {name} = req.body
+    console.log(name)
     try {
-      const searchedPets = db.animal.findAll({
+      const searchedPets = await db.Animal.findAll({
         where:{
           name:{
-            [Op.iLike]: '%' + input + '%'
+            [Op.iLike]: '%' + name + '%'
           },
-          race:{
-            [Op.iLike]: '%' + input + '%'
-          }
         }
       })
       res.send(searchedPets)
