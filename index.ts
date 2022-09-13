@@ -1,4 +1,4 @@
-import db from "./models";
+const db = require("./models");
 const config = require(__dirname + "/config/config.js");
 
 const app = require("./src/app");
