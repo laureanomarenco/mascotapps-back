@@ -46,6 +46,7 @@ const createPets = () => {
   petTS.map(async(pet) => {
     console.log('in')
     await db.PetTS.create(pet);
+    console.log('out')
   });
 };
 createPets();
