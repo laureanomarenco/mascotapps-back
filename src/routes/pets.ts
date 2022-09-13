@@ -1,10 +1,12 @@
 import { Router } from "express";
 import db from "../../models/index";
-import { validateNewPet } from "../auxiliary/PetTSValidators";
+import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 
 const router = Router();
+
+// ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 
 const getAllPets = async () => {
   try {
@@ -17,8 +19,10 @@ const getAllPets = async () => {
   }
 };
 
+// ----- ------ ------- RUTAS :  ------ ------- -------
+
 router.get("/", async (_req, res) => {
-  console.log("entré al get de Animal!");
+  console.log("entré al get de pets!");
 
   try {
     let allThePets = await getAllPets();

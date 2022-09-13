@@ -1,51 +1,47 @@
 import db from "./models";
 const config = require(__dirname + "/config/config.js");
-
 const app = require("./src/app");
 
-// Dejo comentado el código de abajo que sirve para cargar Pets y Users a la DB, y varios console.logs para chequear lo que está fetcheando.:
+import { validateNewPet } from "./src/auxiliary/AnimalValidators";
+import { animalSeeds } from "./seeders/animal-seeds";
 
-// import { users } from "./seeders/users-seed";
-import { petTS } from "./seeders/petTS-seed";
-// //----------------------------------------
-// const createUsers = () => {
-//   users.map((user) => {
-//     db.User.create(user);
-//   });
-// };
-// createUsers();
-
-// let rex = db.Pet.findByPk("cd2fe99d-24d6-4d9a-983b-8cb8a1888a74")
-//   .then((result: any) => console.log(result))
-//   .catch((error: { message: any }) => console.log(error.message));
-
-// console.log("soy rex: " + rex);
-
-// async function rexiasincr() {
-//   console.log("en rexiasinc!");
-//   let rexi = await db.Pet.findByPk("cd2fe99d-24d6-4d9a-983b-8cb8a1888a74");
-//   console.log("DESPUES DEL AWAIT!");
-//   console.log(rexi);
-//   return `SOY REXI!!!!: ${rexi}`;
-// }
-// rexiasincr();
-
-// User.sync({ alter: true });
-// sequelize.sync({ force: true });
-// ---------------------------------------------
-// !-------comento lo de arriba ---------
+// sync({ alter: true })
+// sync({ force: true })
 
 db.sequelize.sync({ force: true }).then(() => {
   app.listen(config.server.port, () => {
+    console.log(
+      "**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** "
+    );
     console.log(`App listening on port ${config.server.port}`);
+    console.log(
+      "**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** "
+    );
+    console.log(
+      "**** **** **** **** **** Creando Animals con las semillas... :  **** **** **** ****"
+    );
+    console.log(
+      "**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** "
+    );
+
+    animalSeeds.forEach(async (pet) => {
+      let validatedPet = validateNewPet(pet);
+      await db.Animal.create(validatedPet);
+    });
   });
 });
 
-// const createPets = () => {
-//   petTS.map(async (pet) => {
-//     console.log("in");
-//     await db.Animal.create(pet);
-//     console.log("out");
-//   });
+// función que podría venir bien en algún momento, por eso la dejo comentada.
+// const createAnimals = () => {
+//   try {
+//     animalsSeed.map(async (pet) => {
+//       let validatedPet: Pet = validateNewPet(pet);
+//       console.log("Soy validatedPet");
+//       // console.log(validatedPet);
+//       let createdPet = await db.Animal.create(validatedPet);
+//       console.log(createdPet);
+//     });
+//   } catch (error: any) {
+//     console.log(error.message);
+//   }
 // };
-// createPets();

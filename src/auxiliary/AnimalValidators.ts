@@ -169,7 +169,11 @@ export function checkName(nameFromReq: any): string | undefined {
 
 //-----funciones de chequeo de id:
 function isValidId(argumento: any): boolean {
-  if (typeof argumento === "string" && argumento.length < 50) {
+  if (
+    typeof argumento === "string" &&
+    argumento.length >= 1 &&
+    argumento.length <= 50
+  ) {
     return true;
   }
   return false;
