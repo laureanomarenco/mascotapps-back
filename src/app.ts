@@ -1,5 +1,4 @@
 import express from "express";
-import petsRouter from "./routes/pets";
 import usersRouter from "./routes/users";
 import petTSRouter from "./routes/petTS";
 // import db from "./src/models";
@@ -25,7 +24,6 @@ app.get("/ping", (_req, res) => {
 });
 
 app.use("/users", usersRouter);
-app.use("/pets", petsRouter);
 app.use("/petts", petTSRouter);
 
 module.exports = app;
