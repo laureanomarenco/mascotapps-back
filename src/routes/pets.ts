@@ -19,16 +19,41 @@ const getAllPets = async () => {
   }
 };
 
+async function getPetById(id: string | undefined) {
+  console.log(`fn getById; id: ${id}`);
+  try {
+    let petFoundById = await db.Animal.findByPk(id);
+    console.log(`petFoundById: ${petFoundById}`);
+    console.log(`${petFoundById.name}`);
+    return petFoundById;
+  } catch (error: any) {
+    return error.message;
+  }
+}
+
 // ----- ------ ------- RUTAS :  ------ ------- -------
 
+//GET ALL PETS:
 router.get("/", async (_req, res) => {
   console.log("entré al get de pets!");
 
   try {
     let allThePets = await getAllPets();
     // console.log(allThePets);
-
     return res.status(200).send(allThePets);
+  } catch (error: any) {
+    return res.status(404).send(error.message);
+  }
+});
+
+//GET BY ID:
+
+router.get("/:id", async (req, res) => {
+  let paramsID = req.params.id;
+  console.log(`entré a get by id con params.id = ${req.params.id}`);
+  try {
+    let petFoundById = await getPetById(paramsID);
+    return res.status(200).send(petFoundById);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
