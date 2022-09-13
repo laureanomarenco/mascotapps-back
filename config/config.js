@@ -26,6 +26,8 @@ module.exports = {
     dialect: 'postgres',
     seederStorage: "sequelize",
     seederStorageTableName: "SequelizeData",
+    logging: false, // set to console.log to see the raw SQL queries
+    native: false,
     dialectOptions: {
       ssl: true,
       rejectUnauthorized: false
