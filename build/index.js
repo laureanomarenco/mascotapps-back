@@ -15,42 +15,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const models_1 = __importDefault(require("./models"));
 const config = require(__dirname + "/config/config.js");
 const app = require("./src/app");
-// Dejo comentado el código de abajo que sirve para cargar Pets y Users a la DB, y varios console.logs para chequear lo que está fetcheando.:
-// import { users } from "./seeders/users-seed";
-const petTS_seed_1 = require("./seeders/petTS-seed");
-// //----------------------------------------
-// const createUsers = () => {
-//   users.map((user) => {
-//     db.User.create(user);
-//   });
-// };
-// createUsers();
-// let rex = db.Pet.findByPk("cd2fe99d-24d6-4d9a-983b-8cb8a1888a74")
-//   .then((result: any) => console.log(result))
-//   .catch((error: { message: any }) => console.log(error.message));
-// console.log("soy rex: " + rex);
-// async function rexiasincr() {
-//   console.log("en rexiasinc!");
-//   let rexi = await db.Pet.findByPk("cd2fe99d-24d6-4d9a-983b-8cb8a1888a74");
-//   console.log("DESPUES DEL AWAIT!");
-//   console.log(rexi);
-//   return `SOY REXI!!!!: ${rexi}`;
-// }
-// rexiasincr();
-// User.sync({ alter: true });
-// sequelize.sync({ force: true });
-// ---------------------------------------------
-// !-------comento lo de arriba ---------
-models_1.default.sequelize.sync().then(() => {
+const AnimalValidators_1 = require("./src/auxiliary/AnimalValidators");
+const animal_seeds_1 = require("./seeders/animal-seeds");
+// sync({ alter: true })
+// sync({ force: true })
+models_1.default.sequelize.sync({ force: true }).then(() => {
     app.listen(config.server.port, () => {
+        console.log("**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** ");
         console.log(`App listening on port ${config.server.port}`);
+        console.log("**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** ");
+        console.log("**** **** **** **** **** Creando Animals con las semillas... :  **** **** **** ****");
+        console.log("**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** ");
+        animal_seeds_1.animalSeeds.forEach((pet) => __awaiter(void 0, void 0, void 0, function* () {
+            let validatedPet = (0, AnimalValidators_1.validateNewPet)(pet);
+            yield models_1.default.Animal.create(validatedPet);
+        }));
+        // users.forEach(async (user) => {
+        //   agregar validate
+        //   await db.User.create(user)
+        // })
     });
 });
-const createPets = () => {
-    petTS_seed_1.petTS.map((pet) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log('in');
-        yield models_1.default.PetTS.create(pet);
-        console.log('out');
-    }));
-};
-createPets();
+// función que podría venir bien en algún momento, por eso la dejo comentada.
+// const createAnimals = () => {
+//   try {
+//     animalsSeed.map(async (pet) => {
+//       let validatedPet: Pet = validateNewPet(pet);
+//       console.log("Soy validatedPet");
+//       // console.log(validatedPet);
+//       let createdPet = await db.Animal.create(validatedPet);
+//       console.log(createdPet);
+//     });
+//   } catch (error: any) {
+//     console.log(error.message);
+//   }
+// };
