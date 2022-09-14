@@ -4,14 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const pets_1 = __importDefault(require("./routes/pets"));
 const users_1 = __importDefault(require("./routes/users"));
-const petTS_1 = __importDefault(require("./routes/petTS"));
+const pets_1 = __importDefault(require("./routes/pets"));
 // import db from "./src/models";
 const app = (0, express_1.default)();
 app.use(express_1.default.json()); // middleware que transforma la req.body a un json
 app.use((_req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
@@ -24,6 +23,5 @@ app.get("/ping", (_req, res) => {
 });
 app.use("/users", users_1.default);
 app.use("/pets", pets_1.default);
-app.use("/petts", petTS_1.default);
 module.exports = app;
 //! este archivo está siendo importado en index.ts de la raíz
