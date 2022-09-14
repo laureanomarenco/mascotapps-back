@@ -100,7 +100,7 @@ router.post("/", async (req, res) => {
     console.log(validatedPet);
 
     let createdPet = await db.Animal.create(validatedPet);
-    return res.status(200).send(createdPet);
+    return res.status(201).send(createdPet);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
