@@ -22,17 +22,5 @@ module.exports = {
     },
     production: {
         use_env_variable: "DATABASE_URL",
-        dialect: 'postgres',
-        seederStorage: "sequelize",
-        seederStorageTableName: "SequelizeData",
-        logging: false,
-        native: false,
-        migrations: {
-            directory: '../migrations'
-        },
-        dialectOptions: {
-            ssl: true,
-            rejectUnauthorized: false
-        },
     },
 };
