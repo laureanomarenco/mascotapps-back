@@ -50,4 +50,7 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //     return res.status(404).send(error.message);
 //   }
 // })
+
+// Hacer más rutas
+
 exports.default = router;

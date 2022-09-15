@@ -88,6 +88,17 @@ async function getAllFound(): Promise<Pet[]> {
   return allFoundFromDB;
 }
 
+async function getAllInAdoption(): Promise<Pet[]> {
+  console.log("Entré a la ruta getAllInAdoption")
+  let allInAdoptionFromDB = await db.Animal.findAll({
+    where:{
+      status: "en adopción",
+    },
+  });
+  console.log(`length de allFoundFromDB: ${allInAdoptionFromDB.length}`);
+  return allInAdoptionFromDB;
+}
+
 // ----- ------ ------- RUTAS :  ------ ------- -------
 
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
@@ -100,7 +111,7 @@ router.post("/", async (req, res) => {
     console.log(validatedPet);
 
     let createdPet = await db.Animal.create(validatedPet);
-    return res.status(200).send(createdPet);
+    return res.status(201).send(createdPet);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
@@ -178,6 +189,19 @@ router.get("/encontrado", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
+
+//GET ALL IN ADOPTION
+router.get("/adopcion", async (req, res) => {
+  console.log(`Entré al GET /adopcion`);
+  try {
+    let allInAdoptionDB = await getAllInAdoption();
+    console.log(`allInAdoptionDB.length = ${allInAdoptionDB.length}`);
+    return res.status(200).send(allInAdoptionDB);
+  } catch (error: any) {
+    return res.status(404).send(error.message);
+  }
+});
+
 
 //GET BY ID:
 router.get("/:id", async (req, res) => {
