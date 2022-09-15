@@ -1,11 +1,11 @@
-interface UserAttributes {
+export interface UserAttributes {
   id: string | undefined;
-  googleId: string;
+  googleId: string | undefined;
   displayName: string | undefined;
-  name: string;
-  email: string;
-  city: string | undefined;
-  contact: string | undefined;
+  email: string | undefined;
+  name: string | undefined;
+  postalCode: string | undefined;
+  aditionalContactInfo: string | undefined;
   thumbnail: string | undefined;
 }
 
