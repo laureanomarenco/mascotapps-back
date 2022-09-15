@@ -5,7 +5,12 @@ const router = Router();
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../../config/config.js")[env];
 
-const stripe = new Stripe(config.stripeKey)
+let stripe: any;
+if(config.stripeKeyProd){
+    stripe = new Stripe(process.env[config.stripeKeyProd])
+} else {
+    stripe = new Stripe(config.stripeKey)
+}
 
 router.post('/', async (req, res) => {
     try {
