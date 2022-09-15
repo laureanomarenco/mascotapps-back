@@ -113,7 +113,10 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log("SOY VALIDATED PET: ");
         console.log(validatedPet);
         let createdPet = yield index_1.default.Animal.create(validatedPet);
+
+
         return res.status(201).send(createdPet);
+
     }
     catch (error) {
         return res.status(404).send(error.message);
