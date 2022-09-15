@@ -2,8 +2,10 @@ import { Router } from "express";
 const Stripe = require('stripe')
 //const stripe = require('../app')
 const router = Router();
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "../../../config/config.js")[env];
 
-const stripe = new Stripe(process.env.STRIPE_KEY)
+const stripe = new Stripe(config.stripeKey)
 
 router.post('/', async (req, res) => {
     try {
