@@ -17,8 +17,8 @@ const authCheck = (req, res, next) => {
 router.get("/", authCheck, (req, res) => {
   // res.send("You are logged in. This is your profile. - " + req.user.username); //#18
   //#19 voy a crear un profile view.
-  return res.status(201).send({ authorized: true, user: req.user });
-  // res.render("profile", { usuario: req.user }); //#19 en el segundo argumento le paso data que quiera enviar a render. {keyQueNoImportaElNombre: dataQueQuieroMandar}
+  // return res.status(201).send({ authorized: true, user: req.user });
+  res.render("profile", { usuario: req.user }); //#19 en el segundo argumento le paso data que quiera enviar a render. {keyQueNoImportaElNombre: dataQueQuieroMandar}
 });
 
 module.exports = router;
