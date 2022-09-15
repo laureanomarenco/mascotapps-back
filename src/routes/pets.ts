@@ -202,7 +202,6 @@ router.get("/adopcion", async (req, res) => {
   }
 });
 
-
 //GET BY ID:
 router.get("/:id", async (req, res) => {
   let paramsID = req.params.id;
