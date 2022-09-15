@@ -34,9 +34,8 @@ passport.use(
       clientSecret: keys.google.clientSecret,
     },
     async (accessToken, refreshToken, profile, done) => {
-      // console.log("ESTOY EN LA GOOGLE STRATEGY!");
+      // passport callback function:
       try {
-        // passport callback function
         console.log("passport callback function dispara!!!");
         console.log(profile);
         //check if user already exists in our db:
@@ -52,47 +51,30 @@ passport.use(
           console.log("USER NO ENCONTRADO EN LA DB...");
           console.log("ESTOY EN EL ELSE DE PASSAPORT CALLBACK FN");
           //! crear un user nuevo:
-          //             interface UserAttributes {
-          //   id: string;
-          //   googleId: string;
-          //   name: string;
-          //   email: string;
-          //   city: string | undefined;
-          //   contact: string | undefined;
-          //   thumbnail: string | undefined;
-          // }
+          //  interface UserAttributes {
+          //    id: string | undefined;
+          //    googleId: string | undefined;
+          //    displayName: string | undefined;
+          //    email: string | undefined;
+          //    name: string | undefined;
+          //    postalCode: string | undefined;
+          //    aditionalContactInfo: string | undefined;
+          //    thumbnail: string | undefined;
+          //  }
           //Acá podría hacer un: let validatedUser = validateUser(profile)
           let validatedUser = {
             id: profile.id,
             googleId: profile.id,
             displayName: profile.displayName,
-            name: `${profile.givenName} ${profile.familyName}`,
+            name: `${profile.name.givenName} ${profile.name.familyName}`,
+            email: profile._json.email,
             thumbnail: profile._json.picture,
           };
           let newUser = await db.User.create(validatedUser);
           console.log(`NEW USER CREATED!!! : ${newUser}`);
 
           done(null, newUser);
-          //!-----
-          // new User({
-          //   username: profile.displayName,
-          //   googleId: profile.id,
-          //   thumbnail: profile._json.picture,
-          // })
-          //   .save()
-          //   .then((newUser) => {
-          //     console.log(`new user created: ${newUser}`);
-          //     le paso el newUser recien creado como argumento de done() que es para serializar la data, para enviar la cookie al navegador con el user
-          //     done(null, newUser);
-          //   });
         }
-
-        //! con async await:
-        // let nuevoUser = await new User({
-        //   username: profile.displayName,
-        //   googleId: profile.id,
-        // }).save();
-        // console.log(nuevoUser);
       } catch (error) {
         console.log(error.message);
       }

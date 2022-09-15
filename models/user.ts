@@ -1,17 +1,18 @@
 "use strict";
 
 import { Model, UUIDV4 } from "sequelize";
+import { UserAttributes } from "../src/types/userTypes";
 
-interface UserAttributes {
-  id: string | undefined;
-  googleId: string | undefined;
-  displayName: string | undefined;
-  name: string | undefined;
-  email: string | undefined;
-  city: string | undefined;
-  contact: string | undefined;
-  thumbnail: string | undefined;
-}
+// export interface UserAttributes {
+//   id: string | undefined;
+//   googleId: string | undefined;
+//   displayName: string | undefined;
+//   email: string | undefined;
+//   name: string | undefined;
+//   postalCode: string | undefined;
+//   aditionalContactInfo: string | undefined;
+//   thumbnail: string | undefined;
+// }
 
 module.exports = (sequelize: any, DataTypes: any) => {
   class User extends Model<UserAttributes> implements UserAttributes {
@@ -25,9 +26,8 @@ module.exports = (sequelize: any, DataTypes: any) => {
     displayName: string | undefined;
     name: string | undefined;
     email: string | undefined;
-    city: string | undefined;
-    contact: string | undefined;
-    image: string | undefined;
+    postalCode: string | undefined;
+    aditionalContactInfo: string | undefined;
     thumbnail: string | undefined;
     static associate(models: any) {
       // define association here
@@ -52,18 +52,18 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       name: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       email: {
         type: DataTypes.STRING,
         allowNull: true,
         unique: false,
       },
-      city: {
+      postalCode: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      contact: {
+      aditionalContactInfo: {
         type: DataTypes.STRING,
         allowNull: true,
       },
