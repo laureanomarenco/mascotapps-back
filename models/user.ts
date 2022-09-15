@@ -3,13 +3,14 @@
 import { Model, UUIDV4 } from "sequelize";
 
 interface UserAttributes {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  city: string;
-  contact: string;
-  image: string | undefined;
+  id: string | undefined;
+  googleId: string | undefined;
+  displayName: string | undefined;
+  name: string | undefined;
+  email: string | undefined;
+  city: string | undefined;
+  contact: string | undefined;
+  thumbnail: string | undefined;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -19,13 +20,15 @@ module.exports = (sequelize: any, DataTypes: any) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    id!: string;
-    name!: string;
-    email!: string;
-    password!: string;
-    city!: string;
-    contact!: string;
+    id: string | undefined;
+    googleId: string | undefined;
+    displayName: string | undefined;
+    name: string | undefined;
+    email: string | undefined;
+    city: string | undefined;
+    contact: string | undefined;
     image: string | undefined;
+    thumbnail: string | undefined;
     static associate(models: any) {
       // define association here
       User.hasMany(models.Animal);
@@ -34,10 +37,18 @@ module.exports = (sequelize: any, DataTypes: any) => {
   User.init(
     {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.STRING,
         defaultValue: UUIDV4,
-        allowNull: false,
         primaryKey: true,
+        // allowNull: true,
+      },
+      googleId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      displayName: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       name: {
         type: DataTypes.STRING,
@@ -45,25 +56,21 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       email: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: false,
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
       },
       city: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       contact: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
-      image: {
+      thumbnail: {
         type: DataTypes.STRING,
         allowNull: true,
-      }
+      },
     },
     {
       sequelize,
