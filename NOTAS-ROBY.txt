@@ -31,3 +31,16 @@ Y que el usuario elija si quiere agregar el tamaño o no. Le damos la opción de
 ** Creé el archivo /seeders/petTS-seed IDEM comentario de arriba.
 
 ** Retoqué el petTypes. Cambié propiedades de interfaces y demás types para que podamos hacer mejores Models. Borré código viejo.
+
+
+//------------- INCORPORAR PASSPORT A DEV-ROBY
+
+Pendiente para lo inmediato:
+-Estudiar las propiedades que podríamos obtener del profile del usuario logueado:  -Ver esto en console.dev de google para ver los permisos que le tenemos que pedir al user. -Ver qué datos necestiamos guardar del usuario para las funcionalidades pensadas en el corto plazo, pero tmb pensar en el largo plazo con geolocalización y demás.
+-Hacer validaciones de props y types del modelo User para poder hacer las creaciones bien.
+-Pushear los cambios al repo back-dev y testear con Heroku
+
+Passport setup con SQLZ y PG: OK
+Routes  de prueba: OK.
+
+El archivo /config/keys.js lo tengo en gitignore.
