@@ -13,6 +13,7 @@ module.exports = {
     database: "masco",
     host: process.env.DB_HOST,
     dialect: "postgres",
+    stripeKey: process.env.STRIPE_KEY
   },
   test: {
     username: "root",

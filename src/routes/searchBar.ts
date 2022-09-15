@@ -5,6 +5,7 @@ import db from "../../models/index";
 const router = Router();
 
 router.get("/", async (req,res)=>{
+  console.log(req.body)
     const {input} = req.body
     try {
       const searchedPets = await db.Animal.findAll({
