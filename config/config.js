@@ -24,5 +24,6 @@ module.exports = {
   },
   production: {
     use_env_variable: "DATABASE_URL",
+    stripeKey: process.env.STRIPE_KEY
   },
 };
