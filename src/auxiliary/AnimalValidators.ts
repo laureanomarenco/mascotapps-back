@@ -37,7 +37,8 @@ export function validateNewPet(reqBody: any): Pet {
 
 //------- function de prueba para //! SPECIE:
 function isSpecies(argumento: any): boolean {
-  return Object.values(Species).includes(argumento);
+  let argumentToLower = argumento.toLowerCase()
+  return Object.values(Species).includes(argumentToLower);
 }
 export function checkSpecies(speciesFromReq: any): Species {
   if (!isSpecies(speciesFromReq)) {
@@ -48,7 +49,8 @@ export function checkSpecies(speciesFromReq: any): Species {
 
 //-----funciones de chequeo de //! STATUS:
 function isStatus(argumento: any): boolean {
-  return Object.values(Status).includes(argumento);
+  let argumentToLower = argumento.toLowerCase()
+  return Object.values(Status).includes(argumentToLower);
 }
 export function checkStatus(statusFromReq: any): Status {
   if (!isStatus(statusFromReq)) {
