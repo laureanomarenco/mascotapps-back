@@ -14,6 +14,8 @@ const authCheck = (req, res, next) => {
   }
 };
 
+//! en esta ruta podría hacer que si pasa la authenticación, por lo que me llegaría por req.user los datos del usuario, le respondo al front con un:
+// return res.status(200).send(req.user)
 router.get("/", authCheck, (req, res) => {
   // res.send("You are logged in. This is your profile. - " + req.user.username); //#18
   //#19 voy a crear un profile view.
