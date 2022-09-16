@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { Op } from "sequelize";
+
 import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet } from "../types/petTypes";
@@ -97,6 +99,27 @@ async function getAllInAdoption(): Promise<Pet[]> {
   });
   console.log(`length de allFoundFromDB: ${allInAdoptionFromDB.length}`);
   return allInAdoptionFromDB;
+}
+
+async function getAllByNameOrRace(input: any): Promise<Pet[]>{
+ 
+    const searchedPets = await db.Animal.findAll({
+      where:{
+        name:{
+          [Op.iLike]: '%' +  input + '%'
+        },
+      }
+    })
+    const searchedPetsRace = await db.Animal.findAll({
+      where:{
+        race:{
+          [Op.iLike]: '%' + input + '%'
+        },
+      }
+    })
+    const allPets = searchedPets.concat(searchedPetsRace)
+
+    return allPets
 }
 
 // ----- ------ ------- RUTAS :  ------ ------- -------
@@ -201,6 +224,12 @@ router.get("/adopcion", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
+
+router.get("/search", async (req,res)=>{
+  const {input} = req.query
+  let result = await getAllByNameOrRace(input)
+  return res.json(result)
+  })
 
 
 //GET BY ID:
