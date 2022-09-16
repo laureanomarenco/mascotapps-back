@@ -33,4 +33,21 @@ router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
   res.redirect("/profile/");
 });
 
+//------- RUTAS QUE REQUIEREN AUTHENTICACIÓN/AUTORIZACIÓN: ------
+// Todas estas rutas deberían extenderse de un "/auth/" ?
+
+// POST de mascota, ascociada al user.id que está autenticandose.
+
+// DELETE de mascota, ascociada al user.id que está autenticandose.
+
+// GET datos de contacto de un User dueño de X pet.id. Mirar en la instancia de la mascota con el :id que llega por params, y de ahí sacamos el ID del dueño/posteador de esa Pet. Y con ese id buscamos a el User en la tabla de Users y obtenemos los datos de contacto (displayName, email, additionaContactInfo, etc).
+
+// GET datos de perfíl de un usuario. Sólo el user.id que hace el GET puede acceder a los datos de user.id. El user.id me va a llegar en req.user gracias a Passport.
+
+// GET de las mascotas asociadas a un user.id. Esto sirve para poder mostrar en el perfíl del usuario los posteos/mascotas que tiene hechos el User. Y desde ahí le vamos a dar opciones de modificar (PUT) datos de esa instancia que creó.
+
+// PUT de los datos de una mascota, que tienen que estar asociadas/belongsTo al user.id que quiere hacer el PUT. Acá le permitimos al usuario cambiar, por ejemplo, el Status de la mascota que posteó. O cambiar el name o comments por ejemplo.
+
+// PUT de los datos del user (EXCEPTO SU ID!!!). El user.id que llega por req.user (cookie?) está autorizado a hacer un PUT únicamente a la instancia del modelo de User que coincide con su ID. Acá podría modificar sus datos de contacto, su nombre, agregar info adicional, actualizar su thumbnail, etc.
+
 module.exports = router;
