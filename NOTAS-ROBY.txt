@@ -44,3 +44,66 @@ Passport setup con SQLZ y PG: OK
 Routes  de prueba: OK.
 
 El archivo /config/keys.js lo tengo en gitignore.
+
+Cómo usar el login del usuario para manejar qué información le llega?
+
+Podríamos hacer que vamos a hacer un chequeo, en cada get o post que nos hagan, de si el usuario está logueado o no. 
+ Si está logueado, le mandamos cierta info, por ejemplo, el detalle de una mascota, incluidos los datos de contacto del usuario que la posteó.
+ Y si vemos que no está logueado, le mandamos el detalle de la mascota pero sin los datos de contacto.
+
+  Otra forma sería que el usuario que quiera ver los datos de contacto de otro usuario, tenga que hacer click en un botón del tipo "Ver datos de contacto".
+  Al hacer click en ese botón se despacha una action que fetchea a una ruta de la api los datos del dueño de esa mascota. Nosotros en esa ruta chequeamos si el usuario está logueado o no. Y si está logueado (y lo identificamos en nuestra db), enviamos los datos de contacto y en el front los renderizan.
+   Si el usuario quiere ver los datos de contacto y no está logueado, vamos a recibir el pedido a una ruta del back, y al pasar por el middleware de autenticación/autorización, vamos a detectar que no me enviaron los datos necesarios para poder obtener el permiso. Por lo que le vamos a contestar con un status404 o con un mensaje, o un objeto de error. Lo que acordemos con los del back que es la mejor forma. Podríamos mandarle un res.status(404).send({error: "Debe loguearse para ver estos datos"}). 
+    Al hacer esta autenticación de si el usuario está logueado y si está en nuestra DB, no vamos a registrarlo automáticamente. Si no que simplemente vamos a chequear si tiene autorización. El intento de login y registro lo hacemos en otro momento. Ahora simplemente hay un usuario no logueado ni registrado que quiere ver info que no tiene permiso para verla si no está registrado.
+     
+      Cuando un usuario quiera ver si perfíl, lo que hacemos en más o menos lo que ya tenemos hecho. Pero además tenemos que crear ruta de DELETE y PUT para que el usuario pueda eliminar o modificar mascotas posteadas, o incluso información de su perfíl guardada en nuestra DB. Le damos la opción de cambiar cosas como su email, si displayName, si aditionalContactInfo, etc. En el front podrían armar inputs tipo formulario que posteen data (o pedidos de DELETE) a ciertas rutas del back, en donde se va a modificar info guardada en la DB, o borrar info. 
+      opcion 1: En el back se va a autenticar que el ID del usuario que quiere modificar esa data coincide con el ID de la instancia/model de la DB. 
+      opcion 2: En el back directamente vamos a agarrar el ID de ese user, y vamos a ir a buscar en la tabla la instancia de ese user, y vamos a modificar esa información directamente. El chequeo de que es el usuario no es necesario ya que al encontrar esa instancia con ese ID ya es suficiente chequeo.
+       Podemos hacer en el back las siguientes rutas:
+       router.POST("/profile/addInfoToDB", middleware, (req, res) => {
+        let userID = req.user.id  (me llega por req.user la cookie deserializada)
+        await db.User.findByPk(userID) 
+        // hacer lo que haya que hacer
+       })
+
+//RUTAS PARA CREAR Y ELIMINAR POSTEOS DE MASCOTAS:
+
+       router.POST("/auth/postAPet", middleware, (req, res) => {
+        try {
+  let userID = req.user.id
+       let userFound = await db.findByPk(userID)
+        let newPet = validatePostedPet(req.body)
+let addedPet = await userFound.addPet(newPet)
+        // agregar 
+        return res.status(200).send(addedPet) 
+        } catch (error) {
+return res.status(404).send(error.message)
+        }
+       })
+
+       router.DELETE("/auth/deleteAPet/:petID", middleware, (req, res) => {
+        try {
+let userID = req.user.id;
+//necesitamos saber el id de la mascota que quieren eliminar. let petIDToDelete = req.query.petID
+// una vez que tenemos el id de la mascota, vamos a chequear si el dueño de esa mascota es el usuario con el id que me llega por req.user.id.
+// si no es, retorno un res.status(400).send("No tiene permiso para borrar esta data")
+// si el req.user.id está asociado a esta mascota, entonces procedo a eliminarla. Imagino que será algo así como:
+let deletedPet = await db.Pet.deleteByPk(req.body.petID ó req.query.petID)
+return res.status(205).send(deletedPet) // o un mensaje de confirmación.. creo que no se envía nada con el 205 igualmente. Sólo llega el status.
+        } catch (error) {
+          return res.status(404).send(error.message)
+        }
+       })
+
+SETEAR EL ESTADO DE LA MASCOTA QUE ENCONTRÓ DUEÑO:
+ El Usuario podría tener la opción de informar que la mascota que posteó ya encontró un nuevo dueño. O que una mascota fue encontrada!
+  Cuando el usuario informe que su mascota fue encontrada, desde el front van a enviar un PUT a una ruta del back y van a decirnos que una mascota con un ID X ya encontró dueño, por lo que ha podemos sacar de la tabla de mascotas perdidas y crear una instancia en una tabla nueva de mascotas "RESCATADAS GRACIAS A MASCOTAPPS", o simplemente cambiarle una propiedad a esa mascota. Por ejemplo, setear el estado de "perdido" a "rescatado"/"nuevoDueño".
+   Habría que hacer que al momento de crear una mascota, no se pueda setear este estado a "rescatado" o "nuevoDueño". Esta nueva categoría sólo debería poder ser seteada/valorizada cuando el usuario hace este PUT diciendo que la categoría/status cambió.
+  Para esto podríamos hacer una validación al momento de crearse, o podríamos tener un atributo nuevo que sea "adopted" (diciendo que el perro que puse en adopción ya fue adoptado, por lo que se podría sacar de la lista de perros en adopción). O un atributo que sea "found" que se inicie con "false" y se cambie a "true" cuando un perro que estaba "perdido" ha sido encontrado por su dueño.
+
+  CREAR UNA RUTA GET QUE ENVÍE TODAS LAS ESPECIES QUE TENEMOS CARGADAS Y TYPEADAS:
+   Esta ruta serviría para que en el front tengan un filtrado dinámico según lo que vamos modificando o adaptando en el back.
+   router.get("/pets/getAllSpecies", (req, res) => {
+    // agarrar un objeto de Types con las especies typeadas y devolver un array con los strings de cada especie.
+
+   })
