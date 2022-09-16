@@ -64,8 +64,8 @@ app.use("/checkout", checkoutRouter);
 
 app.get("/", (req: any, res) => {
   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
-
-  res.render("home", { usuario: req.user });
+  res.send(req.user)
+  //res.render("home", { usuario: req.user });
 });
 
 
