@@ -101,7 +101,7 @@ async function getAllInAdoption(): Promise<Pet[]> {
   return allInAdoptionFromDB;
 }
 
-async function getAllByNameOrRace(input: string): Promise<Pet[]>{
+async function getAllByNameOrRace(input: any): Promise<Pet[]>{
  
     const searchedPets = await db.Animal.findAll({
       where:{
@@ -225,8 +225,8 @@ router.get("/adopcion", async (req, res) => {
   }
 });
 
-router.post("/search", async (req,res)=>{
-  const {input} = req.body
+router.get("/search", async (req,res)=>{
+  const {input} = req.query
   let result = await getAllByNameOrRace(input)
   return res.json(result)
   })
