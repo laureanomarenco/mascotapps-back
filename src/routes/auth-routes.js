@@ -18,7 +18,7 @@ router.get(
   "/google",
   passport.authenticate("google", {
     //el scope le dice a passport qué datos del perfil del usuario queremos obtener
-    scope: ["profile"], //acá uno dice que no tiene que estar adentro de un array si quiero poner más de dos en scope, si no que tiene que ser scope: "profile email", successRedirect: "/", failureRedirect: "/login"
+    scope: ["profile", "email"], //acá uno dice que no tiene que estar adentro de un array si quiero poner más de dos en scope, si no que tiene que ser scope: "profile email", successRedirect: "/", failureRedirect: "/login"
   })
 );
 
