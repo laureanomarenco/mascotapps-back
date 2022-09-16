@@ -5,7 +5,7 @@ const router = require("express").Router(); //#18. Esta instancia de router va a
 const authCheck = (req, res, next) => {
   //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
   console.log("EN EL authCheck!");
-  console.log(req.user)
+  console.log(req.user);
   if (!req.user) {
     console.log("redirigiendo al /auth/login");
     res.redirect("/auth/login");
@@ -18,10 +18,12 @@ const authCheck = (req, res, next) => {
 //! en esta ruta podría hacer que si pasa la authenticación, por lo que me llegaría por req.user los datos del usuario, le respondo al front con un:
 // return res.status(200).send(req.user)
 router.get("/", authCheck, (req, res) => {
-  // res.send("You are logged in. This is your profile. - " + req.user.username); //#18
+  res
+    .status(200)
+    .send("You are logged in. This is your profile. - " + req.user.username); //#18
   //#19 voy a crear un profile view.
   // return res.status(201).send({ authorized: true, user: req.user });
-  res.render("profile", { usuario: req.user }); //#19 en el segundo argumento le paso data que quiera enviar a render. {keyQueNoImportaElNombre: dataQueQuieroMandar}
+  // res.render("profile", { usuario: req.user }); //#19 en el segundo argumento le paso data que quiera enviar a render. {keyQueNoImportaElNombre: dataQueQuieroMandar}
 });
 
 module.exports = router;
