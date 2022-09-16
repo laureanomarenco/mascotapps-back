@@ -1,6 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
+// export interface UserAttributes {
+//   id: string | undefined;
+//   googleId: string | undefined;
+//   displayName: string | undefined;
+//   email: string | undefined;
+//   name: string | undefined;
+//   postalCode: string | undefined;
+//   aditionalContactInfo: string | undefined;
+//   thumbnail: string | undefined;
+// }
 module.exports = (sequelize, DataTypes) => {
     class User extends sequelize_1.Model {
         static associate(models) {
@@ -10,36 +20,40 @@ module.exports = (sequelize, DataTypes) => {
     }
     User.init({
         id: {
-            type: DataTypes.UUID,
+            type: DataTypes.STRING,
             defaultValue: sequelize_1.UUIDV4,
-            allowNull: false,
             primaryKey: true,
+            // allowNull: true,
+        },
+        googleId: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        displayName: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         name: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         email: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             unique: false,
         },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        city: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        contact: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        image: {
+        postalCode: {
             type: DataTypes.STRING,
             allowNull: true,
-        }
+        },
+        aditionalContactInfo: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        thumbnail: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     }, {
         sequelize,
         modelName: "User",

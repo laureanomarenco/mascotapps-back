@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const sequelize_1 = require("sequelize");
 const index_1 = __importDefault(require("../../models/index"));
 const AnimalValidators_1 = require("../auxiliary/AnimalValidators");
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
@@ -103,6 +104,38 @@ function getAllFound() {
         return allFoundFromDB;
     });
 }
+function getAllInAdoption() {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("Entré a la ruta getAllInAdoption");
+        let allInAdoptionFromDB = yield index_1.default.Animal.findAll({
+            where: {
+                status: "en adopción",
+            },
+        });
+        console.log(`length de allFoundFromDB: ${allInAdoptionFromDB.length}`);
+        return allInAdoptionFromDB;
+    });
+}
+function getAllByNameOrRace(input) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const searchedPets = yield index_1.default.Animal.findAll({
+            where: {
+                name: {
+                    [sequelize_1.Op.iLike]: '%' + input + '%'
+                },
+            }
+        });
+        const searchedPetsRace = yield index_1.default.Animal.findAll({
+            where: {
+                race: {
+                    [sequelize_1.Op.iLike]: '%' + input + '%'
+                },
+            }
+        });
+        const allPets = searchedPets.concat(searchedPetsRace);
+        return allPets;
+    });
+}
 // ----- ------ ------- RUTAS :  ------ ------- -------
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
@@ -113,10 +146,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log("SOY VALIDATED PET: ");
         console.log(validatedPet);
         let createdPet = yield index_1.default.Animal.create(validatedPet);
-
-
         return res.status(201).send(createdPet);
-
     }
     catch (error) {
         return res.status(404).send(error.message);
@@ -193,6 +223,23 @@ router.get("/encontrado", (req, res) => __awaiter(void 0, void 0, void 0, functi
     catch (error) {
         return res.status(404).send(error.message);
     }
+}));
+//GET ALL IN ADOPTION
+router.get("/adopcion", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré al GET /adopcion`);
+    try {
+        let allInAdoptionDB = yield getAllInAdoption();
+        console.log(`allInAdoptionDB.length = ${allInAdoptionDB.length}`);
+        return res.status(200).send(allInAdoptionDB);
+    }
+    catch (error) {
+        return res.status(404).send(error.message);
+    }
+}));
+router.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { input } = req.query;
+    let result = yield getAllByNameOrRace(input);
+    return res.json(result);
 }));
 //GET BY ID:
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
