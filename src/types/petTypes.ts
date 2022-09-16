@@ -8,8 +8,6 @@ export enum Ages {
   Desconocido = "desconocido",
 }
 
-export type Genero = "hembra" | "macho" | "desconocido"; //desconocido en caso de haber visto el animal por la calle perdido pero no pudiendo parar a chequear (posible mascota perdida)
-
 export enum Genders {
   Hembra = "hembra",
   Macho = "macho",
@@ -63,49 +61,31 @@ export interface Pet {
   comments: string | undefined;
 }
 
-//-----  Interface y types para PERROS:  -----
-export type dogSpecie = "perro";
+// export type Genero = "hembra" | "macho" | "desconocido"; //desconocido en caso de haber visto el animal por la calle perdido pero no pudiendo parar a chequear (posible mascota perdida)
 
-export interface Dog extends Pet {
-  // specie: dogSpecie;
-  race: DogRaces;
-}
-export enum DogRaces {
-  Labrador = "labrador",
-  OvejeroAleman = "ovejero alemán",
-  ChowChow = "chow chow",
-  CanicheToy = "caniche toy",
-  Pitbull = "pitbull",
-  MastinNapolitano = "mastín napolitano",
-  Mestizo = "mestizo",
-  Salchicha = "salchicha",
-  Callejero = "callejero",
-  Akita = "akita",
-  Chiguagua = "chiguagua",
-  Otro = "otro",
-}
+//-----  Interface y types para PERROS:  -----
+// export type dogSpecie = "perro";
+
+// export interface Dog extends Pet {
+//   // specie: dogSpecie;
+//   race: DogRaces;
+// }
+// export enum DogRaces {
+//   Labrador = "labrador",
+//   OvejeroAleman = "ovejero alemán",
+//   ChowChow = "chow chow",
+//   CanicheToy = "caniche toy",
+//   Pitbull = "pitbull",
+//   MastinNapolitano = "mastín napolitano",
+//   Mestizo = "mestizo",
+//   Salchicha = "salchicha",
+//   Callejero = "callejero",
+//   Akita = "akita",
+//   Chiguagua = "chiguagua",
+//   Otro = "otro",
+// }
 
 // ------- Interface y types para GATOS:  ----
-export type catSpecie = "gato";
-
-export interface Cat extends Pet {
-  // specie: catSpecie;
-  race: CatRaces;
-}
-export enum CatRaces {
-  Abisinio = "abisinio",
-  AmericanShorthair = "American shorthair",
-  AngoraTurco = "angora turco",
-  Bengala = "bengala",
-  BobtailDelMekong = "bobtail del Mekong",
-  Bombay = "bombay",
-  BosqueDeNoruega = "bosque de noruega",
-  Burmilla = "burmilla",
-  Caracal = "caracal",
-  AzulRuso = "gato azul ruso",
-  Persa = "persa",
-  Otro = "otro",
-}
 
 //--------- Interfaces y types para "Otros": -----------
 //! Si la especie no es gato ni perro, que se use la interface de Pet.
@@ -117,32 +97,8 @@ export interface PetReviewed extends Pet {
   review: string;
 }
 
-export interface Mascotita {
-  name: string;
-  age: Ages;
-  gender: Genero;
-  comments?: string; //esta propiedad es opcional. Puede o no estar.
-}
-
-const perrito: Mascotita = {
-  name: "lopito",
-  age: Ages.Joven,
-  gender: "macho",
-};
 // console.log(perrito);
 
-interface Extraviada {
-  missing: boolean;
-}
-
-type MascotitaPerdida = Mascotita & Extraviada;
-
-let lokiMissing: MascotitaPerdida = {
-  name: "loki",
-  age: Ages.Joven,
-  gender: "macho",
-  missing: false,
-};
 // console.log(lokiMissing);
 
 // ----NOTAS Y COMENTARIOS DE TYPES, INTERFACES, OMIT, ETC PARA EL USO DE TypeScript: ---------------------
