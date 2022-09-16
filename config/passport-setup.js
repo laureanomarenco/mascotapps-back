@@ -1,11 +1,13 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20");
 const keys = require("./keys");
+require("dotenv").config();
 import db from "../models/index";
 // import {UserAttributes} from ("../src/types/userTypes")
 
 // SERIALIZACIÓN Y DESERIALIZACIÓN:
 //la serialización se hace cuando agarro de mi DB un id del user y lo quiero "serializar" para enviarle ese dato (cookie) al navegador para que el navegador lo tengo mientras navega por la página. Si en algún momento el cliente quiere usar alguna ruta del backend que requiere algún tipo de permiso/autenticación ya sea porque quiere ver información privada (datos de contacto de otros usuarios, su propio perfil, postear una mascota, etc.. cualquier acción que querramos que sólo pueda hacer un usuario registrado, y además con el permiso para hacer específicamente lo que quiera hacer), va a enviarme esa cookie al backend y yo voy a DESERIALIZAR esa cookie para ver si la data que tiene esa cookie le da autorización para hacer lo que quiere hacer (usar alguna ruta específica del backend, como ver datos de contacto de otro usuario, o postear una mascota).
+
 passport.serializeUser((user, done) => {
   console.log("ESTOY EN EL SERIALIZE USER");
   //le paso el id que crea la DB, y NO la id de google.
@@ -30,8 +32,10 @@ passport.use(
       //options for the strategy
       callbackURL: "/auth/google/redirect", //este es el redirect que seteo en la URI de redireccionamiento autorizado en console.cloud.google. Google me va a enviar no datos, si no un código por medio de la url query. Se va a ver algo así: www.localhost.com/auth/google/redirect?code=4lksadklaskldkjlsadksk.
       // Yo voy a agarrar ese código y se lo voy a intercambiar a google por datos del user profile. Y una vez que me trae esos datos, se ejecuta el passport callback function de esta función (segundo argumento)
-      clientID: keys.google.clientID,
-      clientSecret: keys.google.clientSecret,
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      // clientID: keys.google.clientID,
+      // clientSecret: keys.google.clientSecret,
     },
     async (accessToken, refreshToken, profile, done) => {
       // passport callback function:
