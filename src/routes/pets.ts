@@ -3,12 +3,17 @@ import { Op } from "sequelize";
 
 import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
-import { Pet } from "../types/petTypes";
+import { Pet, Species } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 
 const router = Router();
 
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
+
+function mapSpecies() {
+  let speciesArray = Object.values(Species);
+  return speciesArray;
+}
 
 const getAllPets = async () => {
   try {
@@ -91,9 +96,9 @@ async function getAllFound(): Promise<Pet[]> {
 }
 
 async function getAllInAdoption(): Promise<Pet[]> {
-  console.log("Entré a la ruta getAllInAdoption")
+  console.log("Entré a la ruta getAllInAdoption");
   let allInAdoptionFromDB = await db.Animal.findAll({
-    where:{
+    where: {
       status: "en adopción",
     },
   });
@@ -101,25 +106,24 @@ async function getAllInAdoption(): Promise<Pet[]> {
   return allInAdoptionFromDB;
 }
 
-async function getAllByNameOrRace(input: any): Promise<Pet[]>{
- 
-    const searchedPets = await db.Animal.findAll({
-      where:{
-        name:{
-          [Op.iLike]: '%' +  input + '%'
-        },
-      }
-    })
-    const searchedPetsRace = await db.Animal.findAll({
-      where:{
-        race:{
-          [Op.iLike]: '%' + input + '%'
-        },
-      }
-    })
-    const allPets = searchedPets.concat(searchedPetsRace)
+async function getAllByNameOrRace(input: any): Promise<Pet[]> {
+  const searchedPets = await db.Animal.findAll({
+    where: {
+      name: {
+        [Op.iLike]: "%" + input + "%",
+      },
+    },
+  });
+  const searchedPetsRace = await db.Animal.findAll({
+    where: {
+      race: {
+        [Op.iLike]: "%" + input + "%",
+      },
+    },
+  });
+  const allPets = searchedPets.concat(searchedPetsRace);
 
-    return allPets
+  return allPets;
 }
 
 // ----- ------ ------- RUTAS :  ------ ------- -------
@@ -135,6 +139,18 @@ router.post("/", async (req, res) => {
 
     let createdPet = await db.Animal.create(validatedPet);
     return res.status(201).send(createdPet);
+  } catch (error: any) {
+    return res.status(404).send(error.message);
+  }
+});
+
+//GET ALL SPECIES:
+router.get("/especies", async (_req, res) => {
+  console.log("entré al GET all species");
+  try {
+    let speciesArray = mapSpecies();
+    console.log(`species Array = ${speciesArray}`);
+    return res.status(200).send(speciesArray);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
@@ -225,12 +241,11 @@ router.get("/adopcion", async (req, res) => {
   }
 });
 
-router.get("/search", async (req,res)=>{
-  const {input} = req.query
-  let result = await getAllByNameOrRace(input)
-  return res.json(result)
-  })
-
+router.get("/search", async (req, res) => {
+  const { input } = req.query;
+  let result = await getAllByNameOrRace(input);
+  return res.json(result);
+});
 
 //GET BY ID:
 router.get("/:id", async (req, res) => {
