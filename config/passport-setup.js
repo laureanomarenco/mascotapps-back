@@ -11,6 +11,8 @@ import db from "../models/index";
 
 passport.serializeUser((user, done) => {
   console.log("ESTOY EN EL SERIALIZE USER");
+  console.log(`User id = ${user.id}`);
+  console.log(`User displayName: ${user.displayName}`);
   //le paso el id que crea la DB, y NO la id de google.
   done(null, user.id);
 });
