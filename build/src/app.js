@@ -41,15 +41,15 @@ app.set("view engine", "ejs");
 if (env === "development") {
     console.log("Estoy en development en la cookie session");
     app.use(cookieSession({
-        maxAge: 1000 * 60 * 2,
-        keys: [config.cookieKey],
+        maxAge: 1000 * 60 * 60,
+        keys: "unaKeyParaHashear",
     }));
 }
 else {
     console.log("entré al else de app.use cookie session");
     app.use(cookieSession({
-        maxAge: 1000 * 60 * 2,
-        keys: process.env[config.cookieKey],
+        maxAge: 1000 * 60 * 60,
+        keys: "unaKeyParaHashear",
     }));
 }
 //Inicializar passport:

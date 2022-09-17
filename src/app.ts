@@ -49,8 +49,8 @@ if (env === "development") {
 
   app.use(
     cookieSession({
-      maxAge: 1000 * 60 * 2, // === dos minutos
-      keys: [config.cookieKey],
+      maxAge: 1000 * 60 * 60, // === una hora
+      keys: "unaKeyParaHashear",
     })
   );
 } else {
@@ -58,8 +58,8 @@ if (env === "development") {
 
   app.use(
     cookieSession({
-      maxAge: 1000 * 60 * 2, // === dos minutos
-      keys: process.env[config.cookieKey],
+      maxAge: 1000 * 60 * 60, // === una hora
+      keys: "unaKeyParaHashear",
     })
   );
 }
