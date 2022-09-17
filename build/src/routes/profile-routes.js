@@ -7,8 +7,8 @@ const authCheck = (req, res, next) => {
     console.log("EN EL authCheck!");
     console.log(req.user);
     if (!req.user) {
-        console.log("redirigiendo al /auth/login");
-        res.redirect("/auth/login");
+        console.log("redirigiendo al /auth/google");
+        res.redirect("/auth/google");
     }
     else {
         console.log("continuando con el siguiente middleware");
@@ -20,7 +20,7 @@ const authCheck = (req, res, next) => {
 router.get("/", authCheck, (req, res) => {
     res
         .status(200)
-        .send("You are logged in. We'll send all the profile info about yourself that we have... - " +
+        .send("UPS! All your personal information was leaked and is being used by an indian scamcenter. Sorry, " +
         req.user.displayName); //#18
     //#19 voy a crear un profile view.
     // return res.status(201).send({ authorized: true, user: req.user });
