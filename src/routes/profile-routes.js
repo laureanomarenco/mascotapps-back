@@ -21,7 +21,7 @@ router.get("/", authCheck, (req, res) => {
   res
     .status(200)
     .send(
-      "You are logged in. We'll send all the profile info about yourself that we have... - " +
+      "UPS! All your personal information was leaked and is being used by an indian scamcenter. Sorry, " +
         req.user.displayName
     ); //#18
   //#19 voy a crear un profile view.
