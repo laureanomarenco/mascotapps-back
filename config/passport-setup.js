@@ -27,15 +27,16 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-passport.use(
-  new GoogleStrategy(
+if(env === 'development') {
+
+  passport.use(
+    new GoogleStrategy(
     {
       //options for the strategy
       callbackURL: "/auth/google/redirect", //este es el redirect que seteo en la URI de redireccionamiento autorizado en console.cloud.google. Google me va a enviar no datos, si no un código por medio de la url query. Se va a ver algo así: www.localhost.com/auth/google/redirect?code=4lksadklaskldkjlsadksk.
       // Yo voy a agarrar ese código y se lo voy a intercambiar a google por datos del user profile. Y una vez que me trae esos datos, se ejecuta el passport callback function de esta función (segundo argumento)
-      clientID:
-        "169554474351-adf7e2n0kdcthtq0f3ieemkiq8t2plnp.apps.googleusercontent.com",
-      clientSecret: "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",
+      clientID: config.clientID,
+      clientSecret: config.clientSecret,
       // clientID: keys.google.clientID,
       // clientSecret: keys.google.clientSecret,
     },
@@ -58,27 +59,27 @@ passport.use(
           console.log("ESTOY EN EL ELSE DE PASSAPORT CALLBACK FN");
           //! crear un user nuevo:
           //  interface UserAttributes {
-          //    id: string | undefined;
-          //    googleId: string | undefined;
-          //    displayName: string | undefined;
-          //    email: string | undefined;
-          //    name: string | undefined;
-          //    postalCode: string | undefined;
-          //    aditionalContactInfo: string | undefined;
-          //    thumbnail: string | undefined;
-          //  }
-          //Acá podría hacer un: let validatedUser = validateUser(profile)
-          let validatedUser = {
-            id: profile.id,
-            googleId: profile.id,
-            displayName: profile.displayName,
-            name: `${profile.name.givenName} ${profile.name.familyName}`,
-            email: profile._json.email,
+            //    id: string | undefined;
+            //    googleId: string | undefined;
+            //    displayName: string | undefined;
+            //    email: string | undefined;
+            //    name: string | undefined;
+            //    postalCode: string | undefined;
+            //    aditionalContactInfo: string | undefined;
+            //    thumbnail: string | undefined;
+            //  }
+            //Acá podría hacer un: let validatedUser = validateUser(profile)
+            let validatedUser = {
+              id: profile.id,
+              googleId: profile.id,
+              displayName: profile.displayName,
+              name: `${profile.name.givenName} ${profile.name.familyName}`,
+              email: profile._json.email,
             thumbnail: profile._json.picture,
           };
           let newUser = await db.User.create(validatedUser);
           console.log(`NEW USER CREATED!!! : ${newUser}`);
-
+          
           done(null, newUser);
         }
       } catch (error) {
@@ -86,4 +87,66 @@ passport.use(
       }
     }
   )
-);
+  ); 
+} else {
+  passport.use(
+    new GoogleStrategy(
+      {
+        //options for the strategy
+        callbackURL: "/auth/google/redirect", //este es el redirect que seteo en la URI de redireccionamiento autorizado en console.cloud.google. Google me va a enviar no datos, si no un código por medio de la url query. Se va a ver algo así: www.localhost.com/auth/google/redirect?code=4lksadklaskldkjlsadksk.
+        // Yo voy a agarrar ese código y se lo voy a intercambiar a google por datos del user profile. Y una vez que me trae esos datos, se ejecuta el passport callback function de esta función (segundo argumento)
+        clientID: process.env[config.clientID],
+        clientSecret: process.env[config.clientSecret],
+        // clientID: keys.google.clientID,
+        // clientSecret: keys.google.clientSecret,
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        // passport callback function:
+        try {
+          console.log("passport callback function dispara!!!");
+          console.log(profile);
+          //check if user already exists in our db:
+          let userEncontrado = await db.User.findOne({
+            where: { googleId: profile.id },
+          });
+          if (userEncontrado) {
+            //si tengo al user en mi db...:
+            console.log(`EL USER YA EXISTE! ES ESTE: ${userEncontrado}`);
+            //le meto la serialización para poder enviar la cookie con la data(user.id) serializada. La serialización se hace en la función serializeUser de arriba. El done acá adentro lo que hace es mandar el argumento currentUser como argumento de la función serializeUser, la cual hace otro done() pero con el user.id
+            done(null, userEncontrado);
+          } else {
+            console.log("USER NO ENCONTRADO EN LA DB...");
+            console.log("ESTOY EN EL ELSE DE PASSAPORT CALLBACK FN");
+            //! crear un user nuevo:
+            //  interface UserAttributes {
+            //    id: string | undefined;
+            //    googleId: string | undefined;
+            //    displayName: string | undefined;
+            //    email: string | undefined;
+            //    name: string | undefined;
+            //    postalCode: string | undefined;
+            //    aditionalContactInfo: string | undefined;
+            //    thumbnail: string | undefined;
+            //  }
+            //Acá podría hacer un: let validatedUser = validateUser(profile)
+            let validatedUser = {
+              id: profile.id,
+              googleId: profile.id,
+              displayName: profile.displayName,
+              name: `${profile.name.givenName} ${profile.name.familyName}`,
+              email: profile._json.email,
+              thumbnail: profile._json.picture,
+            };
+            let newUser = await db.User.create(validatedUser);
+            console.log(`NEW USER CREATED!!! : ${newUser}`);
+  
+            done(null, newUser);
+          }
+        } catch (error) {
+          console.log(error.message);
+        }
+      }
+    )
+  );
+  
+}
