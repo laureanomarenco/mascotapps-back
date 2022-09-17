@@ -46,7 +46,7 @@ app.set("view engine", "ejs");
 // middlewares para encriptar la cookie que voy a enviar al browser:
 app.use(
   cookieSession({
-    maxAge: 1000 * 60 * 2, // === dos minutos
+    maxAge: 1000 * 60 * 10, // === dos minutos
     keys: [config.cookieKey],
   })
 );
@@ -64,10 +64,9 @@ app.use("/checkout", checkoutRouter);
 
 app.get("/", (req: any, res) => {
   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
-  res.send(req.user)
+  res.send(req.user);
   //res.render("home", { usuario: req.user });
 });
-
 
 module.exports = app;
 

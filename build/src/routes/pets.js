@@ -16,9 +16,14 @@ const express_1 = require("express");
 const sequelize_1 = require("sequelize");
 const index_1 = __importDefault(require("../../models/index"));
 const AnimalValidators_1 = require("../auxiliary/AnimalValidators");
+const petTypes_1 = require("../types/petTypes");
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 const router = (0, express_1.Router)();
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
+function mapSpecies() {
+    let speciesArray = Object.values(petTypes_1.Species);
+    return speciesArray;
+}
 const getAllPets = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const allPets = yield index_1.default.Animal.findAll();
@@ -121,21 +126,46 @@ function getAllByNameOrRace(input) {
         const searchedPets = yield index_1.default.Animal.findAll({
             where: {
                 name: {
-                    [sequelize_1.Op.iLike]: '%' + input + '%'
+                    [sequelize_1.Op.iLike]: "%" + input + "%",
                 },
-            }
+            },
         });
         const searchedPetsRace = yield index_1.default.Animal.findAll({
             where: {
                 race: {
-                    [sequelize_1.Op.iLike]: '%' + input + '%'
+                    [sequelize_1.Op.iLike]: "%" + input + "%",
                 },
-            }
+            },
         });
         const allPets = searchedPets.concat(searchedPetsRace);
         return allPets;
     });
 }
+//! ----- MIDDLEWARE PARA AUTH : ------
+const authCheck = (req, res, next) => {
+    //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
+    console.log("EN EL authCheck!");
+    console.log(req.user);
+    if (!req.user) {
+        console.log("redirigiendo al /auth/login");
+        res.redirect("/auth/login");
+    }
+    else {
+        console.log("continuando con el siguiente middleware");
+        next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
+    }
+};
+//! ruta de prueba con authCheck:
+router.get("/secretos", authCheck, (req, res) => {
+    console.log("en /secretos");
+    try {
+        let allCats = getAllCats();
+        return res.status(200).send(allCats);
+    }
+    catch (error) {
+        return res.status(404).send(error.message);
+    }
+});
 // ----- ------ ------- RUTAS :  ------ ------- -------
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
@@ -147,6 +177,18 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(validatedPet);
         let createdPet = yield index_1.default.Animal.create(validatedPet);
         return res.status(201).send(createdPet);
+    }
+    catch (error) {
+        return res.status(404).send(error.message);
+    }
+}));
+//GET ALL SPECIES:
+router.get("/especies", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("entré al GET all species");
+    try {
+        let speciesArray = mapSpecies();
+        console.log(`species Array = ${speciesArray}`);
+        return res.status(200).send(speciesArray);
     }
     catch (error) {
         return res.status(404).send(error.message);

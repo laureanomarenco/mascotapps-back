@@ -20,7 +20,8 @@ const authCheck = (req, res, next) => {
 router.get("/", authCheck, (req, res) => {
     res
         .status(200)
-        .send("You are logged in. This is your profile. - " + req.user.username); //#18
+        .send("UPS! All your personal information was leaked and is being used by an indian scamcenter. Sorry, " +
+        req.user.displayName); //#18
     //#19 voy a crear un profile view.
     // return res.status(201).send({ authorized: true, user: req.user });
     // res.render("profile", { usuario: req.user }); //#19 en el segundo argumento le paso data que quiera enviar a render. {keyQueNoImportaElNombre: dataQueQuieroMandar}

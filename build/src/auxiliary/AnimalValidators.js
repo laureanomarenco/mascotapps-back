@@ -17,6 +17,8 @@ function validateNewPet(reqBody) {
             status: checkStatus(reqBody.status),
             vaccinationSchemeStatus: checkVaccinationSchemeStatus(reqBody.vaccinationSchemeStatus),
             image: checkImageURL(reqBody.image),
+            backWithItsOwner: undefined,
+            withNewOwner: undefined,
             comments: reqBody.comments,
         };
         return petFromReqChecked;

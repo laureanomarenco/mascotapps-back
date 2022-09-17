@@ -21,6 +21,8 @@ module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
     vaccinationSchemeStatus: VaccinationStatus | undefined;
     image: string | undefined;
     comments: string | undefined;
+    withNewOwner: undefined | true;
+    backWithItsOwner: undefined | true;
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -78,6 +80,14 @@ module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
         validate: {
           len: [1, 3000],
         },
+        allowNull: true,
+      },
+      backWithItsOwner: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      withNewOwner: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
     },

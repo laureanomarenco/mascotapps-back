@@ -25,6 +25,8 @@ export function validateNewPet(reqBody: any): Pet {
         reqBody.vaccinationSchemeStatus
       ),
       image: checkImageURL(reqBody.image),
+      backWithItsOwner: undefined,
+      withNewOwner: undefined,
       comments: reqBody.comments,
     };
     return petFromReqChecked;

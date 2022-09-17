@@ -14,18 +14,19 @@ var Genders;
 (function (Genders) {
     Genders["Hembra"] = "hembra";
     Genders["Macho"] = "macho";
-    Genders["Desconocido"] = "desconocido";
 })(Genders = exports.Genders || (exports.Genders = {}));
 var Species;
 (function (Species) {
     Species["Perro"] = "perro";
     Species["Gato"] = "gato";
+    Species["Ave"] = "ave";
+    Species["Reptil"] = "rept\u00EDl";
+    Species["Roedor"] = "roedor";
     Species["Otra"] = "otra especie";
 })(Species = exports.Species || (exports.Species = {}));
 var Status;
 (function (Status) {
     Status["Perdido"] = "perdido";
-    Status["PosiblementePerdido"] = "posiblemente perdido";
     Status["Encontrado"] = "encontrado";
     Status["enAdopcion"] = "en adopci\u00F3n";
 })(Status = exports.Status || (exports.Status = {}));
