@@ -35,7 +35,7 @@ passport.use(
       // Yo voy a agarrar ese código y se lo voy a intercambiar a google por datos del user profile. Y una vez que me trae esos datos, se ejecuta el passport callback function de esta función (segundo argumento)
       clientID:
         "169554474351-adf7e2n0kdcthtq0f3ieemkiq8t2plnp.apps.googleusercontent.com",
-      clientSecret: config.clientSecret,
+      clientSecret: "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",
       // clientID: keys.google.clientID,
       // clientSecret: keys.google.clientSecret,
     },
