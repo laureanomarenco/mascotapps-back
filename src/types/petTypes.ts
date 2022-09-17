@@ -60,6 +60,8 @@ export interface Pet {
   vaccinationSchemeStatus: VaccinationStatus | undefined;
   image: string | undefined;
   comments: string | undefined;
+  withNewOwner: undefined | true;
+  backWithItsOwner: undefined | true;
 }
 
 // export type Genero = "hembra" | "macho" | "desconocido"; //desconocido en caso de haber visto el animal por la calle perdido pero no pudiendo parar a chequear (posible mascota perdida)
