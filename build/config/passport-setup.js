@@ -42,8 +42,8 @@ passport.use(new GoogleStrategy({
     //options for the strategy
     callbackURL: "/auth/google/redirect",
     // Yo voy a agarrar ese código y se lo voy a intercambiar a google por datos del user profile. Y una vez que me trae esos datos, se ejecuta el passport callback function de esta función (segundo argumento)
-    clientID: "169554474351-adf7e2n0kdcthtq0f3ieemkiq8t2plnp.apps.googleusercontent.com",
-    clientSecret: "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",
+    clientID: "169554474351-ksb241859ih8a2mdonpq9skg57eh6tue.apps.googleusercontent.com",
+    clientSecret: "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",
     // clientID: keys.google.clientID,
     // clientSecret: keys.google.clientSecret,
 }, (accessToken, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
