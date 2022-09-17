@@ -11,18 +11,19 @@ export enum Ages {
 export enum Genders {
   Hembra = "hembra",
   Macho = "macho",
-  Desconocido = "desconocido",
 }
 
 export enum Species {
   Perro = "perro",
   Gato = "gato",
+  Ave = "ave",
+  Reptil = "reptíl",
+  Roedor = "roedor",
   Otra = "otra especie",
 }
 
 export enum Status {
   Perdido = "perdido",
-  PosiblementePerdido = "posiblemente perdido",
   Encontrado = "encontrado",
   enAdopcion = "en adopción",
 }
