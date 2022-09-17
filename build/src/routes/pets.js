@@ -156,16 +156,16 @@ const authCheck = (req, res, next) => {
     }
 };
 //! ruta de prueba con authCheck:
-router.get("/secretos", authCheck, (req, res) => {
+router.get("/secretos", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("en /secretos");
     try {
-        let allCats = getAllCats();
+        let allCats = yield getAllCats();
         return res.status(200).send(allCats);
     }
     catch (error) {
         return res.status(404).send(error.message);
     }
-});
+}));
 // ----- ------ ------- RUTAS :  ------ ------- -------
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:

@@ -7,8 +7,8 @@ const authCheck = (req, res, next) => {
   console.log("EN EL authCheck!");
   console.log(req.user);
   if (!req.user) {
-    console.log("redirigiendo al /auth/login");
-    res.redirect("/auth/login");
+    console.log("redirigiendo al /auth/google");
+    res.redirect("/auth/google");
   } else {
     console.log("continuando con el siguiente middleware");
     next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
