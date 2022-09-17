@@ -16,7 +16,7 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/config.js")[env];
-require("dotenv").config();
+// require("dotenv").config();
 const index_1 = __importDefault(require("../models/index"));
 // import {UserAttributes} from ("../src/types/userTypes")
 // SERIALIZACIÓN Y DESERIALIZACIÓN:
