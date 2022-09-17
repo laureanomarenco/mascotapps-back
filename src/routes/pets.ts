@@ -143,10 +143,10 @@ const authCheck = (req: any, res: any, next: any) => {
 
 //! ruta de prueba con authCheck:
 
-router.get("/secretos", authCheck, (req, res) => {
+router.get("/secretos", authCheck, async (req, res) => {
   console.log("en /secretos");
   try {
-    let allCats = getAllCats();
+    let allCats = await getAllCats();
     return res.status(200).send(allCats);
   } catch (error: any) {
     return res.status(404).send(error.message);
