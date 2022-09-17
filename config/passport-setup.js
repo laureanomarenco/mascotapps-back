@@ -33,8 +33,8 @@ passport.use(
       //options for the strategy
       callbackURL: "/auth/google/redirect", //este es el redirect que seteo en la URI de redireccionamiento autorizado en console.cloud.google. Google me va a enviar no datos, si no un código por medio de la url query. Se va a ver algo así: www.localhost.com/auth/google/redirect?code=4lksadklaskldkjlsadksk.
       // Yo voy a agarrar ese código y se lo voy a intercambiar a google por datos del user profile. Y una vez que me trae esos datos, se ejecuta el passport callback function de esta función (segundo argumento)
-      clientID: config.production.clientID,
-      clientSecret: config.production.clientSecret,
+      clientID: config.clientID,
+      clientSecret: config.clientSecret,
       // clientID: keys.google.clientID,
       // clientSecret: keys.google.clientSecret,
     },
