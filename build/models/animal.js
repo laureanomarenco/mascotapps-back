@@ -61,6 +61,14 @@ module.exports = (sequelize, DataTypes) => {
             },
             allowNull: true,
         },
+        backWithItsOwner: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        withNewOwner: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     }, {
         sequelize,
         modelName: "Animal",

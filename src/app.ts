@@ -1,8 +1,18 @@
 import express from "express";
 import usersRouter from "./routes/users";
 import animalRouter from "./routes/pets";
-import searchBar from "./routes/searchBar";
 import checkoutRouter from "./routes/checkout";
+
+//! ---- nuevo para passport:
+const authRoutes = require("./routes/auth-routes");
+const profileRoutes = require("./routes/profile-routes");
+const passportSetup = require("../config/passport-setup");
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "../../config/config.js")[env];
+const cookieSession = require("cookie-session");
+const passport = require("passport");
+//!---fin nuevo para passport ----
+
 // import db from "./src/models";
 const app = express();
 //const Stripe = require('stripe')
@@ -11,7 +21,7 @@ const app = express();
 //const cors = require('cors')
 
 app.use(express.json()); // middleware que transforma la req.body a un json
-//app.use(cors({origin: '*'}))
+
 app.use((_req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
   res.header("Access-Control-Allow-Credentials", "true");
@@ -23,16 +33,41 @@ app.use((_req, res, next) => {
   next();
 });
 
+//ruta para testear que responde la api:
 app.get("/ping", (_req, res) => {
   // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
   console.log("Someone pinged here!!!");
   res.send("pong");
 });
 
+//! set up view engine. No debería estar, pero lo pongo para testeos provisorios:
+app.set("view engine", "ejs");
+
+// middlewares para encriptar la cookie que voy a enviar al browser:
+app.use(
+  cookieSession({
+    maxAge: 1000 * 60 * 2, // === dos minutos
+    keys: [config.cookieKey],
+  })
+);
+
+//Inicializar passport:
+app.use(passport.initialize());
+app.use(passport.session());
+
+// RUTAS:
+app.use("/auth", authRoutes);
+app.use("/profile", profileRoutes);
 app.use("/users", usersRouter);
 app.use("/pets", animalRouter);
 app.use("/checkout", checkoutRouter);
-app.use("/searchBar", searchBar)
+
+app.get("/", (req: any, res) => {
+  console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
+  res.send(req.user)
+  //res.render("home", { usuario: req.user });
+});
+
 
 module.exports = app;
 

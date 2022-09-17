@@ -1,7 +1,7 @@
 "use strict";
 //---------   MASCOTA: -----------------------------------
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CatRaces = exports.DogRaces = exports.VaccinationStatus = exports.Size = exports.Status = exports.Species = exports.Genders = exports.Ages = void 0;
+exports.VaccinationStatus = exports.Size = exports.Status = exports.Species = exports.Genders = exports.Ages = void 0;
 var Ages;
 (function (Ages) {
     Ages["Cachorro"] = "muy joven";
@@ -14,18 +14,19 @@ var Genders;
 (function (Genders) {
     Genders["Hembra"] = "hembra";
     Genders["Macho"] = "macho";
-    Genders["Desconocido"] = "desconocido";
 })(Genders = exports.Genders || (exports.Genders = {}));
 var Species;
 (function (Species) {
     Species["Perro"] = "perro";
     Species["Gato"] = "gato";
+    Species["Ave"] = "ave";
+    Species["Reptil"] = "rept\u00EDl";
+    Species["Roedor"] = "roedor";
     Species["Otra"] = "otra especie";
 })(Species = exports.Species || (exports.Species = {}));
 var Status;
 (function (Status) {
     Status["Perdido"] = "perdido";
-    Status["PosiblementePerdido"] = "posiblemente perdido";
     Status["Encontrado"] = "encontrado";
     Status["enAdopcion"] = "en adopci\u00F3n";
 })(Status = exports.Status || (exports.Status = {}));
@@ -46,47 +47,7 @@ var VaccinationStatus;
     VaccinationStatus["Incompleto"] = "incompleto";
     VaccinationStatus["Desconocido"] = "desconocido";
 })(VaccinationStatus = exports.VaccinationStatus || (exports.VaccinationStatus = {}));
-var DogRaces;
-(function (DogRaces) {
-    DogRaces["Labrador"] = "labrador";
-    DogRaces["OvejeroAleman"] = "ovejero alem\u00E1n";
-    DogRaces["ChowChow"] = "chow chow";
-    DogRaces["CanicheToy"] = "caniche toy";
-    DogRaces["Pitbull"] = "pitbull";
-    DogRaces["MastinNapolitano"] = "mast\u00EDn napolitano";
-    DogRaces["Mestizo"] = "mestizo";
-    DogRaces["Salchicha"] = "salchicha";
-    DogRaces["Callejero"] = "callejero";
-    DogRaces["Akita"] = "akita";
-    DogRaces["Chiguagua"] = "chiguagua";
-    DogRaces["Otro"] = "otro";
-})(DogRaces = exports.DogRaces || (exports.DogRaces = {}));
-var CatRaces;
-(function (CatRaces) {
-    CatRaces["Abisinio"] = "abisinio";
-    CatRaces["AmericanShorthair"] = "American shorthair";
-    CatRaces["AngoraTurco"] = "angora turco";
-    CatRaces["Bengala"] = "bengala";
-    CatRaces["BobtailDelMekong"] = "bobtail del Mekong";
-    CatRaces["Bombay"] = "bombay";
-    CatRaces["BosqueDeNoruega"] = "bosque de noruega";
-    CatRaces["Burmilla"] = "burmilla";
-    CatRaces["Caracal"] = "caracal";
-    CatRaces["AzulRuso"] = "gato azul ruso";
-    CatRaces["Persa"] = "persa";
-    CatRaces["Otro"] = "otro";
-})(CatRaces = exports.CatRaces || (exports.CatRaces = {}));
-const perrito = {
-    name: "lopito",
-    age: Ages.Joven,
-    gender: "macho",
-};
-let lokiMissing = {
-    name: "loki",
-    age: Ages.Joven,
-    gender: "macho",
-    missing: false,
-};
+// console.log(perrito);
 // console.log(lokiMissing);
 // ----NOTAS Y COMENTARIOS DE TYPES, INTERFACES, OMIT, ETC PARA EL USO DE TypeScript: ---------------------
 // export type NonSensitiveInfoDiaryEntry = Pick<DiaryEntry, "id" | "date" | "weather" | "visibility">
