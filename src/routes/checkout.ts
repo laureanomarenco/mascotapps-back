@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
 
   const endpointSecret = "whsec_da7m5mm9xQTKTJOOAJ8sqa0ry0pZoriH";
 
-  router.post('/balance', express.raw({type: 'application/json'}), (request, response) => {
+  router.post('/balance', (request, response) => {
     const sig = request.headers['stripe-signature'];
   
     let event;
