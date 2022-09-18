@@ -30,12 +30,25 @@ const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 // ----- ------ ------- RUTAS :  ------ ------- -------
+//GET ALL USERS FROM DB:  //! Hay que dejarla comentada ( o borrarla) porque no es seguro poder tener toda la data de los users registrados:
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("entré al get de Users!");
     try {
         let allTheUsers = yield getAllUsers();
         // console.log(allTheUsers);
         return res.status(200).send(allTheUsers);
+    }
+    catch (error) {
+        return res.status(404).send(error.message);
+    }
+}));
+// GET NUMBER OF USERS IN DB:
+router.get("/numberOfUsersInDB", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Entré a la route /numberOfUsersInDB");
+    try {
+        let allUsersInDB = yield getAllUsers();
+        let numberOfUsersInDB = allUsersInDB.length;
+        return res.status(200).send(numberOfUsersInDB);
     }
     catch (error) {
         return res.status(404).send(error.message);
