@@ -55,7 +55,7 @@ function getPetById(id) {
         try {
             let petFoundById = yield index_1.default.Animal.findByPk(id);
             console.log(`petFoundById: ${petFoundById}`);
-            console.log(`${petFoundById.name}`);
+            console.log(`${petFoundById === null || petFoundById === void 0 ? void 0 : petFoundById.name}`);
             return petFoundById;
         }
         catch (error) {
@@ -318,6 +318,7 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(200).send(petFoundById);
     }
     catch (error) {
+        console.log(`retornando error en GET /:id: ${error.message}`);
         return res.status(404).send(error.message);
     }
 }));

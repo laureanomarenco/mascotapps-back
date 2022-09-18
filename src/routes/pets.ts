@@ -44,7 +44,7 @@ async function getPetById(id: string | undefined) {
   try {
     let petFoundById = await db.Animal.findByPk(id);
     console.log(`petFoundById: ${petFoundById}`);
-    console.log(`${petFoundById.name}`);
+    console.log(`${petFoundById?.name}`);
     return petFoundById;
   } catch (error: any) {
     return error.message;
@@ -307,6 +307,7 @@ router.get("/:id", async (req, res) => {
     let petFoundById = await getPetById(paramsID);
     return res.status(200).send(petFoundById);
   } catch (error: any) {
+    console.log(`retornando error en GET /:id: ${error.message}`);
     return res.status(404).send(error.message);
   }
 });
