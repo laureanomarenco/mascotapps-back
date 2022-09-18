@@ -47,20 +47,18 @@ router.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
   }
 
   // Handle the event
-  let balance
   switch (event.type) {
     case 'balance.available':
-      balance = event.data.object;
+      const balance = event.data.object;
       // Then define and call a function to handle the event balance.available
-      return balance
       break;
     // ... handle other event types
     default:
       console.log(`Unhandled event type ${event.type}`);
   }
-  console.log(balance)
+
   // Return a 200 response to acknowledge receipt of the event
-  res.send(balance);
+  res.send();
 });
 
 
