@@ -74,9 +74,13 @@ const authCheck = (req, res, next) => {
 //POST NEW PET:
 // validar usuario que sea uno registrado.
 // obtener su ID que lo voy a usar para asociarlo a la new pet.
-// obtener el req.body que va a tener los datos de la new pet
-router.post("/postpet", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(`Entré a users/postpet`);
+// obtener el req.body que va a tener los datos de la new pet.
+// validar el req.body antes de crear el new pet en la DB.
+// crear la validatedPet en la DB
+// asociar la validatedPet con el userID del que la posteó
+//! retonar la associatedPetWithUser o la createdPet?????
+router.post("/postnewpet", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré a users/postnewpet`);
     try {
         console.log(`req.user es = ${req === null || req === void 0 ? void 0 : req.user}`);
         let userID = req.user.id;
