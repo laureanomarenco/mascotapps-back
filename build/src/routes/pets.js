@@ -35,6 +35,20 @@ const getAllPets = () => __awaiter(void 0, void 0, void 0, function* () {
         return error;
     }
 });
+function getNumberOfPetsInDB() {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("En la fn getNumberOfPetsInDB");
+        try {
+            let allPetsInDB = yield getAllPets();
+            let numberOfPetsInDB = allPetsInDB.length;
+            console.log(`numberOfPetsInDB: ${numberOfPetsInDB}`);
+            return numberOfPetsInDB;
+        }
+        catch (error) {
+            return error.message;
+        }
+    });
+}
 function getPetById(id) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`fn getById; id: ${id}`);
@@ -177,6 +191,17 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(validatedPet);
         let createdPet = yield index_1.default.Animal.create(validatedPet);
         return res.status(201).send(createdPet);
+    }
+    catch (error) {
+        return res.status(404).send(error.message);
+    }
+}));
+// GET NUMBER OF PETS IN DB:
+router.get("/numberofpets", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("En route /numberofpets");
+    try {
+        let numberOfPetsInDB = yield getNumberOfPetsInDB();
+        return res.status(200).send(numberOfPetsInDB);
     }
     catch (error) {
         return res.status(404).send(error.message);

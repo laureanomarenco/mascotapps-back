@@ -26,6 +26,19 @@ const getAllPets = async () => {
   }
 };
 
+async function getNumberOfPetsInDB(): Promise<number> {
+  console.log("En la fn getNumberOfPetsInDB");
+  try {
+    let allPetsInDB = await getAllPets();
+    let numberOfPetsInDB = allPetsInDB.length;
+    console.log(`numberOfPetsInDB: ${numberOfPetsInDB}`);
+
+    return numberOfPetsInDB;
+  } catch (error: any) {
+    return error.message;
+  }
+}
+
 async function getPetById(id: string | undefined) {
   console.log(`fn getById; id: ${id}`);
   try {
@@ -166,6 +179,17 @@ router.post("/", async (req, res) => {
 
     let createdPet = await db.Animal.create(validatedPet);
     return res.status(201).send(createdPet);
+  } catch (error: any) {
+    return res.status(404).send(error.message);
+  }
+});
+
+// GET NUMBER OF PETS IN DB:
+router.get("/numberofpets", async (req, res) => {
+  console.log("En route /numberofpets");
+  try {
+    let numberOfPetsInDB = await getNumberOfPetsInDB();
+    return res.status(200).send(numberOfPetsInDB);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
