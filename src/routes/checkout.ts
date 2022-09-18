@@ -14,6 +14,17 @@ if(config.stripeKeyProd){
     stripe = new Stripe(config.stripeKey)
 }
 
+const getAllDonations = async () => {
+    try {
+      const allDonations = await db.Donation.findAll();
+      // console.log(allPets);
+      return allDonations;
+    } catch (error: any) {
+      console.log(error.message);
+      return error;
+    }
+  };
+
 router.post('/', async (req, res) => {
     try {
         const { id, amount, email } = req.body
@@ -39,6 +50,12 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/balance', async (req, res) => {
-
+    try {
+        let allTheDonations = await getAllDonations();
+        // console.log(allThePets);
+        return res.status(200).send(allTheDonations);
+      } catch (error: any) {
+        return res.status(404).send(error.message);
+      }
 })
 export default router;
