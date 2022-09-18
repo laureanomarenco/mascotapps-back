@@ -132,5 +132,30 @@ router.get("/contactinfo/:petid", authCheck, (req, res) => __awaiter(void 0, voi
         return res.status(404).send(error.message);
     }
 }));
+// GET ALL PETS OF AUTH USER ID:
+// obtener todas las instancias de mascotas que tienen como UserId el id del usuario que quiere obtener el listado de mascotas.
+// Esta ruta serviría para que un usuario pueda ver su listado de mascotas posteadas, desde su perfíl.
+// Hay que ver el req.user.id de la cookie, y buscar en la tabla Animals (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
+// Recolectamos esas instancias en un arreglo y enviamos ese arreglo al cliente.
+//---
+// /users/getallpetsofuser
+router.get("/getallpetsofuser", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    console.log(`Entré a la ruta /users/getallpetsofuser`);
+    console.log(`user ID = ${(_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id}`);
+    try {
+        let userID = req.user.id;
+        let petsPostedByUser = yield index_1.default.Animals.findAll({
+            where: {
+                UserId: userID,
+            },
+        });
+        return res.status(200).send(petsPostedByUser);
+    }
+    catch (error) {
+        console.log(`error en el /users/getallpetsofusers: ${error.message}`);
+        return res.status(404).send(error.message);
+    }
+}));
 // Hacer más rutas
 exports.default = router;
