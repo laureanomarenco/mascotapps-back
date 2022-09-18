@@ -3,6 +3,7 @@ import {
   checkId,
   checkName,
   isString,
+  isStringBetween1And101CharsLong,
   isUndefinedOrNull,
 } from "./AnimalValidators";
 
@@ -17,24 +18,41 @@ import {
 //   thumbnail: string | undefined;
 // }
 
-export function validateNewUser(reqBody: any): UserAttributes {
+export function validateNewUser(profile: any): UserAttributes {
   try {
     let userFromReqChecked: UserAttributes = {
-      id: checkId(reqBody.id),
-      googleId: checkId(reqBody.googleId),
-      displayName: checkName(reqBody.displayName),
-      email: checkEmail(reqBody.email),
-      name: checkName(reqBody.name),
-      postalCode: reqBody.postalCode,
+      id: checkId(profile.id),
+      googleId: checkId(profile.googleId),
+      displayName: checkName(profile.displayName),
+      email: checkEmail(profile._json.email),
+      name: checkFullName(profile.name.givenName, profile.name.familyName),
+      postalCode: profile.postalCode,
       aditionalContactInfo: checkAditionalContactInfo(
-        reqBody.aditionalContactInfo
+        profile.aditionalContactInfo
       ),
-      thumbnail: checkThumbnail(reqBody.thumbnail),
+      thumbnail: checkThumbnail(profile._json.picture),
     };
     return userFromReqChecked;
   } catch (error: any) {
     throw new Error(error.message);
   }
+}
+
+// Check givenName + familyName:
+export function checkFullName(
+  givenName: any,
+  familyName: any
+): string | undefined {
+  let namesConcatenated = `${givenName} ${familyName}`;
+  if (isUndefinedOrNull(namesConcatenated)) {
+    return undefined;
+  }
+  if (isStringBetween1And101CharsLong(namesConcatenated)) {
+    return namesConcatenated;
+  }
+  throw new Error(
+    `El nombre completo "${namesConcatenated}" no es un nombre válido. Debe tener un máximo de 100 characteres y ser una cadena de texto.`
+  );
 }
 
 // Validate email:
@@ -57,6 +75,7 @@ export function checkEmail(emailFromReq: any): string | undefined {
   );
 }
 
+// Validate aditionalContactInfo
 export function checkAditionalContactInfo(
   aditionalContactInfoFromReq: any
 ): string | undefined {
@@ -71,6 +90,7 @@ export function checkAditionalContactInfo(
   );
 }
 
+// Validate Thumbnail:
 export function checkThumbnail(thumbnailFromReq: any): string | undefined {
   if (isUndefinedOrNull(thumbnailFromReq)) {
     return undefined;
