@@ -15,7 +15,7 @@ module.exports = (sequelize: any, DataTypes: any ) => {
           primaryKey: true,
         },
         amount: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
         },
         email: {
             type: DataTypes.STRING,
