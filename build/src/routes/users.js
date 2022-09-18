@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
+const AnimalValidators_1 = require("../auxiliary/AnimalValidators");
 // import axios from "axios";
 //import { UserAttributes } from "../../models/user"
 const router = (0, express_1.Router)();
@@ -50,6 +51,45 @@ router.get("/numberOfUsersInDB", (req, res) => __awaiter(void 0, void 0, void 0,
         let numberOfUsersInDB = allUsersInDB.length;
         let numberOfUsersInDBtoString = `${numberOfUsersInDB}`;
         return res.status(200).send(numberOfUsersInDBtoString);
+    }
+    catch (error) {
+        return res.status(404).send(error.message);
+    }
+}));
+//! ----- MIDDLEWARE PARA AUTH : ------
+const authCheck = (req, res, next) => {
+    //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
+    console.log("En el authCheck de /users");
+    console.log(req === null || req === void 0 ? void 0 : req.user);
+    if (!req.user) {
+        console.log("redirigiendo al /auth/google");
+        res.redirect("/auth/google");
+    }
+    else {
+        console.log("Usuario autenticado (req.user existe)");
+        console.log("continuando con el siguiente middleware");
+        next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
+    }
+};
+//POST NEW PET:
+// validar usuario que sea uno registrado.
+// obtener su ID que lo voy a usar para asociarlo a la new pet.
+// obtener el req.body que va a tener los datos de la new pet
+router.post("/postpet", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré a users/postpet`);
+    try {
+        console.log(`req.user es = ${req === null || req === void 0 ? void 0 : req.user}`);
+        let userID = req.user.id;
+        console.log(`userID = ${userID}`);
+        console.log(`req.body = `);
+        console.log(req.body);
+        let validatedPet = (0, AnimalValidators_1.validateNewPet)(req.body);
+        console.log("SOY VALIDATED PET: ");
+        console.log(validatedPet);
+        let createdPet = yield index_1.default.Animal.create(validatedPet);
+        //asociar createdPet con el userID:
+        let associatedPetWithUser = yield createdPet.setUser(userID);
+        return res.status(200).send(associatedPetWithUser);
     }
     catch (error) {
         return res.status(404).send(error.message);

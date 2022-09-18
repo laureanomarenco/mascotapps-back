@@ -1,5 +1,7 @@
 import { Router } from "express";
 import db from "../../models/index";
+import { validateNewPet } from "../auxiliary/AnimalValidators";
+import { Pet } from "../types/petTypes";
 // import axios from "axios";
 //import { UserAttributes } from "../../models/user"
 const router = Router();
@@ -42,6 +44,45 @@ router.get("/numberOfUsersInDB", async (req, res) => {
     let numberOfUsersInDB = allUsersInDB.length;
     let numberOfUsersInDBtoString = `${numberOfUsersInDB}`;
     return res.status(200).send(numberOfUsersInDBtoString);
+  } catch (error: any) {
+    return res.status(404).send(error.message);
+  }
+});
+
+//! ----- MIDDLEWARE PARA AUTH : ------
+const authCheck = (req: any, res: any, next: any) => {
+  //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
+  console.log("En el authCheck de /users");
+  console.log(req?.user);
+  if (!req.user) {
+    console.log("redirigiendo al /auth/google");
+    res.redirect("/auth/google");
+  } else {
+    console.log("Usuario autenticado (req.user existe)");
+    console.log("continuando con el siguiente middleware");
+    next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
+  }
+};
+
+//POST NEW PET:
+// validar usuario que sea uno registrado.
+// obtener su ID que lo voy a usar para asociarlo a la new pet.
+// obtener el req.body que va a tener los datos de la new pet
+router.post("/postpet", authCheck, async (req: any, res) => {
+  console.log(`Entré a users/postpet`);
+  try {
+    console.log(`req.user es = ${req?.user}`);
+    let userID = req.user.id;
+    console.log(`userID = ${userID}`);
+    console.log(`req.body = `);
+    console.log(req.body);
+    let validatedPet: Pet = validateNewPet(req.body);
+    console.log("SOY VALIDATED PET: ");
+    console.log(validatedPet);
+    let createdPet = await db.Animal.create(validatedPet);
+    //asociar createdPet con el userID:
+    let associatedPetWithUser = await createdPet.setUser(userID);
+    return res.status(200).send(associatedPetWithUser);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
