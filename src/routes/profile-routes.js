@@ -1,3 +1,5 @@
+const { default: db } = require("../../models");
+
 const router = require("express").Router(); //#18. Esta instancia de router va a controlar las rutas de /profile/
 
 //#18: Creo una función para manejar en caso de que el usuario quiera acceder a /profile/ sin estar logueado.
@@ -17,13 +19,26 @@ const authCheck = (req, res, next) => {
 
 //! en esta ruta podría hacer que si pasa la authenticación, por lo que me llegaría por req.user los datos del usuario, le respondo al front con un:
 // return res.status(200).send(req.user)
-router.get("/", authCheck, (req, res) => {
-  res
-    .status(200)
-    .send(
-      "UPS! All your personal information was leaked and is being used by an indian scamcenter. Sorry, " +
-        req.user.displayName
-    ); //#18
+router.get("/", authCheck, async (req, res) => {
+  try {
+    console.log(
+      `En la ruta /profile. El user.displayName es: ${req?.user?.displayName}`
+    );
+    // buscar los datos de este user id en la DB y devolver los datos de esa instancia:
+    let userID = req.user.id;
+    let userDataInDB = await db.Users.findByPk(userID);
+    console.log(`User encontrado por id en la db:`);
+    console.log(userDataInDB);
+    return res.status(200).send(userDataInDB);
+  } catch (error) {
+    return res.status(404).send(error.message);
+  }
+  // res
+  //   .status(200)
+  //   .send(
+  //     "UPS! All your personal information was leaked and is being used by an indian scamcenter. Sorry, " +
+  //       req.user.displayName
+  //   ); //#18
   //#19 voy a crear un profile view.
   // return res.status(201).send({ authorized: true, user: req.user });
   // res.render("profile", { usuario: req.user }); //#19 en el segundo argumento le paso data que quiera enviar a render. {keyQueNoImportaElNombre: dataQueQuieroMandar}
