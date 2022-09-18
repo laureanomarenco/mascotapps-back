@@ -29,7 +29,9 @@ router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
   console.log("ESTOY DESPUÉS DEL MIDDLEWARE DE AUTHTENTICATE");
   //#17 Ahora en este req me va a llegar el user en req.user:
   // res.send(req.user);
+
   // res.send("you reached the callback URI");
+
   //#18 Voy a redirigir y enviar al cliente a una URL particular. Por ejemplo, a /profile. Hago un archivo con las rutas para el perfil.
   res.redirect("/profile/");
 });
