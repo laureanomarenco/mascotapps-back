@@ -1,5 +1,5 @@
 export interface Donate {
-    id: string | undefined;
+    id: string;
     amount: number | undefined;
     email: string | undefined;
   }
