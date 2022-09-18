@@ -8,7 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const { default: db } = require("../../models");
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// const { default: db } = require("../../models");
+const index_1 = __importDefault(require("../../models/index"));
 const router = require("express").Router(); //#18. Esta instancia de router va a controlar las rutas de /profile/
 //#18: Creo una función para manejar en caso de que el usuario quiera acceder a /profile/ sin estar logueado.
 //Acá abajo voy a crear un "middleware" que s elo voy a pasar a la ruta get "/", similar a como hicimos en auth-routes.js en el router.get("/google/redirect", middlewareDePassportAuthenticate("google")). Un middleware lo que hace es ejecutar una función antes de que se ejecute el siguiente argumento (arrow function con (req,res)).
@@ -33,7 +38,7 @@ router.get("/", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, funct
         console.log(`En la ruta /profile. El user.displayName es: ${(_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.displayName}`);
         // buscar los datos de este user id en la DB y devolver los datos de esa instancia:
         let userID = req.user.id;
-        let userDataInDB = yield db.Users.findByPk(userID);
+        let userDataInDB = yield index_1.default.User.findByPk(userID);
         console.log(`User encontrado por id en la db:`);
         console.log(userDataInDB);
         return res.status(200).send(userDataInDB);

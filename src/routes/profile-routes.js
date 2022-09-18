@@ -1,4 +1,5 @@
-const { default: db } = require("../../models");
+// const { default: db } = require("../../models");
+import db from "../../models/index";
 
 const router = require("express").Router(); //#18. Esta instancia de router va a controlar las rutas de /profile/
 
@@ -26,7 +27,7 @@ router.get("/", authCheck, async (req, res) => {
     );
     // buscar los datos de este user id en la DB y devolver los datos de esa instancia:
     let userID = req.user.id;
-    let userDataInDB = await db.Users.findByPk(userID);
+    let userDataInDB = await db.User.findByPk(userID);
     console.log(`User encontrado por id en la db:`);
     console.log(userDataInDB);
     return res.status(200).send(userDataInDB);
