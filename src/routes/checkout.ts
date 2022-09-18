@@ -1,4 +1,5 @@
 import { Router } from "express";
+const express = require('express');
 const Stripe = require('stripe')
 //const stripe = require('../app')
 const router = Router();
@@ -29,5 +30,38 @@ router.post('/', async (req, res) => {
         res.json({msg: err.raw.message})
     }
 })
+
+// This is your Stripe CLI webhook secret for testing your endpoint locally.
+const endpointSecret = "whsec_8f73e9eaa6c9915a827f0f0a0f999e98a356ec4d546cecfaffc677c8281d9bd1";
+
+router.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
+  const sig = req.headers['stripe-signature'];
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+  } catch (err: any) {
+    res.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the event
+  let balance
+  switch (event.type) {
+    case 'balance.available':
+      balance = event.data.object;
+      // Then define and call a function to handle the event balance.available
+      return balance
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+  console.log(balance)
+  // Return a 200 response to acknowledge receipt of the event
+  res.send(balance);
+});
+
 
 export default router;
