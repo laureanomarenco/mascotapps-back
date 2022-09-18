@@ -22,7 +22,7 @@ export function validateNewUser(profile: any): UserAttributes {
   try {
     let userFromReqChecked: UserAttributes = {
       id: checkId(profile.id),
-      googleId: checkId(profile.googleId),
+      googleId: checkId(profile.id),
       displayName: checkName(profile.displayName),
       email: checkEmail(profile._json.email),
       name: checkFullName(profile.name.givenName, profile.name.familyName),

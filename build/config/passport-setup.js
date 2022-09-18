@@ -67,6 +67,7 @@ passport.use(new GoogleStrategy({
             console.log("ESTOY EN EL ELSE DE PASSAPORT CALLBACK FN");
             //! crear un user nuevo:
             let validatedUser = (0, UserValidators_1.validateNewUser)(profile);
+            console.log("usuario validado correctamente y listo para crearse...");
             // let validatedUser = {
             //   id: profile.id,
             //   googleId: profile.id,
