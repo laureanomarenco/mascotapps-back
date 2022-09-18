@@ -12,6 +12,7 @@ module.exports = (sequelize: any, DataTypes: any ) => {
   Donation.init({
         id: {
           type: DataTypes.STRING,
+          primaryKey: true,
         },
         amount: {
             type: DataTypes.NUMBER,
