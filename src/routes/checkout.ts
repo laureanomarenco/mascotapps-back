@@ -51,6 +51,7 @@ router.post('/', async (req, res) => {
       case 'balance.available':
         const balance = event.data.object;
         // Then define and call a function to handle the event balance.available
+        response.send(balance)
         break;
       // ... handle other event types
       default:
@@ -60,4 +61,5 @@ router.post('/', async (req, res) => {
     // Return a 200 response to acknowledge receipt of the event
     response.send();
   })
+
 export default router;
