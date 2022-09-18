@@ -1,4 +1,5 @@
 import { Router } from "express";
+import db from "../../models";
 const express = require('express');
 const Stripe = require('stripe')
 //const stripe = require('../app')
@@ -15,7 +16,8 @@ if(config.stripeKeyProd){
 
 router.post('/', async (req, res) => {
     try {
-        const { id, amount } = req.body
+        const { id, amount, email } = req.body
+        
         const payment = await stripe.paymentIntents.create({
             amount,
             currency: "USD",
@@ -23,11 +25,20 @@ router.post('/', async (req, res) => {
             payment_method: id,
             confirm: true
         })
-        console.log(payment)
+        const donation = await db.Donation.create({
+            id,
+            amount,
+            email
+        })
+
         res.send({msg: 'Succesfull payment'})
 
     } catch(err: any){
         res.json({msg: err.raw.message})
     }
+})
+
+router.get('/balance', async (req, res) => {
+
 })
 export default router;
