@@ -4,6 +4,7 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/config.js")[env];
 require("dotenv").config();
 import db from "../models/index";
+import { validateNewUser } from "../src/auxiliary/UserValidators";
 // import {UserAttributes} from ("../src/types/userTypes")
 
 // SERIALIZACIÓN Y DESERIALIZACIÓN:
@@ -51,31 +52,21 @@ passport.use(
         if (userEncontrado) {
           //si tengo al user en mi db...:
           console.log(`EL USER YA EXISTE! ES ESTE: ${userEncontrado}`);
-          //le meto la serialización para poder enviar la cookie con la data(user.id) serializada. La serialización se hace en la función serializeUser de arriba. El done acá adentro lo que hace es mandar el argumento currentUser como argumento de la función serializeUser, la cual hace otro done() pero con el user.id
+          // Le meto la serialización para poder enviar la cookie con la data(user.id) serializada. La serialización se hace en la función serializeUser de arriba. El done acá adentro lo que hace es mandar el argumento currentUser como argumento de la función serializeUser, la cual hace otro done() pero con el user.id
           done(null, userEncontrado);
         } else {
           console.log("USER NO ENCONTRADO EN LA DB...");
           console.log("ESTOY EN EL ELSE DE PASSAPORT CALLBACK FN");
           //! crear un user nuevo:
-          //  interface UserAttributes {
-          //    id: string | undefined;
-          //    googleId: string | undefined;
-          //    displayName: string | undefined;
-          //    email: string | undefined;
-          //    name: string | undefined;
-          //    postalCode: string | undefined;
-          //    aditionalContactInfo: string | undefined;
-          //    thumbnail: string | undefined;
-          //  }
-          //Acá podría hacer un: let validatedUser = validateUser(profile)
-          let validatedUser = {
-            id: profile.id,
-            googleId: profile.id,
-            displayName: profile.displayName,
-            name: `${profile.name.givenName} ${profile.name.familyName}`,
-            email: profile._json.email,
-            thumbnail: profile._json.picture,
-          };
+          let validatedUser = validateNewUser(profile);
+          // let validatedUser = {
+          //   id: profile.id,
+          //   googleId: profile.id,
+          //   displayName: profile.displayName,
+          //   name: `${profile.name.givenName} ${profile.name.familyName}`,
+          //   email: profile._json.email,
+          //   thumbnail: profile._json.picture,
+          // };
           let newUser = await db.User.create(validatedUser);
           console.log(`NEW USER CREATED!!! : ${newUser}`);
 
@@ -83,6 +74,7 @@ passport.use(
         }
       } catch (error) {
         console.log(error.message);
+        return error.message;
       }
     }
   )
