@@ -119,7 +119,7 @@ export function checkVaccinationSchemeStatus(
 }
 
 //------funciones de chequeo de image:
-function isValidURL(argumento: any): boolean {
+export function isValidURL(argumento: any): boolean {
   if (typeof argumento !== "string") {
     return false;
   }
@@ -170,7 +170,7 @@ export function checkName(nameFromReq: any): string | undefined {
 }
 
 //-----funciones de chequeo de id:
-function isValidId(argumento: any): boolean {
+export function isValidId(argumento: any): boolean {
   if (
     typeof argumento === "string" &&
     argumento.length >= 1 &&
@@ -192,7 +192,7 @@ export function checkId(idFromReq: any): string | undefined {
 }
 
 //! is STRING:
-function isString(argumento: any): boolean {
+export function isString(argumento: any): boolean {
   if (typeof argumento !== "string") {
     return false;
   }
@@ -200,7 +200,7 @@ function isString(argumento: any): boolean {
 }
 
 //! funcion auxiliar para chequear strings y su largo
-function isStringBetween1And101CharsLong(argumento: any): boolean {
+export function isStringBetween1And101CharsLong(argumento: any): boolean {
   if (
     typeof argumento === "string" &&
     argumento.length >= 1 &&
@@ -212,7 +212,7 @@ function isStringBetween1And101CharsLong(argumento: any): boolean {
 }
 
 //! is UNDEFINEDorNULL:
-function isUndefinedOrNull(argumento: any): boolean {
+export function isUndefinedOrNull(argumento: any): boolean {
   if (argumento === undefined || argumento === null) {
     return true;
   }
