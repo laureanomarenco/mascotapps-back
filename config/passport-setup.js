@@ -58,7 +58,9 @@ passport.use(
           console.log("USER NO ENCONTRADO EN LA DB...");
           console.log("ESTOY EN EL ELSE DE PASSAPORT CALLBACK FN");
           //! crear un user nuevo:
+
           let validatedUser = validateNewUser(profile);
+          console.log("usuario validado correctamente y listo para crearse...");
           // let validatedUser = {
           //   id: profile.id,
           //   googleId: profile.id,

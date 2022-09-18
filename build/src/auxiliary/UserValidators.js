@@ -16,7 +16,7 @@ function validateNewUser(profile) {
     try {
         let userFromReqChecked = {
             id: (0, AnimalValidators_1.checkId)(profile.id),
-            googleId: (0, AnimalValidators_1.checkId)(profile.googleId),
+            googleId: (0, AnimalValidators_1.checkId)(profile.id),
             displayName: (0, AnimalValidators_1.checkName)(profile.displayName),
             email: checkEmail(profile._json.email),
             name: checkFullName(profile.name.givenName, profile.name.familyName),
