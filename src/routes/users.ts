@@ -40,7 +40,8 @@ router.get("/numberOfUsersInDB", async (req, res) => {
   try {
     let allUsersInDB = await getAllUsers();
     let numberOfUsersInDB = allUsersInDB.length;
-    return res.status(200).send(numberOfUsersInDB);
+    let numberOfUsersInDBtoString = `${numberOfUsersInDB}`;
+    return res.status(200).send(numberOfUsersInDBtoString);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }

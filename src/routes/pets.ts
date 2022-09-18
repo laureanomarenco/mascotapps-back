@@ -185,11 +185,12 @@ router.post("/", async (req, res) => {
 });
 
 // GET NUMBER OF PETS IN DB:
-router.get("/numberofpets", async (req, res) => {
+router.get("/numberofpetsindb", async (req, res) => {
   console.log("En route /numberofpets");
   try {
     let numberOfPetsInDB = await getNumberOfPetsInDB();
-    return res.status(200).send(numberOfPetsInDB);
+    let numberOfPetsInDBtoString = `${numberOfPetsInDB}`;
+    return res.status(200).send(numberOfPetsInDBtoString);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }

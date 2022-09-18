@@ -48,7 +48,8 @@ router.get("/numberOfUsersInDB", (req, res) => __awaiter(void 0, void 0, void 0,
     try {
         let allUsersInDB = yield getAllUsers();
         let numberOfUsersInDB = allUsersInDB.length;
-        return res.status(200).send(numberOfUsersInDB);
+        let numberOfUsersInDBtoString = `${numberOfUsersInDB}`;
+        return res.status(200).send(numberOfUsersInDBtoString);
     }
     catch (error) {
         return res.status(404).send(error.message);

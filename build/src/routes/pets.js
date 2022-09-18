@@ -197,11 +197,12 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 }));
 // GET NUMBER OF PETS IN DB:
-router.get("/numberofpets", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/numberofpetsindb", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("En route /numberofpets");
     try {
         let numberOfPetsInDB = yield getNumberOfPetsInDB();
-        return res.status(200).send(numberOfPetsInDB);
+        let numberOfPetsInDBtoString = `${numberOfPetsInDB}`;
+        return res.status(200).send(numberOfPetsInDBtoString);
     }
     catch (error) {
         return res.status(404).send(error.message);
