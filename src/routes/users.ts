@@ -2,6 +2,7 @@ import { Router } from "express";
 import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet } from "../types/petTypes";
+import { UserAttributes } from "../types/userTypes";
 // import axios from "axios";
 //import { UserAttributes } from "../../models/user"
 const router = Router();
@@ -92,16 +93,39 @@ router.post("/postnewpet", authCheck, async (req: any, res) => {
   }
 });
 
-// router.post("/", async (req, res) => {
-//   try {
-//     let validatedPet: UserAttributes = validateNewUser(req.body);
+// GET CONTACT INFO OF USER (AUTH):
+// La info de contacto del usuario vamos a obtenerla gracias al :petid. Desde el front tienen que enviarnos el id de la mascota por params, y nosotros buscamos el id de la mascota en la DB para obtener su UserId que tiene asociado.
+// Una vez que tener el UserId, vamos a la tabla de Users en la DB y buscamos ese ID.
+// Una vez encontrado ese User mediante el ID, obtenemos cierta información para retornarle al cliente. info a obtener: diplayName, email, aditionalContactInfo.
+//--
+// obtener petID
+// buscar en la DB ese petID
+// obtener el UserId de esa instancia de Pet
+// buscar en la DB en la tabla de Users el id = UserID
 
-//     let createdPet = await db.User.create(validatedUser);
-//     return res.status(200).send(createdPet);
-//   } catch (error: any) {
-//     return res.status(404).send(error.message);
-//   }
-// })
+router.get("/contactinfo/:petid", authCheck, async (req, res) => {
+  console.log(`Entré a la ruta /users/contactinfo/:petid`);
+  console.log(`:petid = ${req.params.petid}`);
+  try {
+    let petID = req.params.petid;
+    let petInDB = await db.Animals.findByPk(petID);
+    let ownerID = petInDB.UserId;
+    let ownerInDB: UserAttributes = await db.Users.findByPk(ownerID);
+    let contactInfoOfOwner = {
+      displayName: ownerInDB.displayName,
+      name: ownerInDB.name,
+      email: ownerInDB.email,
+      postalCode: ownerInDB.postalCode,
+      aditionalContactInfo: ownerInDB.aditionalContactInfo,
+      thumbnail: ownerInDB.thumbnail,
+    };
+    console.log(`contactInfoOfOwner = ${contactInfoOfOwner}`);
+    return res.status(200).send(contactInfoOfOwner);
+  } catch (error: any) {
+    console.log(`error en /contactinfo/:petid = ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+});
 
 // Hacer más rutas
 
