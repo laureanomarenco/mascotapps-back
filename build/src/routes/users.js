@@ -157,5 +157,36 @@ router.get("/getallpetsofuser", authCheck, (req, res) => __awaiter(void 0, void 
         return res.status(404).send(error.message);
     }
 }));
+// DELETE PET:
+// Esta ruta va a intentar eliminar de la DB una instancia de Animal.
+// va a obtener el req.user.id de la cookie, y va a obtener el id de la mascota a eliminar, buscando el req.params.petid.
+router.delete("/deletepet/:petid", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    console.log(`En la ruta users/deletepet/:petid.`);
+    console.log(`:petid = ${req.params.petid}`);
+    console.log(`req.user.id = ${(_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.id}`);
+    try {
+        let petID = req.params.petid;
+        let userID = req.user.id;
+        //buscar instancia de mascota en DB:
+        let petToDeleteInDB = yield index_1.default.Animals.findByPk(petID);
+        if (petToDeleteInDB.UserId == userID) {
+            //borrar instancia de la DB:
+            let deletedPet = yield petToDeleteInDB.destroy();
+            console.log(`pet with id ${petToDeleteInDB.id} and pet.UserId = ${petToDeleteInDB.UserId}...  soft-destroyed`);
+            return res.status(200).send(deletedPet);
+        }
+        else {
+            //retornar que no coincide el petToDelete.UserId con el req.user.id
+            return res
+                .status(400)
+                .send(`El ID del cliente no coincide con el UserId de la mascota.`);
+        }
+    }
+    catch (error) {
+        console.log(`Hubo un error en el users/deletepet/:petid = ${error.message}`);
+        return res.status(404).send(error.message);
+    }
+}));
 // Hacer más rutas
 exports.default = router;
