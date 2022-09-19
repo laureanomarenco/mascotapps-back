@@ -11,6 +11,8 @@ import db from "../models/index";
 
 passport.serializeUser((user, done) => {
   console.log("ESTOY EN EL SERIALIZE USER");
+  console.log(`User id = ${user.id}`);
+  console.log(`User displayName: ${user.displayName}`);
   //le paso el id que crea la DB, y NO la id de google.
   done(null, user.id);
 });
@@ -27,76 +29,17 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-if(env === 'development') {
 
-  passport.use(
-    new GoogleStrategy(
-    {
-      //options for the strategy
-      callbackURL: "/auth/google/redirect", //este es el redirect que seteo en la URI de redireccionamiento autorizado en console.cloud.google. Google me va a enviar no datos, si no un código por medio de la url query. Se va a ver algo así: www.localhost.com/auth/google/redirect?code=4lksadklaskldkjlsadksk.
-      // Yo voy a agarrar ese código y se lo voy a intercambiar a google por datos del user profile. Y una vez que me trae esos datos, se ejecuta el passport callback function de esta función (segundo argumento)
-      clientID: config.clientID,
-      clientSecret: config.clientSecret,
-      // clientID: keys.google.clientID,
-      // clientSecret: keys.google.clientSecret,
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      // passport callback function:
-      try {
-        console.log("passport callback function dispara!!!");
-        console.log(profile);
-        //check if user already exists in our db:
-        let userEncontrado = await db.User.findOne({
-          where: { googleId: profile.id },
-        });
-        if (userEncontrado) {
-          //si tengo al user en mi db...:
-          console.log(`EL USER YA EXISTE! ES ESTE: ${userEncontrado}`);
-          //le meto la serialización para poder enviar la cookie con la data(user.id) serializada. La serialización se hace en la función serializeUser de arriba. El done acá adentro lo que hace es mandar el argumento currentUser como argumento de la función serializeUser, la cual hace otro done() pero con el user.id
-          done(null, userEncontrado);
-        } else {
-          console.log("USER NO ENCONTRADO EN LA DB...");
-          console.log("ESTOY EN EL ELSE DE PASSAPORT CALLBACK FN");
-          //! crear un user nuevo:
-          //  interface UserAttributes {
-            //    id: string | undefined;
-            //    googleId: string | undefined;
-            //    displayName: string | undefined;
-            //    email: string | undefined;
-            //    name: string | undefined;
-            //    postalCode: string | undefined;
-            //    aditionalContactInfo: string | undefined;
-            //    thumbnail: string | undefined;
-            //  }
-            //Acá podría hacer un: let validatedUser = validateUser(profile)
-            let validatedUser = {
-              id: profile.id,
-              googleId: profile.id,
-              displayName: profile.displayName,
-              name: `${profile.name.givenName} ${profile.name.familyName}`,
-              email: profile._json.email,
-            thumbnail: profile._json.picture,
-          };
-          let newUser = await db.User.create(validatedUser);
-          console.log(`NEW USER CREATED!!! : ${newUser}`);
-          
-          done(null, newUser);
-        }
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
-  )
-  ); 
-} else {
+if (env === "development") {
+  console.log("EN AMBIENTE DE DEVELOPMENT EN PASSPORT-SETUP");
   passport.use(
     new GoogleStrategy(
       {
         //options for the strategy
         callbackURL: "/auth/google/redirect", //este es el redirect que seteo en la URI de redireccionamiento autorizado en console.cloud.google. Google me va a enviar no datos, si no un código por medio de la url query. Se va a ver algo así: www.localhost.com/auth/google/redirect?code=4lksadklaskldkjlsadksk.
         // Yo voy a agarrar ese código y se lo voy a intercambiar a google por datos del user profile. Y una vez que me trae esos datos, se ejecuta el passport callback function de esta función (segundo argumento)
-        clientID: process.env[config.clientID],
-        clientSecret: process.env[config.clientSecret],
+        clientID: config.clientID,
+        clientSecret: config.clientSecret,
         // clientID: keys.google.clientID,
         // clientSecret: keys.google.clientSecret,
       },
@@ -139,7 +82,6 @@ if(env === 'development') {
             };
             let newUser = await db.User.create(validatedUser);
             console.log(`NEW USER CREATED!!! : ${newUser}`);
-  
             done(null, newUser);
           }
         } catch (error) {
@@ -148,5 +90,66 @@ if(env === 'development') {
       }
     )
   );
-  
+} else {
+  console.log("EN AMBIENTE NO ES DEVELOPMENT EN PASSPORT-SETUP");
+  passport.use(
+    new GoogleStrategy(
+      {
+        //options for the strategy
+        callbackURL: "/auth/google/redirect", //este es el redirect que seteo en la URI de redireccionamiento autorizado en console.cloud.google. Google me va a enviar no datos, si no un código por medio de la url query. Se va a ver algo así: www.localhost.com/auth/google/redirect?code=4lksadklaskldkjlsadksk.
+        // Yo voy a agarrar ese código y se lo voy a intercambiar a google por datos del user profile. Y una vez que me trae esos datos, se ejecuta el passport callback function de esta función (segundo argumento)
+        clientID: process.env[config.clientID],
+        clientSecret: process.env[config.clientSecret],
+        // clientID: keys.google.clientID,
+        // clientSecret: keys.google.clientSecret,
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        // passport callback function:
+        try {
+          console.log("passport callback function dispara!!!");
+          console.log(profile);
+          //check if user already exists in our db:
+          let userEncontrado = await db.User.findOne({
+            where: { googleId: profile.id },
+          });
+          if (userEncontrado) {
+            //si tengo al user en mi db...:
+            console.log(`EL USER YA EXISTE! ES ESTE: `);
+            //le meto la serialización para poder enviar la cookie con la data(user.id) serializada. La serialización se hace en la función serializeUser de arriba. El done acá adentro lo que hace es mandar el argumento currentUser como argumento de la función serializeUser, la cual hace otro done() pero con el user.id
+            console.log(userEncontrado);
+            done(null, userEncontrado);
+          } else {
+            console.log("USER NO ENCONTRADO EN LA DB...");
+            console.log("ESTOY EN EL ELSE DE PASSAPORT CALLBACK FN");
+            //! crear un user nuevo:
+            //  interface UserAttributes {
+            //    id: string | undefined;
+            //    googleId: string | undefined;
+            //    displayName: string | undefined;
+            //    email: string | undefined;
+            //    name: string | undefined;
+            //    postalCode: string | undefined;
+            //    aditionalContactInfo: string | undefined;
+            //    thumbnail: string | undefined;
+            //  }
+            //Acá podría hacer un: let validatedUser = validateUser(profile)
+            let validatedUser = {
+              id: profile.id,
+              googleId: profile.id,
+              displayName: profile.displayName,
+              name: `${profile.name.givenName} ${profile.name.familyName}`,
+              email: profile._json.email,
+              thumbnail: profile._json.picture,
+            };
+            let newUser = await db.User.create(validatedUser);
+            console.log(`NEW USER CREATED!!! : ${newUser}`);
+
+            done(null, newUser);
+          }
+        } catch (error) {
+          console.log(error.message);
+        }
+      }
+    )
+  );
 }

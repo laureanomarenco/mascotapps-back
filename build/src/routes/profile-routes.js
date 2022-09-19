@@ -4,11 +4,11 @@ const router = require("express").Router(); //#18. Esta instancia de router va a
 //Acá abajo voy a crear un "middleware" que s elo voy a pasar a la ruta get "/", similar a como hicimos en auth-routes.js en el router.get("/google/redirect", middlewareDePassportAuthenticate("google")). Un middleware lo que hace es ejecutar una función antes de que se ejecute el siguiente argumento (arrow function con (req,res)).
 const authCheck = (req, res, next) => {
     //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
-    console.log("EN EL authCheck!");
+    console.log("AUTHCHECK DE PROFILE!");
     console.log(req.user);
     if (!req.user) {
-        console.log("redirigiendo al /auth/login");
-        res.redirect("/auth/login");
+        console.log("redirigiendo al /auth/google");
+        res.redirect("/auth/google");
     }
     else {
         console.log("continuando con el siguiente middleware");
@@ -20,7 +20,7 @@ const authCheck = (req, res, next) => {
 router.get("/", authCheck, (req, res) => {
     res
         .status(200)
-        .send("You are logged in. We'll send all the profile info about yourself that we have... - " +
+        .send("UPS! All your personal information was leaked and is being used by an indian scamcenter. Sorry, " +
         req.user.displayName); //#18
     //#19 voy a crear un profile view.
     // return res.status(201).send({ authorized: true, user: req.user });

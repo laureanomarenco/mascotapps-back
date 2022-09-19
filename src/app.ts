@@ -44,22 +44,26 @@ app.get("/ping", (_req, res) => {
 app.set("view engine", "ejs");
 
 // middlewares para encriptar la cookie que voy a enviar al browser:
-if(env === 'development') {
+
+if (env === "development") {
+  console.log("Estoy en development en la cookie session");
 
   app.use(
     cookieSession({
-      maxAge: 1000 * 60 * 2, // === dos minutos
-      keys: [config.cookieKey],
+      maxAge: 1000 * 60 * 60, // === una hora
+      keys: "unaKeyParaHashear",
     })
-    );
-  } else {
-    app.use(
-      cookieSession({
-        maxAge: 1000 * 60 * 2, // === dos minutos
-        keys: process.env[config.cookieKey],
-      })
-      );
-  }
+  );
+} else {
+  console.log("entré al else de app.use cookie session");
+
+  app.use(
+    cookieSession({
+      maxAge: 1000 * 60 * 60, // === una hora
+      keys: "unaKeyParaHashear",
+    })
+  );
+}
 
 //Inicializar passport:
 app.use(passport.initialize());
@@ -74,10 +78,9 @@ app.use("/checkout", checkoutRouter);
 
 app.get("/", (req: any, res) => {
   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
-  res.send(req.user)
+  res.send(req.user);
   //res.render("home", { usuario: req.user });
 });
-
 
 module.exports = app;
 
