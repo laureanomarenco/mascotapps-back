@@ -54,9 +54,9 @@ app.use("/pets", pets_1.default);
 app.use("/checkout", checkout_1.default);
 app.get("/", (req, res) => {
     console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
+    let newVisit = models_1.default.Visitor.create();
     res.send(req.user);
     //res.render("home", { usuario: req.user });
-    let newVisit = models_1.default.Visitor.create(1);
 });
 module.exports = app;
 //! este archivo está siendo importado en index.ts de la raíz

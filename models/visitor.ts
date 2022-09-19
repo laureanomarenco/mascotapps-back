@@ -2,14 +2,16 @@
 const {
   Model, UUIDV4
 } = require('sequelize');
+import { visitor } from "../src/types/visitorTypes";
+
 module.exports = (sequelize: any , DataTypes: any) => {
-  class Visitor extends Model {
+  class Visitor extends Model <visitor> implements visitor{
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    id!:string 
+    id:undefined 
     static associate(models: any) {
       // define association here
     }

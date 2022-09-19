@@ -189,7 +189,7 @@ router.get('/numbervisitors', async(req,res)=>{
   try {
     let arrayVisitors = await db.Visitor.findAll()
     let numberOfVisitors = arrayVisitors.length
-    res.status(200).send(`${numberOfVisitors.toString()}`)
+    res.status(200).send(`${numberOfVisitors}`)
   } catch (error) {
     res.status(404).send(error)
   }

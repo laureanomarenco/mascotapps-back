@@ -67,9 +67,9 @@ app.use("/checkout", checkoutRouter);
 
 app.get("/", (req: any, res) => {
   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
+  let newVisit = db.Visitor.create()
   res.send(req.user);
   //res.render("home", { usuario: req.user });
-  let newVisit = db.Visitor.create(1)
 });
 
 module.exports = app;
