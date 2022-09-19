@@ -44,12 +44,14 @@ app.get("/ping", (_req, res) => {
 app.set("view engine", "ejs");
 
 // middlewares para encriptar la cookie que voy a enviar al browser:
+
 app.use(
   cookieSession({
     maxAge: 1000 * 60 * 45, // === 45 minutos
     keys: [config.cookieKey],
   })
 );
+
 
 //Inicializar passport:
 app.use(passport.initialize());

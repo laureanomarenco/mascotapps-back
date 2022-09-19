@@ -13,6 +13,8 @@ import { validateNewUser } from "../src/auxiliary/UserValidators";
 
 passport.serializeUser((user, done) => {
   console.log("ESTOY EN EL SERIALIZE USER");
+  console.log(`User id = ${user.id}`);
+  console.log(`User displayName: ${user.displayName}`);
   //le paso el id que crea la DB, y NO la id de google.
   done(null, user.id);
 });
@@ -28,6 +30,7 @@ passport.deserializeUser((id, done) => {
     // lo que hace este done es meterle una key "user" al objeto req de la ruta app.get("/")
   });
 });
+
 
 passport.use(
   new GoogleStrategy(

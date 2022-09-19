@@ -38,10 +38,12 @@ app.get("/ping", (_req, res) => {
 //! set up view engine. No debería estar, pero lo pongo para testeos provisorios:
 app.set("view engine", "ejs");
 // middlewares para encriptar la cookie que voy a enviar al browser:
+
 app.use(cookieSession({
     maxAge: 1000 * 60 * 45,
     keys: [config.cookieKey],
 }));
+
 //Inicializar passport:
 app.use(passport.initialize());
 app.use(passport.session());

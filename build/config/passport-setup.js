@@ -25,6 +25,8 @@ const UserValidators_1 = require("../src/auxiliary/UserValidators");
 //la serialización se hace cuando agarro de mi DB un id del user y lo quiero "serializar" para enviarle ese dato (cookie) al navegador para que el navegador lo tengo mientras navega por la página. Si en algún momento el cliente quiere usar alguna ruta del backend que requiere algún tipo de permiso/autenticación ya sea porque quiere ver información privada (datos de contacto de otros usuarios, su propio perfil, postear una mascota, etc.. cualquier acción que querramos que sólo pueda hacer un usuario registrado, y además con el permiso para hacer específicamente lo que quiera hacer), va a enviarme esa cookie al backend y yo voy a DESERIALIZAR esa cookie para ver si la data que tiene esa cookie le da autorización para hacer lo que quiere hacer (usar alguna ruta específica del backend, como ver datos de contacto de otro usuario, o postear una mascota).
 passport.serializeUser((user, done) => {
     console.log("ESTOY EN EL SERIALIZE USER");
+    console.log(`User id = ${user.id}`);
+    console.log(`User displayName: ${user.displayName}`);
     //le paso el id que crea la DB, y NO la id de google.
     done(null, user.id);
 });
@@ -40,6 +42,7 @@ passport.deserializeUser((id, done) => {
         // lo que hace este done es meterle una key "user" al objeto req de la ruta app.get("/")
     });
 });
+
 passport.use(new GoogleStrategy({
     //options for the strategy
     callbackURL: "/auth/google/redirect",

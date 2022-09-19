@@ -204,7 +204,9 @@ async function getAllByNameOrRace(input: any): Promise<Pet[]> {
 
 const authCheck = (req: any, res: any, next: any) => {
   //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
+
   console.log("En el authCheck de pets!");
+
   console.log(req.user);
   if (!req.user) {
     console.log("redirigiendo al /auth/google");

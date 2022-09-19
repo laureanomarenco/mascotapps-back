@@ -209,7 +209,11 @@ function getAllByNameOrRace(input) {
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req, res, next) => {
     //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
+<<<<<<< HEAD
     console.log("En el authCheck de pets!");
+=======
+    console.log("EN EL AUTH CHECK DE PETS/SECRETOS");
+>>>>>>> dev
     console.log(req.user);
     if (!req.user) {
         console.log("redirigiendo al /auth/google");
