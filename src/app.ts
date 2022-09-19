@@ -8,6 +8,7 @@ const authRoutes = require("./routes/auth-routes");
 const profileRoutes = require("./routes/profile-routes");
 const passportSetup = require("../config/passport-setup");
 const env = process.env.NODE_ENV || "development";
+const { COOKIE_SESSION_KEY } = process.env;
 const config = require(__dirname + "../../config/config.js")[env];
 const cookieSession = require("cookie-session");
 const passport = require("passport");
@@ -47,7 +48,7 @@ app.set("view engine", "ejs");
 app.use(
   cookieSession({
     maxAge: 1000 * 60 * 10, // === dos minutos
-    keys: [config.cookieKey],
+    keys: [COOKIE_SESSION_KEY],
   })
 );
 
