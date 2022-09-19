@@ -2,6 +2,8 @@ import express from "express";
 import usersRouter from "./routes/users";
 import animalRouter from "./routes/pets";
 import checkoutRouter from "./routes/checkout";
+import db from "../models";
+import { visitor } from "./types/visitorTypes";
 
 //! ---- nuevo para passport:
 const authRoutes = require("./routes/auth-routes");
@@ -64,11 +66,20 @@ app.use("/users", usersRouter);
 app.use("/pets", animalRouter);
 app.use("/checkout", checkoutRouter);
 
-app.get("/", (req: any, res) => {
+app.get("/", async (req: any, res) => {
   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
-  res.send(req.user);
+  try {
+    let newVisitor: visitor = {
+      id: undefined
+    }
+    let newVisit = await db.Visitor.create(newVisitor)
+    res.send(req.user)
+  } catch (error) {
+    res.status(404).send(error)
+  }
   //res.render("home", { usuario: req.user });
 });
+
 
 module.exports = app;
 

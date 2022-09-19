@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const users_1 = __importDefault(require("./routes/users"));
 const pets_1 = __importDefault(require("./routes/pets"));
 const checkout_1 = __importDefault(require("./routes/checkout"));
+const models_1 = __importDefault(require("../models"));
 //! ---- nuevo para passport:
 const authRoutes = require("./routes/auth-routes");
 const profileRoutes = require("./routes/profile-routes");
@@ -38,12 +39,10 @@ app.get("/ping", (_req, res) => {
 //! set up view engine. No debería estar, pero lo pongo para testeos provisorios:
 app.set("view engine", "ejs");
 // middlewares para encriptar la cookie que voy a enviar al browser:
-
 app.use(cookieSession({
     maxAge: 1000 * 60 * 45,
     keys: [config.cookieKey],
 }));
-
 //Inicializar passport:
 app.use(passport.initialize());
 app.use(passport.session());
@@ -55,6 +54,7 @@ app.use("/pets", pets_1.default);
 app.use("/checkout", checkout_1.default);
 app.get("/", (req, res) => {
     console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
+    let newVisit = models_1.default.Visitor.create();
     res.send(req.user);
     //res.render("home", { usuario: req.user });
 });
