@@ -14,9 +14,9 @@ if(config.stripeKeyProd){
 }
 
 const getAllDonations = async () => {
+    console.log('en function getAllDonations')
     try {
       const allDonations = await db.Donation.findAll();
-      // console.log(allPets);
       return allDonations;
     } catch (error: any) {
       console.log(error.message);
