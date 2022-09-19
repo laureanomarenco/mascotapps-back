@@ -13,6 +13,12 @@ https://mascotapps-prod.herokuapp.com/ping
 Stagging(dev)             
 https://mascotapps-stage.herokuapp.com/ping 
 
+Stagging(dev-2-TESTING)
+https://worker-dev2testing.up.railway.app/
+
+Stagging(dev-2)
+https://worker-dev-2.up.railway.app/
+
 Local                     
 ‘npm run dev’  → localhost 3001
 
