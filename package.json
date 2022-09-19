@@ -25,10 +25,16 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "pg": "^8.8.0",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.21.6"
+    "sequelize": "^6.21.6",
+    "stripe": "^10.8.0",
+    "cookie-session": "^2.0.0",
+    "passport": "0.5.3",
+    "passport-google-oauth20": "^2.0.0",
+    "ejs": "^3.1.8"
   }
 }

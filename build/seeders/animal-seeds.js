@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.petTS = void 0;
+exports.animalSeeds = void 0;
 const uuid_1 = require("uuid");
-exports.petTS = [
+// "mediano"
+exports.animalSeeds = [
     // perdidos
     {
         id: (0, uuid_1.v4)(),
@@ -73,7 +74,7 @@ exports.petTS = [
         gender: "macho",
         status: "perdido",
         vaccinationSchemeStatus: "completo",
-        image: "https://media.taringa.net/knn/fit:550/Z3M6Ly9rbjMvdGFyaW5nYS9DL0YvNy8wLzIvRC9Ccm9ueV9UYXJpbmd1ZXJvLzgwRC5qcGc",
+        // image:  "https://media.taringa.net/knn/fit:550/Z3M6Ly9rbjMvdGFyaW5nYS9DL0YvNy8wLzIvRC9Ccm9ueV9UYXJpbmd1ZXJvLzgwRC5qcGc",
         comments: "gato colorado muy vago",
     },
     {
@@ -123,7 +124,6 @@ exports.petTS = [
         image: "https://cdn.pixabay.com/photo/2014/04/05/11/40/dog-316598__340.jpg",
         comments: "un ovejero aleman",
     },
-    // encontrado
     {
         id: (0, uuid_1.v4)(),
         name: "chorizo",
@@ -134,7 +134,7 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "incompleto",
         comments: "largo como salchicha",
-        image: "https://i.pinimg.com/736x/57/cf/98/57cf9899961fb683a2dbb0b37fa3cd42--fat-animals-dog-facts.jpg"
+        image: "https://i.pinimg.com/736x/57/cf/98/57cf9899961fb683a2dbb0b37fa3cd42--fat-animals-dog-facts.jpg",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -146,7 +146,7 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "completo",
         comments: "se come un alfajor de un bocado",
-        image: "https://static.misionesonline.news/wp-content/uploads/2021/09/19-17.jpg"
+        image: "https://static.misionesonline.news/wp-content/uploads/2021/09/19-17.jpg",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -158,7 +158,7 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "completo",
         comments: "muy pachorra, lo encontraron durmiendo",
-        image: "https://www.caracteristicas.co/wp-content/uploads/2017/02/perro-3-e1561679226953.jpg"
+        image: "https://www.caracteristicas.co/wp-content/uploads/2017/02/perro-3-e1561679226953.jpg",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -170,7 +170,7 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "incompleto",
         comments: "solamente lyzzie",
-        image: "https://www.muyinteresante.es/mascotas/fotos/impresionantes-curiosidades-sobre-perros-que-fuerte"
+        // image: "https://www.muyinteresante.es/mascotas/fotos/impresionantes-curiosidades-sobre-perros-que-fuerte",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -182,7 +182,7 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "incompleto",
         comments: "lider de una banda de perros callejeros de londres",
-        image: "https://statics.memondo.com/p/s1/crs/2020/06/CR_1147259_4527b033a6744dd9a6d0e0fd1ca164b3_pug_blinders_thumb_fb.jpg?cb=46469"
+        image: "https://statics.memondo.com/p/s1/crs/2020/06/CR_1147259_4527b033a6744dd9a6d0e0fd1ca164b3_pug_blinders_thumb_fb.jpg?cb=46469",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -194,19 +194,19 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "completo",
         comments: "suele romper via publica",
-        image: "https://cdn.upsocl.com/wp-content/uploads/2021/08/iyesvm3s28e51.jpg"
+        image: "https://cdn.upsocl.com/wp-content/uploads/2021/08/iyesvm3s28e51.jpg",
     },
     {
         id: (0, uuid_1.v4)(),
         name: "Marge",
         specie: "perro",
         race: "mastín napolitano",
-        age: "mediano",
+        // age: "mediano",
         gender: "hembra",
         status: "encontrado",
         vaccinationSchemeStatus: "completo",
         comments: "tiene un pelaje particular",
-        image: "https://i.pinimg.com/550x/7e/5c/cd/7e5ccd8af43f4f7ceb2618ecf57f67bc.jpg"
+        image: "https://i.pinimg.com/550x/7e/5c/cd/7e5ccd8af43f4f7ceb2618ecf57f67bc.jpg",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -218,7 +218,7 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "completo",
         comments: "muy arizca",
-        image: "https://2.bp.blogspot.com/-RKxVXO2Kfbo/V7wmJsvWcXI/AAAAAAAABF4/v_cSlNuZWQ0poZvvS56B1VrVnJ1FOlYzwCLcB/s1600/Gato%2Bbengala%2B1.jpg"
+        image: "https://2.bp.blogspot.com/-RKxVXO2Kfbo/V7wmJsvWcXI/AAAAAAAABF4/v_cSlNuZWQ0poZvvS56B1VrVnJ1FOlYzwCLcB/s1600/Gato%2Bbengala%2B1.jpg",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -285,8 +285,8 @@ exports.petTS = [
         gender: "macho",
         status: "en adopción",
         vaccinationSchemeStatus: "completo",
-        image: "https://static.nationalgeographic.es/files/styles/image_3200/public/01-stray-dogs-nationalgeographic_1927666.jpg?w=1600&h=900",
-        comments: "perrito lleno de amor en busca de hogar",
+        // image: "https://static.nationalgeographic.es/files/styles/image_3200/public/01-stray-dogs-nationalgeographic_1927666.jpg?w=1600&h=900",
+        comments: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, veniam maxime nesciunt rem laborum quisquam amet expedita nisi fuga nam accusantium itaque at quaerat deserunt exercitationem, ea, deleniti sed numquam? Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae expedita repellat sint magni, at odit delectus unde, necessitatibus beatae consequatur est. Illum aut ad voluptatibus dolorum omnis aliquam tempora laborum! Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi beatae maiores ea iusto consequatur quod quasi id fuga explicabo tempora vitae, cumque, maxime laudantium odio natus amet ducimus, exercitationem nisi. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corrupti, odit magni ipsa exercitationem consectetur in repellat aspernatur aliquam nostrum unde incidunt ut animi atque nobis consequuntur commodi eveniet at voluptatum! Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nobis, esse in ratione qui eligendi cupiditate modi aperiam eos aliquam quas ullam culpa pariatur, molestiae exercitationem neque reprehenderit quae illo accusantium. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam dolores necessitatibus nihil numquam incidunt accusamus corrupti exercitationem neque ducimus veniam, consectetur hic ab ad facilis quaerat amet, perspiciatis similique rerum Quo porro illum quis, ea dolore hic libero excepturi nemo nam fugit minima totam voluptatum voluptatem odio reprehenderit sed. Sapiente voluptatibus incidunt rr adipisicing elit. Atque enim dolor rem vero? Quod inventore repudiandae maxime, quibusdam ipsa recusandae quis vitae hic, sit, ratione dolorem rem sequi! Esse, reiciendis. dio reprehenderit sed. Sapiente voluptatibus incidunt reprehenderit voluptatem hic corporis eaque aut eveniet sint Et quisquam sint iure illum delectus, ratione, impedit deserunt magni minus libero cupiditate porro inventore assumenda minima eveniet autem quis, debitis dolorum molestiae quibusdam voluptate eos! Dicta suscipit nemo atque! Lorem ipsum dolor, sit amet consectesssss ",
     },
     {
         name: "Flash",
@@ -342,7 +342,19 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "completo",
         comments: "rosquillas",
-        image: "https://cnwebsite.blob.core.windows.net/files/2021/01/WhatsApp-Image-2021-01-15-at-13.49.25.jpeg"
+        image: "https://cnwebsite.blob.core.windows.net/files/2021/01/WhatsApp-Image-2021-01-15-at-13.49.25.jpeg",
+    },
+    {
+        id: (0, uuid_1.v4)(),
+        name: "thor con commets muy largos",
+        specie: "gato",
+        race: "otro",
+        age: "adulto",
+        gender: "macho",
+        status: "encontrado",
+        vaccinationSchemeStatus: "incompleto",
+        comments: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, veniam maxime nesciunt rem laborum quisquam amet expedita nisi fuga nam accusantium itaque at quaerat deserunt exercitationem, ea, deleniti sed numquam? Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae expedita repellat sint magni, at odit delectus unde, necessitatibus beatae consequatur est. Illum aut ad voluptatibus dolorum omnis aliquam tempora laborum! Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi beatae maiores ea iusto consequatur quod quasi id fuga explicabo tempora vitae, cumque, maxime laudantium odio natus amet ducimus, exercitationem nisi. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corrupti, odit magni ipsa exercitationem consectetur in repellat aspernatur aliquam nostrum unde incidunt ut animi atque nobis consequuntur commodi eveniet at voluptatum! Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nobis, esse in ratione qui eligendi cupiditate modi aperiam eos aliquam quas ullam culpa pariatur, molestiae exercitationem neque reprehenderit quae illo accusantium. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam dolores necessitatibus nihil numquam incidunt accusamus corrupti exercitationem neque ducimus veniam, consectetur hic ab ad facilis quaerat amet, perspiciatis similique rerum Quo porro illum quis, ea dolore hic libero excepturi nemo nam fugit minima totam voluptatum voluptatem odio reprehenderit sed. Sapiente voluptatibus incidunt reprehenderit voluptatem hic corporis eaque aut eveniet sint Et quisquam sint iure illum delectus, ratione, impedit deserunt magni minus libero cupiditate porro inventore assumenda minima eveniet autem quis, debitis dolorum molestiae quibusdam voluptate eos! Dicta suscipit nemo atque! Lorem ipsum dolor, sit amet consectetptatem id aliquid perferendis! Vitae amet ratione temporibus perferendis. Ullam, accusantium Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque neque nemo quo magni qui voluptatem quidem esse dolor, consequatur voluptatum veritatis deserunt incidunt voluptate reiciendis sequi, totam repudiandae, beatae omnis? Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque illo, repellat consequatur sit unde ab consectetur. Perspiciatis temporibus vel delectus vero quas ipsum totam eum recusandae mollitia quibusdam. Delectus, explicabo. Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque enim dolor rem vero? Quod inventore repudiandae maxime, quibusdam ipsa recusandae quis vitae hic, sit, ratione dolorem rem sequi! Esse, reiciendis. dio reprehenderit sed. Sapiente voluptatibus incidunt reprehenderit voluptatem hic corporis eaque aut eveniet sint Et quisquam sint iure illum delectus, ratione, impedit deserunt magni minus libero cupiditate porro inventore assumenda minima eveniet autem quis, debitis dolorum molestiae quibusdam voluptate eos! Dicta suscipit nemo atque! Lorem ipsum dolor, sit amet consectesssss ",
+        image: "https://i.pinimg.com/originals/1a/94/86/1a948614d9f9d3e6dc4b6b742b86c730.jpg",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -354,19 +366,7 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "incompleto",
         comments: "es muy rapido",
-        image: "https://i.pinimg.com/originals/1a/94/86/1a948614d9f9d3e6dc4b6b742b86c730.jpg"
-    },
-    {
-        id: (0, uuid_1.v4)(),
-        name: "thor",
-        specie: "gato",
-        race: "otro",
-        age: "adulto",
-        gender: "macho",
-        status: "encontrado",
-        vaccinationSchemeStatus: "incompleto",
-        comments: "es muy rapido",
-        image: "https://i.pinimg.com/originals/1a/94/86/1a948614d9f9d3e6dc4b6b742b86c730.jpg"
+        image: "https://i.pinimg.com/originals/1a/94/86/1a948614d9f9d3e6dc4b6b742b86c730.jpg",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -378,7 +378,8 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "completo",
         comments: "puede volar",
-        image: "https://images.unsplash.com/photo-1532202802379-df93d543bac3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8ZGlzZnJheiUyMGRlJTIwcGVycm98ZW58MHx8MHx8&w=1000&q=80"
+        // image:
+        //   "https://images.unsplash.com/photo-1532202802379-df93d543bac3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8ZGlzZnJheiUyMGRlJTIwcGVycm98ZW58MHx8MHx8&w=1000&q=80",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -390,7 +391,7 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "completo",
         comments: "dueño de un hotel de perros",
-        image: "https://viapais.com.ar/resizer/TXjDSl_CamriDPdbL6RWFLJ8ZQ8=/1023x663/smart/cloudfront-us-east-1.images.arcpublishing.com/grupoclarin/G5SDIZJYMIYTAMRZGU4TANJXGM.jpg"
+        image: "https://viapais.com.ar/resizer/TXjDSl_CamriDPdbL6RWFLJ8ZQ8=/1023x663/smart/cloudfront-us-east-1.images.arcpublishing.com/grupoclarin/G5SDIZJYMIYTAMRZGU4TANJXGM.jpg",
     },
     {
         id: (0, uuid_1.v4)(),
@@ -402,6 +403,6 @@ exports.petTS = [
         status: "encontrado",
         vaccinationSchemeStatus: "completo",
         comments: "rey de las croquetas",
-        image: "https://www.schnauzi.com/wp-content/uploads/2012/01/perro-disfraz-leon.jpg"
+        image: "https://www.schnauzi.com/wp-content/uploads/2012/01/perro-disfraz-leon.jpg",
     },
 ];

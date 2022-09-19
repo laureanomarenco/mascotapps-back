@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-    class PetTS extends sequelize_1.Model {
+    class Animal extends sequelize_1.Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -10,10 +10,10 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            PetTS.belongsTo(models.User);
+            Animal.belongsTo(models.User);
         }
     }
-    PetTS.init({
+    Animal.init({
         id: {
             type: DataTypes.STRING,
             defaultValue: sequelize_1.UUIDV4,
@@ -50,20 +50,28 @@ module.exports = (sequelize, DataTypes) => {
         image: {
             type: DataTypes.STRING,
             validate: {
-                len: [1, 3000]
+                len: [1, 3000],
             },
             allowNull: true,
         },
         comments: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(3000),
             validate: {
-                len: [1, 3000]
+                len: [1, 3000],
             },
+            allowNull: true,
+        },
+        backWithItsOwner: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        withNewOwner: {
+            type: DataTypes.STRING,
             allowNull: true,
         },
     }, {
         sequelize,
-        modelName: "PetTS",
+        modelName: "Animal",
     });
-    return PetTS;
+    return Animal;
 };

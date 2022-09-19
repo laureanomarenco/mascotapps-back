@@ -1,11 +1,11 @@
 require("dotenv").config();
 
 // console.log(process.env.DB_USER);
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 module.exports = {
   server: {
-    port: port
+    port: port,
   },
   development: {
     username: process.env.DB_USER,
@@ -13,6 +13,12 @@ module.exports = {
     database: "masco",
     host: process.env.DB_HOST,
     dialect: "postgres",
+
+    stripeKey: process.env.STRIPE_KEY,
+
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    cookieKey: process.env.SESSION_COOKIE_KEY
   },
   test: {
     username: "root",
@@ -23,5 +29,9 @@ module.exports = {
   },
   production: {
     use_env_variable: "DATABASE_URL",
+    stripeKeyProd: "STRIPE_KEY",
+    clientID: "GOOGLE_CLIENT_ID",
+    clientSecret: "GOOGLE_CLIENT_SECRET",
+    cookieKey: "SESSION_COOKIE_KEY"
   },
 };

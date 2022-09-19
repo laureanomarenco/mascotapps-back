@@ -1,0 +1,9 @@
+-Archivo ./config/keys.js:
+- tiene las claves para google: google.clientID y google.clientSecret
+- también tiene la clave de hasheo de la session.cookieKey
+
+-Paso al archivo .env las claves que están en /config/keys.js
+ * Las claves de google.clientID y google.clientSecret se usan en passport-setup.
+ * La clave de la cookieSession key se usa en src/app.ts, para hashear la cookie (hashearla y establecer el tiempo de expiración).
+
+
