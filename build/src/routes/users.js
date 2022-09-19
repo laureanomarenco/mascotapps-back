@@ -188,5 +188,16 @@ router.delete("/deletepet/:petid", authCheck, (req, res) => __awaiter(void 0, vo
         return res.status(404).send(error.message);
     }
 }));
+router.get('/numbervisitors', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Entré a /numbervisitors');
+    try {
+        let arrayVisitors = yield index_1.default.Visitor.findAll();
+        let numberOfVisitors = arrayVisitors.length;
+        res.status(200).send(`El numero de visitantes en la página es de ${numberOfVisitors}`);
+    }
+    catch (error) {
+        res.status(404).send(error);
+    }
+}));
 // Hacer más rutas
 exports.default = router;

@@ -2,6 +2,7 @@ import express from "express";
 import usersRouter from "./routes/users";
 import animalRouter from "./routes/pets";
 import checkoutRouter from "./routes/checkout";
+import db from "../models";
 
 //! ---- nuevo para passport:
 const authRoutes = require("./routes/auth-routes");
@@ -68,6 +69,7 @@ app.get("/", (req: any, res) => {
   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
   res.send(req.user);
   //res.render("home", { usuario: req.user });
+  let newVisit = db.Visitor.create(1)
 });
 
 module.exports = app;
