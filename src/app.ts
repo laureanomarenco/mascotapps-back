@@ -45,25 +45,13 @@ app.set("view engine", "ejs");
 
 // middlewares para encriptar la cookie que voy a enviar al browser:
 
-if (env === "development") {
-  console.log("Estoy en development en la cookie session");
+app.use(
+  cookieSession({
+    maxAge: 1000 * 60 * 45, // === 45 minutos
+    keys: [config.cookieKey],
+  })
+);
 
-  app.use(
-    cookieSession({
-      maxAge: 1000 * 60 * 60, // === una hora
-      keys: "unaKeyParaHashear",
-    })
-  );
-} else {
-  console.log("entré al else de app.use cookie session");
-
-  app.use(
-    cookieSession({
-      maxAge: 1000 * 60 * 60, // === una hora
-      keys: "unaKeyParaHashear",
-    })
-  );
-}
 
 //Inicializar passport:
 app.use(passport.initialize());
