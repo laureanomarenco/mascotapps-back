@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const users_1 = __importDefault(require("./routes/users"));
 const pets_1 = __importDefault(require("./routes/pets"));
 const checkout_1 = __importDefault(require("./routes/checkout"));
+const models_1 = __importDefault(require("../models"));
 //! ---- nuevo para passport:
 const authRoutes = require("./routes/auth-routes");
 const profileRoutes = require("./routes/profile-routes");
@@ -53,6 +54,7 @@ app.use("/pets", pets_1.default);
 app.use("/checkout", checkout_1.default);
 app.get("/", (req, res) => {
     console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
+    let newVisit = models_1.default.Visitor.create();
     res.send(req.user);
     //res.render("home", { usuario: req.user });
 });
