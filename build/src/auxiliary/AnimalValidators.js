@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkId = exports.checkName = exports.checkComments = exports.checkImageURL = exports.checkVaccinationSchemeStatus = exports.checkRace = exports.checkAge = exports.checkGender = exports.checkStatus = exports.checkSpecies = exports.validateNewPet = void 0;
+exports.isUndefinedOrNull = exports.isStringBetween1And101CharsLong = exports.isString = exports.checkId = exports.isValidId = exports.checkName = exports.checkComments = exports.checkImageURL = exports.isValidURL = exports.checkVaccinationSchemeStatus = exports.checkRace = exports.checkAge = exports.checkGender = exports.checkStatus = exports.checkSpecies = exports.validateNewPet = void 0;
 const petTypes_1 = require("../types/petTypes");
 //! VALIDAR TODO EL PET ENTERO:
 // SI HAY UN ERROR, DEVOLVER UN ERROR.
@@ -112,6 +112,7 @@ function isValidURL(argumento) {
     return (argumento.match(/^http[^\?]*.(jpg|jpeg|gif|png|tiff|bmp)(\?(.*))?$/gim) !==
         null);
 }
+exports.isValidURL = isValidURL;
 function checkImageURL(imageFromReq) {
     if (isUndefinedOrNull(imageFromReq)) {
         return undefined;
@@ -155,6 +156,7 @@ function isValidId(argumento) {
     }
     return false;
 }
+exports.isValidId = isValidId;
 function checkId(idFromReq) {
     if (isUndefinedOrNull(idFromReq)) {
         return undefined;
@@ -172,6 +174,7 @@ function isString(argumento) {
     }
     return true;
 }
+exports.isString = isString;
 //! funcion auxiliar para chequear strings y su largo
 function isStringBetween1And101CharsLong(argumento) {
     if (typeof argumento === "string" &&
@@ -181,6 +184,7 @@ function isStringBetween1And101CharsLong(argumento) {
     }
     return false;
 }
+exports.isStringBetween1And101CharsLong = isStringBetween1And101CharsLong;
 //! is UNDEFINEDorNULL:
 function isUndefinedOrNull(argumento) {
     if (argumento === undefined || argumento === null) {
@@ -188,3 +192,4 @@ function isUndefinedOrNull(argumento) {
     }
     return false;
 }
+exports.isUndefinedOrNull = isUndefinedOrNull;
