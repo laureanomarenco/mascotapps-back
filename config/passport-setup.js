@@ -3,6 +3,7 @@ const GoogleStrategy = require("passport-google-oauth20");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/config.js")[env];
 require("dotenv").config();
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
 import db from "../models/index";
 import { validateNewUser } from "../src/auxiliary/UserValidators";
 // import {UserAttributes} from ("../src/types/userTypes")
@@ -34,9 +35,8 @@ passport.use(
       //options for the strategy
       callbackURL: "/auth/google/redirect", //este es el redirect que seteo en la URI de redireccionamiento autorizado en console.cloud.google. Google me va a enviar no datos, si no un código por medio de la url query. Se va a ver algo así: www.localhost.com/auth/google/redirect?code=4lksadklaskldkjlsadksk.
       // Yo voy a agarrar ese código y se lo voy a intercambiar a google por datos del user profile. Y una vez que me trae esos datos, se ejecuta el passport callback function de esta función (segundo argumento)
-      clientID:
-        "169554474351-ksb241859ih8a2mdonpq9skg57eh6tue.apps.googleusercontent.com",
-      clientSecret: "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",
+      clientID: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
       // clientID: keys.google.clientID,
       // clientSecret: keys.google.clientSecret,
     },
