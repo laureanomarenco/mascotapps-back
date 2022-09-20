@@ -1,7 +1,7 @@
 "use strict";
 require("dotenv").config();
 // console.log(process.env.DB_USER);
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 module.exports = {
     server: {
         port: port,
@@ -15,7 +15,9 @@ module.exports = {
         stripeKey: process.env.STRIPE_KEY,
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        cookieKey: process.env.SESSION_COOKIE_KEY
+        cookieKey: process.env.SESSION_COOKIE_KEY,
+        gmailUser: process.env.GMAIL_USER,
+        gmailPass: process.env.GMAIL_PASS
     },
     test: {
         username: "root",
@@ -29,6 +31,8 @@ module.exports = {
         stripeKeyProd: "STRIPE_KEY",
         clientID: "GOOGLE_CLIENT_ID",
         clientSecret: "GOOGLE_CLIENT_SECRET",
-        cookieKey: "SESSION_COOKIE_KEY"
+        cookieKey: "SESSION_COOKIE_KEY",
+        gmailUser: "GMAIL_USER",
+        gmailPass: "GMAIL_PASS"
     },
 };
