@@ -48,22 +48,30 @@ const cors = require("cors");
 //   res.setHeader("Access-Control-Allow-Credentials", "true");
 //   next();
 // });
-app.use(cors());
+app.use(cors({
+    origin: "https://mascotapps.vercel.app",
+}));
 //!_---
-app.use(function (req, res, next) {
-    var allowedDomains = [
-        "https://mascotapps.vercel.app/",
-        "https://accounts.google.com",
-    ];
-    var origin = req.headers.origin;
-    if (allowedDomains.indexOf(origin) > -1) {
-        res.setHeader("Access-Control-Allow-Origin", origin);
-    }
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
-    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type, Accept");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    next();
-});
+// app.use(function (req, res, next) {
+//   var allowedDomains: string[] = [
+//     "https://mascotapps.vercel.app/",
+//     "https://accounts.google.com",
+//   ];
+//   var origin: any = req.headers.origin;
+//   if (allowedDomains.indexOf(origin) > -1) {
+//     res.setHeader("Access-Control-Allow-Origin", origin);
+//   }
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "X-Requested-With,content-type, Accept"
+//   );
+//   res.setHeader("Access-Control-Allow-Credentials", "true");
+//   next();
+// });
 //!--------- probando CORS: ----
 // app.use((req, res, next) => {
 //   const allowedOrigins = [
