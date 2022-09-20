@@ -101,8 +101,9 @@ app.set("view engine", "ejs");
 
 app.use(
   cookieSession({
-    maxAge: 1000 * 60 * 45, // === 45 minutos
-    keys: ["LaKeyParaHashearLaCookie"],
+    name: "LaSesionEnMascotapps",
+    maxAge: 24 * 60 * 60 * 1000,
+    keys: ["lakeyparahashear"],
   })
 );
 
