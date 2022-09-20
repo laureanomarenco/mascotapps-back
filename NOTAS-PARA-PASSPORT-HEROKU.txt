@@ -7,3 +7,14 @@
  * La clave de la cookieSession key se usa en src/app.ts, para hashear la cookie (hashearla y establecer el tiempo de expiración).
 
 
+header:
+"Access-Control-Allow-Origin
+Access-Control-Allow-Credentials", "true"
+
+const config = {
+  headers:{
+    "Access-Control-Allow-Origin": true,
+   "Access-Control-Allow-Credentials": true
+  }
+};
+const url = "api endpoint";
