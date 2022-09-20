@@ -30,9 +30,10 @@ const passport = require("passport");
 const app = (0, express_1.default)();
 //const Stripe = require('stripe')
 //export const stripe = new Stripe("sk_test_51LhyryGUTOi474cy1H3QDqeKpzGNU83MUMej4yzD3Rr4K7o0EonNQkpgN51HTb12T4p0tq4Uzx5KFN6scOdrAJEX00PdF4emQp")
-// const cors = require('cors')
+const cors = require("cors");
 app.use(express_1.default.json()); // middleware que transforma la req.body a un json
 //!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
+app.use(cors({ credentials: true, origin: true, exposedHeaders: "*" }));
 app.use((_req, res, next) => {
     res.header("Access-Control-Allow-Origin", "https://accounts.google.com"); // update to match the domain you will make the request from
     res.header("Access-Control-Allow-Credentials", "true");
