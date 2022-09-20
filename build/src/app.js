@@ -50,6 +50,7 @@ const cors = require("cors");
 // });
 app.use(cors({
     origin: "*",
+    credentials: true,
 }));
 //!_---
 // app.use(function (req, res, next) {
