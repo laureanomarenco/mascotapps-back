@@ -79,7 +79,7 @@ passport.use(
           let newUser = await db.User.create(validatedUser);
           console.log(`NEW USER CREATED!!! : ${newUser}`);
 
-          cb(null, newUser);
+          done(null, newUser);
         }
       } catch (error) {
         console.log(error.message);
