@@ -20,7 +20,7 @@ const app = express();
 //const Stripe = require('stripe')
 //export const stripe = new Stripe("sk_test_51LhyryGUTOi474cy1H3QDqeKpzGNU83MUMej4yzD3Rr4K7o0EonNQkpgN51HTb12T4p0tq4Uzx5KFN6scOdrAJEX00PdF4emQp")
 
-const cors = require("cors");
+// const cors = require("cors");
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 // //!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
@@ -39,34 +39,34 @@ app.use(express.json()); // middleware que transforma la req.body a un json
 //   res.setHeader("Access-Control-Allow-Credentials", "true");
 
 
-// app.use((req, res, next) => {
-//   var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app'];
-//   const origin: any = req.headers.origin;
-//   if (allowedDomains.includes(origin)) {
-//        res.setHeader('Access-Control-Allow-Origin', origin);
-//   }
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, DELETE"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
+app.use((req, res, next) => {
+  var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app'];
+  const origin: any = req.headers.origin;
+  if (allowedDomains.includes(origin)) {
+       res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
 
 //   next();
 // });
 
 //   next();
 // });
-app.use(
-  cors({
-    origin: ["https://mascotapps.vercel.app", "http://localhost:3000"],
-    optionSuccesStatus: 200,
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: ["https://mascotapps.vercel.app", "http://localhost:3000"],
+//     optionSuccesStatus: 200,
+//     credentials: true,
+//   })
+// );
 //!_---
 // app.use(function (req, res, next) {
 //   var allowedDomains: string[] = [
