@@ -29,26 +29,25 @@ app.use(expressSession({
   resave: true,
   saveUninitialized: true, 
 })); 
-const cors = require("cors");
-app.use(cors({ origin: "https://mascotapps.vercel.app" }));
-// app.use((req, res, next) => {
-//   var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app'];
-//   const origin: any = req.headers.origin;
-//   if (allowedDomains.includes(origin)) {
-//        res.setHeader('Access-Control-Allow-Origin', origin);
-//   }
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, DELETE"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
 
-//   next();
-// });
+app.use((req, res, next) => {
+  var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app'];
+  const origin: any = req.headers.origin;
+  if (allowedDomains.includes(origin)) {
+       res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  next();
+});
 
 //ruta para testear que responde la api:
 app.get("/ping", (_req, res) => {
