@@ -30,8 +30,8 @@ router.get("/", authCheck, async (req, res) => {
     let userDataInDB = await db.User.findByPk(userID);
     console.log(`User encontrado por id en la db:`);
     console.log(userDataInDB);
-    // return res.redirect("https://mascotapps.vercel.app/home");
-    return res.status(200).send(userDataInDB);
+    return res.redirect("https://mascotapps.vercel.app/account");
+    // return res.status(200).send(userDataInDB);
   } catch (error) {
     return res.status(404).send(error.message);
   }
