@@ -39,10 +39,11 @@ app.use(express.json()); // middleware que transforma la req.body a un json
 //   res.setHeader("Access-Control-Allow-Credentials", "true");
 
 
-app.use((_req, res, next) => {
+app.use((req, res, next) => {
   var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app' ];
-  if(allowedDomains.indexOf(origin) > -1){
-    res.setHeader('Access-Control-Allow-Origin', origin);
+  const origin: any = req.headers.origin;
+  if (allowedDomains.includes(origin)) {
+       res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader(
     "Access-Control-Allow-Methods",
