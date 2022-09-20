@@ -30,8 +30,8 @@ router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
   //#17 Ahora en este req me va a llegar el user en req.user:
   // res.send(req.user);
 
-  res.send("you reached the callback URI");
-  //return res.redirect("https://mascotapps.vercel.app/home");
+  //res.send("you reached the callback URI");
+  return res.redirect("https://mascotapps.vercel.app/home");
   //#18 Voy a redirigir y enviar al cliente a una URL particular. Por ejemplo, a /profile. Hago un archivo con las rutas para el perfil.
   // res.redirect("/profile/");
 });
@@ -50,7 +50,7 @@ const authCheck = (req, res, next) => {
   }
 };
 
-router.get("/logged_in", passport.authenticate("google"), (req, res) => {
+router.get("/logged_in", authCheck, (req, res) => {
   console.log("ESTOY EN LA RUTA LOGGED IN");
   try {
     return res.status(200).send({ isLogged: true });
