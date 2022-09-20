@@ -125,7 +125,7 @@ app.use("/users", usersRouter);
 app.use("/pets", animalRouter);
 app.use("/checkout", checkoutRouter);
 
-//! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page.
+//! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page. Voy a comentarla ahora para probar passport. Pero habría que mover esta ruta a otra ruta más específica y que desde el front le tiren GETs cada vez que se monta el landing por ejemplo.
 app.get("/", async (req: any, res) => {
   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
   try {
