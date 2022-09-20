@@ -39,33 +39,34 @@ app.use(express.json()); // middleware que transforma la req.body a un json
 //   res.setHeader("Access-Control-Allow-Credentials", "true");
 
 
-app.use((req, res, next) => {
-  var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app' ];
-  const origin: any = req.headers.origin;
-  if (allowedDomains.includes(origin)) {
-       res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, DELETE"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-
-  next();
-});
+// app.use((req, res, next) => {
+//   var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app'];
+//   const origin: any = req.headers.origin;
+//   if (allowedDomains.includes(origin)) {
+//        res.setHeader('Access-Control-Allow-Origin', origin);
+//   }
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, OPTIONS, PUT, DELETE"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   res.setHeader("Access-Control-Allow-Credentials", "true");
 
 //   next();
 // });
-// app.use(
-//   cors({
-//     origin: "https://mascotapps.vercel.app",
-//     credentials: true,
-//   })
-// );
+
+//   next();
+// });
+app.use(
+  cors({
+    origin: ["https://mascotapps.vercel.app", "http://localhost:3000"],
+    optionSuccesStatus: 200,
+    credentials: true,
+  })
+);
 //!_---
 // app.use(function (req, res, next) {
 //   var allowedDomains: string[] = [
