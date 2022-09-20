@@ -24,10 +24,17 @@ const app = express();
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 
+app.set('trust proxy', 1)
+
 app.use(expressSession({ 
   secret: SESSION_COOKIE_KEY || 'some-secret', 
   resave: true,
   saveUninitialized: true, 
+  cookie: {
+    sameSite: 'none',
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000
+  }
 })); 
 
 app.use((req, res, next) => {
