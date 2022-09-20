@@ -11,8 +11,8 @@ const profileRoutes = require("./routes/profile-routes");
 const passportSetup = require("../config/passport-setup");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../config/config.js")[env];
-const cookieSession = require("cookie-session");
-const cookieParser = require("cookie-parser");
+//const cookieSession = require("cookie-session");
+//const cookieParser = require("cookie-parser");
 const expressSession = require('express-session');
 const passport = require("passport");
 const { SESSION_COOKIE_KEY } = process.env
@@ -20,16 +20,20 @@ const { SESSION_COOKIE_KEY } = process.env
 
 // import db from "./src/models";
 const app = express();
-app.use(cookieParser());
+//app.use(cookieParser());
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 
-// app.use(expressSession({ 
-//   secret: SESSION_COOKIE_KEY || 'some-secret', 
-//   resave: false, 
-//   saveUninitialized: true, 
-
-// }));
+app.use(expressSession({ 
+  secret: SESSION_COOKIE_KEY || 'some-secret', 
+  resave: false,
+  saveUninitialized: true, 
+  cookie: { 
+    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: 'none',
+    secure: true,
+  }
+})); 
 
 app.use((req, res, next) => {
   var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app'];
@@ -59,13 +63,13 @@ app.get("/ping", (_req, res) => {
 
 // middlewares para encriptar la cookie que voy a enviar al browser:
 
-app.use(
-  cookieSession({
-    name: "LaSesionEnMascotapps",
-    maxAge: 24 * 60 * 60 * 1000,
-    keys: [SESSION_COOKIE_KEY],
-  })
-);
+// app.use(
+//   cookieSession({
+//     name: "LaSesionEnMascotapps",
+//     maxAge: 24 * 60 * 60 * 1000,
+//     keys: [SESSION_COOKIE_KEY],
+//   })
+// );
 
 //Inicializar passport:
 app.use(passport.initialize());
