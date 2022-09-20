@@ -40,7 +40,7 @@ app.use(express.json()); // middleware que transforma la req.body a un json
 
 
 app.use((_req, res, next) => {
-  var allowedDomains = ['http://localhost:3001','https://mascotapps.vercel.app/' ];
+  var allowedDomains = ['http://localhost:3001','https://mascotapps.vercel.app' ];
   if(allowedDomains.indexOf(origin) > -1){
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
