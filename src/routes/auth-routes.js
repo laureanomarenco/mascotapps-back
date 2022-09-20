@@ -25,7 +25,7 @@ router.get(
 
 // callback route for google to redirect to
 // entra a esta ruta cuando google me redirecciona, completando la URL/URI con el code que completan en la query de la URL
-router.get("/google/redirect", authCheck, (req, res) => {
+router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
   console.log("ESTOY DESPUÉS DEL MIDDLEWARE DE AUTHTENTICATE");
   //#17 Ahora en este req me va a llegar el user en req.user:
   // res.send(req.user);
