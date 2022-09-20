@@ -23,7 +23,7 @@ const authCheck = (req, res, next) => {
 
 //! en esta ruta podría hacer que si pasa la authenticación, por lo que me llegaría por req.user los datos del usuario, le respondo al front con un:
 // return res.status(200).send(req.user);
-router.get("/", authCheck, async (req, res) => {
+router.get("/",  passport.authenticate("google"), async (req, res) => {
   try {
     console.log(
       `En la ruta /profile. El user.displayName es: ${req?.user?.displayName}`

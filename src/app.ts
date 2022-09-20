@@ -17,26 +17,8 @@ const passport = require("passport");
 
 // import db from "./src/models";
 const app = express();
-//const Stripe = require('stripe')
-//export const stripe = new Stripe("sk_test_51LhyryGUTOi474cy1H3QDqeKpzGNU83MUMej4yzD3Rr4K7o0EonNQkpgN51HTb12T4p0tq4Uzx5KFN6scOdrAJEX00PdF4emQp")
-
-// const cors = require("cors");
 
 app.use(express.json()); // middleware que transforma la req.body a un json
-// //!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
-// app.use(cors());
-// // app.use(cors({ credentials: true, origin: true, exposedHeaders: "*" }));
-// app.use((_req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, DELETE"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
 
 
 app.use((req, res, next) => {
@@ -57,57 +39,6 @@ app.use((req, res, next) => {
 
   next();
 });
-
-//   next();
-// });
-// app.use(
-//   cors({
-//     origin: ["https://mascotapps.vercel.app", "http://localhost:3000"],
-//     optionSuccesStatus: 200,
-//     credentials: true,
-//   })
-// );
-//!_---
-// app.use(function (req, res, next) {
-//   var allowedDomains: string[] = [
-//     "https://mascotapps.vercel.app/",
-//     "https://accounts.google.com",
-//   ];
-//   var origin: any = req.headers.origin;
-//   if (allowedDomains.indexOf(origin) > -1) {
-//     res.setHeader("Access-Control-Allow-Origin", origin);
-//   }
-
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "X-Requested-With,content-type, Accept"
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
-
-//   next();
-// });
-
-//!--------- probando CORS: ----
-// app.use((req, res, next) => {
-//   const allowedOrigins = [
-//     "https://mascotapps.vercel.app",
-//     "https://accounts.google.com",
-//     "www.example3.com",
-//   ];
-//   const origin: any = req.headers.origin;
-//   if (allowedOrigins.includes(origin)) {
-//     res.setHeader("Access-Control-Allow-Origin", origin);
-//   }
-//   console.log("PASÉ POR EL APP.USE DE CORS");
-
-//   next();
-// });
-//!--------------------------------------
-
 
 //ruta para testear que responde la api:
 app.get("/ping", (_req, res) => {
@@ -130,13 +61,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-//!vuelvo a agregar cors abajo de el tema de las cookies o lo que se que haga acá arriba: NUEVO
-// app.use(
-//   cors({
-//     origin: "https://mascotapps.vercel.app",
-//     credentials: true,
-//   })
-// );
+
 // RUTAS:
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
