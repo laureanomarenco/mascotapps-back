@@ -49,7 +49,7 @@ const cors = require("cors");
 //   next();
 // });
 app.use(cors({
-    origin: "https://mascotapps.vercel.app",
+    origin: "*",
 }));
 //!_---
 // app.use(function (req, res, next) {

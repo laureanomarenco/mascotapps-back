@@ -42,7 +42,7 @@ const cors = require("cors");
 // });
 app.use(
   cors({
-    origin: "https://mascotapps.vercel.app",
+    origin: "*",
   })
 );
 //!_---
