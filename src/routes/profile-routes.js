@@ -10,8 +10,10 @@ const authCheck = (req, res, next) => {
   console.log("AUTHCHECK DE PROFILE!");
   console.log(req.user);
   if (!req.user) {
-    console.log("redirigiendo a https://mascotapps.vercel.app/");
-    res.redirect("https://mascotapps.vercel.app/");
+    console.log("RESPONDIENDO CON UN STRING:");
+    return res.status(200).send({ displayName: "Soy el USER HARDCODEADO!" });
+    // console.log("redirigiendo a https://mascotapps.vercel.app/");
+    // res.redirect("https://mascotapps.vercel.app/");
   } else {
     console.log("continuando con el siguiente middleware");
     next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
