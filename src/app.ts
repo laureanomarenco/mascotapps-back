@@ -42,7 +42,7 @@ app.use(express.json()); // middleware que transforma la req.body a un json
 // });
 app.use(
   cors({
-    origin: "https://mascotapps.vercel.app",
+    origin: "https://mascotapps.vercel.app/",
     credentials: true,
   })
 );

@@ -49,7 +49,7 @@ app.use(express_1.default.json()); // middleware que transforma la req.body a un
 //   next();
 // });
 app.use(cors({
-    origin: "https://mascotapps.vercel.app",
+    origin: "https://mascotapps.vercel.app/",
     credentials: true,
 }));
 //!_---
