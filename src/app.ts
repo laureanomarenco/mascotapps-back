@@ -22,7 +22,7 @@ const app = express();
 
 const cors = require("cors");
 
-// app.use(express.json()); // middleware que transforma la req.body a un json
+app.use(express.json()); // middleware que transforma la req.body a un json
 // //!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
 // app.use(cors());
 // // app.use(cors({ credentials: true, origin: true, exposedHeaders: "*" }));
@@ -42,7 +42,7 @@ const cors = require("cors");
 // });
 app.use(
   cors({
-    origin: "*",
+    origin: "https://mascotapps.vercel.app/",
     credentials: true,
   })
 );
