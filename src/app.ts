@@ -42,7 +42,7 @@ app.use(express.json()); // middleware que transforma la req.body a un json
 // });
 app.use(
   cors({
-    origin: "https://mascotapps.vercel.app/",
+    origin: "https://mascotapps.vercel.app",
     credentials: true,
   })
 );
@@ -113,7 +113,7 @@ app.use(passport.session());
 //!vuelvo a agregar cors abajo de el tema de las cookies o lo que se que haga acá arriba: NUEVO
 app.use(
   cors({
-    origin: "https://mascotapps.vercel.app/",
+    origin: "https://mascotapps.vercel.app",
     credentials: true,
   })
 );
