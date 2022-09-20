@@ -51,7 +51,7 @@ app.set("view engine", "ejs");
 app.use(
   cookieSession({
     maxAge: 1000 * 60 * 45, // === 45 minutos
-    keys: [config.cookieKey],
+    keys: ['LaKeyParaHashear'],
   })
 );
 
