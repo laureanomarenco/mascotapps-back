@@ -10,8 +10,8 @@ const authCheck = (req, res, next) => {
   console.log("AUTHCHECK DE PROFILE!");
   console.log(req.user);
   if (!req.user) {
-    console.log("redirigiendo al /auth/google");
-    res.redirect("/auth/google");
+    console.log("redirigiendo a https://mascotapps.vercel.app/");
+    res.redirect("https://mascotapps.vercel.app/");
   } else {
     console.log("continuando con el siguiente middleware");
     next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
