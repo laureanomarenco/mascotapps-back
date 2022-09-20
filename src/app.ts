@@ -24,15 +24,19 @@ const cors = require("cors");
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 //!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
-app.use(cors({ credentials: true, origin: true, exposedHeaders: "*" }));
+app.use(cors());
+// app.use(cors({ credentials: true, origin: true, exposedHeaders: "*" }));
 app.use((_req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://accounts.google.com"); // update to match the domain you will make the request from
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header(
+  res.setHeader("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, DELETE"
+  );
   next();
 });
 
