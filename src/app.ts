@@ -20,20 +20,35 @@ const app = express();
 //const Stripe = require('stripe')
 //export const stripe = new Stripe("sk_test_51LhyryGUTOi474cy1H3QDqeKpzGNU83MUMej4yzD3Rr4K7o0EonNQkpgN51HTb12T4p0tq4Uzx5KFN6scOdrAJEX00PdF4emQp")
 
-//const cors = require('cors')
+// const cors = require('cors')
 
 app.use(express.json()); // middleware que transforma la req.body a un json
+//!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
+// app.use((_req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "https://mascotapps.vercel.app"); // update to match the domain you will make the request from
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+//   next();
+// });
 
-app.use((_req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://mascotapps.vercel.app"); // update to match the domain you will make the request from
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+//!--------- probando CORS: ----
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    "https://mascotapps.vercel.app",
+    "https://accounts.google.com",
+    "www.example3.com",
+  ];
+  const origin: any = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   next();
 });
+//!--------------------------------------
 
 //ruta para testear que responde la api:
 app.get("/ping", (_req, res) => {
@@ -69,16 +84,15 @@ app.get("/", async (req: any, res) => {
   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
   try {
     let newVisitor: visitor = {
-      id: undefined
-    }
-    let newVisit = await db.Visitor.create(newVisitor)
-    res.send(req.user)
+      id: undefined,
+    };
+    let newVisit = await db.Visitor.create(newVisitor);
+    res.send(req.user);
   } catch (error) {
-    res.status(404).send(error)
+    res.status(404).send(error);
   }
   //res.render("home", { usuario: req.user });
 });
-
 
 module.exports = app;
 
