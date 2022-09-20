@@ -172,7 +172,7 @@ async function getAllInAdoption(): Promise<Pet[]> {
   }
 }
 
-async function getAllByNameOrRace(input: any): Promise<Pet[]> {
+async function getAllBy(input: any): Promise<Pet[]> {
   console.log(`En la function getAllByNameOrRace`);
   try {
     const searchedPets = await db.Animal.findAll({
@@ -189,7 +189,23 @@ async function getAllByNameOrRace(input: any): Promise<Pet[]> {
         },
       },
     });
-    const allPets = searchedPets.concat(searchedPetsRace);
+    const searchedPetsSpecie = await db.Animal.findAll({
+      where: {
+        specie: {
+          [Op.iLike]: "%" + input + "%",
+        },
+      },
+    });
+    const searchedPetsGender = await db.Animal.findAll({
+      where: {
+        gender: {
+          [Op.iLike]: "%" + input + "%",
+        },
+      },
+    });
+    
+    
+    const allPets = [...searchedPets, ...searchedPetsGender, ...searchedPetsRace, ...searchedPetsSpecie]
 
     return allPets;
   } catch (error: any) {
@@ -360,7 +376,7 @@ router.get("/search", async (req, res) => {
   try {
     const { input } = req.query;
     console.log(`input = ${input}`);
-    let result = await getAllByNameOrRace(input);
+    let result = await getAllBy(input);
     return res.status(200).send(result);
   } catch (error: any) {
     console.log(

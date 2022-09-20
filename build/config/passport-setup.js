@@ -42,7 +42,6 @@ passport.deserializeUser((id, done) => {
         // lo que hace este done es meterle una key "user" al objeto req de la ruta app.get("/")
     });
 });
-
 passport.use(new GoogleStrategy({
     //options for the strategy
     callbackURL: "/auth/google/redirect",

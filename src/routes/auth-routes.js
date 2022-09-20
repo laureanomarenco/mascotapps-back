@@ -31,9 +31,9 @@ router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
   // res.send(req.user);
 
   // res.send("you reached the callback URI");
-
+  return res.redirect("https://mascotapps.vercel.app/home");
   //#18 Voy a redirigir y enviar al cliente a una URL particular. Por ejemplo, a /profile. Hago un archivo con las rutas para el perfil.
-  res.redirect("/profile/");
+  // res.redirect("/profile/");
 });
 
 //------- RUTAS QUE REQUIEREN AUTHENTICACIÓN/AUTORIZACIÓN: ------
