@@ -38,7 +38,7 @@ router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
 
 router.get("/logged_in", passport.authenticate("google"), (req, res) => {
   console.log("ESTOY EN LA RUTA LOGGED IN")
-  res.send(true)
+  return res.status(200).send({isLogged: true})
 })
 //------- RUTAS QUE REQUIEREN AUTHENTICACIÓN/AUTORIZACIÓN: ------
 // Todas estas rutas deberían extenderse de un "/auth/" ?
