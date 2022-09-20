@@ -94,9 +94,6 @@ app.get("/ping", (_req, res) => {
   res.send("pong");
 });
 
-//! set up view engine. No debería estar, pero lo pongo para testeos provisorios:
-app.set("view engine", "ejs");
-
 // middlewares para encriptar la cookie que voy a enviar al browser:
 
 app.use(
