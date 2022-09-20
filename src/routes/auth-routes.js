@@ -36,10 +36,30 @@ router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
   // res.redirect("/profile/");
 });
 
-router.get("/logged_in", passport.authenticate("google"), (req, res) => {
-  console.log("ESTOY EN LA RUTA LOGGED IN")
-  return res.status(200).send({isLogged: true})
-})
+const authCheck = (req, res, next) => {
+  //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
+  console.log("AUTHCHECK DE PROFILE!");
+  console.log(req.user);
+  if (!req.user) {
+    return res.status(200).send({ isLogged: false });
+  } else {
+    console.log(
+      "continuando con el siguiente middleware porque el req.user existe"
+    );
+    next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
+  }
+};
+
+router.get("/logged_in", authCheck, (req, res) => {
+  console.log("ESTOY EN LA RUTA LOGGED IN");
+  try {
+    return res.status(200).send({ isLogged: true });
+  } catch (error) {
+    console.log(`Error en la ruta /logged_in. Error message: ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+});
+
 //------- RUTAS QUE REQUIEREN AUTHENTICACIÓN/AUTORIZACIÓN: ------
 // Todas estas rutas deberían extenderse de un "/auth/" ?
 
