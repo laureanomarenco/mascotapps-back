@@ -22,11 +22,11 @@ passport.serializeUser((user, done) => {
 // esta serializeUser se la meto adentro del try del passport callback function.
 // el primer parámetro del done() es para manejar errores. Pero no deberían haber..
 //! cuando un método done() se usa adentro del passport callback de acá abajo, lo que hace es ejercutar la función serializeUser de acá arriba, el cual recibe como argumento el user, y adentro de la función usa un done pero pasandole como argumento el user.id
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser((id, done) => {
   console.log("ESTOY EN EL DESERIALIZE USER");
   // acá sólo recibimos como argumento el id, porque al momento de hacer la serialización y enviar la cookie, sólo enviamos el id serializado.
   // a continuación busco el User en la DB, según el id que nos pasaron mediante la cookie y nosotros deserializamos, y cuando encuentro el user en la DB, le paso ese user como argumento al done().
-  let user = await db.User.findByPk(id);
+  let user = db.User.findByPk(id);
   console.log("Soy el user adentro de deserializeUser:");
   console.log(user);
   done(null, user);
