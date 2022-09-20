@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -21,15 +30,33 @@ const passport = require("passport");
 const app = (0, express_1.default)();
 //const Stripe = require('stripe')
 //export const stripe = new Stripe("sk_test_51LhyryGUTOi474cy1H3QDqeKpzGNU83MUMej4yzD3Rr4K7o0EonNQkpgN51HTb12T4p0tq4Uzx5KFN6scOdrAJEX00PdF4emQp")
-//const cors = require('cors')
+// const cors = require('cors')
 app.use(express_1.default.json()); // middleware que transforma la req.body a un json
-app.use((_req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "https://mascotapps.vercel.app/"); // update to match the domain you will make the request from
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+//!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
+// app.use((_req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "https://mascotapps.vercel.app"); // update to match the domain you will make the request from
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+//   next();
+// });
+//!--------- probando CORS: ----
+app.use((req, res, next) => {
+    const allowedOrigins = [
+        "https://mascotapps.vercel.app",
+        "https://accounts.google.com",
+        "www.example3.com",
+    ];
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader("Access-Control-Allow-Origin", origin);
+    }
     next();
 });
+//!--------------------------------------
 //ruta para testear que responde la api:
 app.get("/ping", (_req, res) => {
     // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
@@ -52,11 +79,19 @@ app.use("/profile", profileRoutes);
 app.use("/users", users_1.default);
 app.use("/pets", pets_1.default);
 app.use("/checkout", checkout_1.default);
-app.get("/", (req, res) => {
+app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
-    let newVisit = models_1.default.Visitor.create();
-    res.send(req.user);
+    try {
+        let newVisitor = {
+            id: undefined,
+        };
+        let newVisit = yield models_1.default.Visitor.create(newVisitor);
+        res.send(req.user);
+    }
+    catch (error) {
+        res.status(404).send(error);
+    }
     //res.render("home", { usuario: req.user });
-});
+}));
 module.exports = app;
 //! este archivo está siendo importado en index.ts de la raíz
