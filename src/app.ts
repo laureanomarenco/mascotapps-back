@@ -13,6 +13,7 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../config/config.js")[env];
 const cookieSession = require("cookie-session");
 const passport = require("passport");
+const { SESSION_COOKIE_KEY } = process.env
 //!---fin nuevo para passport ----
 
 // import db from "./src/models";
@@ -53,7 +54,7 @@ app.use(
   cookieSession({
     name: "LaSesionEnMascotapps",
     maxAge: 24 * 60 * 60 * 1000,
-    keys: ["lakeyparahashear"],
+    keys: [SESSION_COOKIE_KEY],
   })
 );
 
