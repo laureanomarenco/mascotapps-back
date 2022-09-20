@@ -110,6 +110,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+//!vuelvo a agregar cors abajo de el tema de las cookies o lo que se que haga acá arriba: NUEVO
+app.use(
+  cors({
+    origin: "https://mascotapps.vercel.app/",
+    credentials: true,
+  })
+);
 // RUTAS:
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);

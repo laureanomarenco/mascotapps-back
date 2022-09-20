@@ -22,8 +22,10 @@ const authCheck = (req, res, next) => {
     console.log("AUTHCHECK DE PROFILE!");
     console.log(req.user);
     if (!req.user) {
-        console.log("redirigiendo al /auth/google");
-        res.redirect("/auth/google");
+        console.log("RESPONDIENDO CON UN STRING:");
+        return res.status(200).send({ displayName: "Soy el USER HARDCODEADO!" });
+        // console.log("redirigiendo a https://mascotapps.vercel.app/");
+        // res.redirect("https://mascotapps.vercel.app/");
     }
     else {
         console.log("continuando con el siguiente middleware");
