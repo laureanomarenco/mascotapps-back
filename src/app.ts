@@ -12,7 +12,8 @@ const passportSetup = require("../config/passport-setup");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../config/config.js")[env];
 const cookieSession = require("cookie-session");
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
+const expressSession = require('express-session');
 const passport = require("passport");
 const { SESSION_COOKIE_KEY } = process.env
 //!---fin nuevo para passport ----
@@ -23,6 +24,12 @@ app.use(cookieParser());
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 
+// app.use(expressSession({ 
+//   secret: SESSION_COOKIE_KEY || 'some-secret', 
+//   resave: false, 
+//   saveUninitialized: true, 
+
+// }));
 
 app.use((req, res, next) => {
   var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app'];
@@ -56,7 +63,7 @@ app.use(
   cookieSession({
     name: "LaSesionEnMascotapps",
     maxAge: 24 * 60 * 60 * 1000,
-    keys: ['SESSION_COOKIE_KEY'],
+    keys: [SESSION_COOKIE_KEY],
   })
 );
 
