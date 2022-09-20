@@ -26,7 +26,7 @@ const authCheck = (req, res, next) => {
 router.get("/", authCheck, async (req, res) => {
   try {
     console.log(
-      `En la ruta /profile. El user.displayName es: ${req?.user?.displayName}`
+      `En ruta /profile. El user.displayName es: ${req?.user?.displayName}`
     );
     // buscar los datos de este user id en la DB y devolver los datos de esa instancia:
     let userID = req.user.id;
