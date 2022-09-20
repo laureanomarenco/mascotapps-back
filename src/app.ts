@@ -22,21 +22,46 @@ const app = express();
 
 const cors = require("cors");
 
-app.use(express.json()); // middleware que transforma la req.body a un json
-//!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
-app.use(cors());
-// app.use(cors({ credentials: true, origin: true, exposedHeaders: "*" }));
-app.use((_req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+// app.use(express.json()); // middleware que transforma la req.body a un json
+// //!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
+// app.use(cors());
+// // app.use(cors({ credentials: true, origin: true, exposedHeaders: "*" }));
+// app.use((_req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, OPTIONS, PUT, DELETE"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   res.setHeader("Access-Control-Allow-Credentials", "true");
+
+//   next();
+// });
+
+//!_---
+app.use(function (req, res, next) {
+  var allowedDomains: string[] = [
+    "https://mascotapps.vercel.app/",
+    "https://accounts.google.com",
+  ];
+  var origin: any = req.headers.origin;
+  if (allowedDomains.indexOf(origin) > -1) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, DELETE"
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
   );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type, Accept"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
   next();
 });
 

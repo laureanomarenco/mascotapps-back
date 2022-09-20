@@ -1,16 +1,42 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+var __awaiter =
+  (this && this.__awaiter) ||
+  function (thisArg, _arguments, P, generator) {
+    function adopt(value) {
+      return value instanceof P
+        ? value
+        : new P(function (resolve) {
+            resolve(value);
+          });
+    }
     return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
+      function fulfilled(value) {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function rejected(value) {
+        try {
+          step(generator["throw"](value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function step(result) {
+        result.done
+          ? resolve(result.value)
+          : adopt(result.value).then(fulfilled, rejected);
+      }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+  };
+var __importDefault =
+  (this && this.__importDefault) ||
+  function (mod) {
+    return mod && mod.__esModule ? mod : { default: mod };
+  };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const users_1 = __importDefault(require("./routes/users"));
@@ -36,11 +62,17 @@ app.use(express_1.default.json()); // middleware que transforma la req.body a un
 app.use(cors());
 // app.use(cors({ credentials: true, origin: true, exposedHeaders: "*" }));
 app.use((_req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-    next();
+  res.setHeader("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  next();
 });
 //!--------- probando CORS: ----
 // app.use((req, res, next) => {
@@ -59,17 +91,19 @@ app.use((_req, res, next) => {
 //!--------------------------------------
 //ruta para testear que responde la api:
 app.get("/ping", (_req, res) => {
-    // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
-    console.log("Someone pinged here!!!");
-    res.send("pong");
+  // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
+  console.log("Someone pinged here!!!");
+  res.send("pong");
 });
 //! set up view engine. No debería estar, pero lo pongo para testeos provisorios:
 app.set("view engine", "ejs");
 // middlewares para encriptar la cookie que voy a enviar al browser:
-app.use(cookieSession({
+app.use(
+  cookieSession({
     maxAge: 1000 * 60 * 45,
     keys: [config.cookieKey],
-}));
+  })
+);
 //Inicializar passport:
 app.use(passport.initialize());
 app.use(passport.session());
@@ -79,19 +113,20 @@ app.use("/profile", profileRoutes);
 app.use("/users", users_1.default);
 app.use("/pets", pets_1.default);
 app.use("/checkout", checkout_1.default);
-app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/", (req, res) =>
+  __awaiter(void 0, void 0, void 0, function* () {
     console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
     try {
-        let newVisitor = {
-            id: undefined,
-        };
-        let newVisit = yield models_1.default.Visitor.create(newVisitor);
-        res.send(req.user);
-    }
-    catch (error) {
-        res.status(404).send(error);
+      let newVisitor = {
+        id: undefined,
+      };
+      let newVisit = yield models_1.default.Visitor.create(newVisitor);
+      res.send(req.user);
+    } catch (error) {
+      res.status(404).send(error);
     }
     //res.render("home", { usuario: req.user });
-}));
+  })
+);
 module.exports = app;
 //! este archivo está siendo importado en index.ts de la raíz
