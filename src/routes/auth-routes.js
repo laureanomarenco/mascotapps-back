@@ -32,7 +32,7 @@ router.get("/google/redirect", passport.authenticate("google", { failureRedirect
 
   //res.send("you reached the callback URI");
 
-  return res.redirect("https://mascotapps.vercel.app/home");
+  res.redirect("https://mascotapps.vercel.app/home");
   //#18 Voy a redirigir y enviar al cliente a una URL particular. Por ejemplo, a /profile. Hago un archivo con las rutas para el perfil.
   // res.redirect("/profile/");
 });
@@ -42,7 +42,7 @@ const authCheck = (req, res, next) => {
   console.log("AUTHCHECK DE PROFILE!");
   console.log(req.user);
   if (!req.user) {
-    return res.status(200).send({ isLogged: false });
+    res.status(200).send({ isLogged: false });
   } else {
     console.log(
       "continuando con el siguiente middleware porque el req.user existe"
