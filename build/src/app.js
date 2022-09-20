@@ -33,30 +33,27 @@ const app = (0, express_1.default)();
 // const cors = require('cors')
 app.use(express_1.default.json()); // middleware que transforma la req.body a un json
 //!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
-// app.use((_req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "https://mascotapps.vercel.app"); // update to match the domain you will make the request from
-//   res.header("Access-Control-Allow-Credentials", "true");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-//   next();
-// });
-//!--------- probando CORS: ----
-app.use((req, res, next) => {
-    const allowedOrigins = [
-        "https://mascotapps.vercel.app",
-        "https://accounts.google.com",
-        "www.example3.com",
-    ];
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader("Access-Control-Allow-Origin", origin);
-    }
-    console.log("PASÉ POR EL APP.USE DE CORS");
+app.use((_req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "https://accounts.google.com"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
     next();
 });
+//!--------- probando CORS: ----
+// app.use((req, res, next) => {
+//   const allowedOrigins = [
+//     "https://mascotapps.vercel.app",
+//     "https://accounts.google.com",
+//     "www.example3.com",
+//   ];
+//   const origin: any = req.headers.origin;
+//   if (allowedOrigins.includes(origin)) {
+//     res.setHeader("Access-Control-Allow-Origin", origin);
+//   }
+//   console.log("PASÉ POR EL APP.USE DE CORS");
+//   next();
+// });
 //!--------------------------------------
 //ruta para testear que responde la api:
 app.get("/ping", (_req, res) => {
