@@ -56,7 +56,7 @@ app.use(
   cookieSession({
     name: "LaSesionEnMascotapps",
     maxAge: 24 * 60 * 60 * 1000,
-    keys: [SESSION_COOKIE_KEY],
+    keys: ['SESSION_COOKIE_KEY'],
   })
 );
 
