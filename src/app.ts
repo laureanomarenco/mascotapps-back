@@ -40,7 +40,7 @@ const cors = require("cors");
 
 //   next();
 // });
-
+app.use(cors());
 //!_---
 app.use(function (req, res, next) {
   var allowedDomains: string[] = [
@@ -112,6 +112,7 @@ app.use("/users", usersRouter);
 app.use("/pets", animalRouter);
 app.use("/checkout", checkoutRouter);
 
+//! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page.
 app.get("/", async (req: any, res) => {
   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
   try {
@@ -119,7 +120,7 @@ app.get("/", async (req: any, res) => {
       id: undefined,
     };
     let newVisit = await db.Visitor.create(newVisitor);
-    res.send(req.user);
+    // res.send(req.user);
   } catch (error) {
     res.status(404).send(error);
   }
