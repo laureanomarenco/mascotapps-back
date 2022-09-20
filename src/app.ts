@@ -30,7 +30,7 @@ app.use(expressSession({
   saveUninitialized: true, 
 })); 
 const cors = require("cors");
-app.use(cors({ origin: ["http://localhost:3000", "https://mascotapps.vercel.app"] }));
+app.use(cors({ origin: "https://mascotapps.vercel.app" }));
 // app.use((req, res, next) => {
 //   var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app'];
 //   const origin: any = req.headers.origin;
