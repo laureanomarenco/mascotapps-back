@@ -25,23 +25,22 @@ const app = express();
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 
-// app.use((_req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "https://mascotapps.vercel.app");
-//   res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // update to match the domain you will make the request from
-//   res.header("Access-Control-Allow-Credentials", "true");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-//   next();
-// });
-app.use(
-  cors({
-    origin: "https://mascotapps.vercel.app",
-    credentials: true,
-  })
-);
+app.use((_req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://mascotapps.vercel.app");// update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  next();
+});
+// app.use(
+//   cors({
+//     origin: "https://mascotapps.vercel.app",
+//     credentials: true,
+//   })
+// );
 //ruta para testear que responde la api:
 app.get("/ping", (_req, res) => {
   // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
@@ -49,15 +48,12 @@ app.get("/ping", (_req, res) => {
   res.send("pong");
 });
 
-//! set up view engine. No debería estar, pero lo pongo para testeos provisorios:
-app.set("view engine", "ejs");
-
 // middlewares para encriptar la cookie que voy a enviar al browser:
 
 app.use(
   cookieSession({
     maxAge: 1000 * 60 * 45, // === 45 minutos
-    keys: ["LaKeyParaLaCookie"],
+    keys: ['LaKeyParaHashear'],
   })
 );
 

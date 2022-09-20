@@ -36,6 +36,7 @@ router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
   // res.redirect("/profile/");
 });
 
+
 const authCheck = (req, res, next) => {
   //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
   console.log("AUTHCHECK DE PROFILE!");
