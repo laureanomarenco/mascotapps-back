@@ -4,6 +4,7 @@ import animalRouter from "./routes/pets";
 import checkoutRouter from "./routes/checkout";
 import db from "../models";
 import { visitor } from "./types/visitorTypes";
+const cors = require("cors");
 
 //! ---- nuevo para passport:
 const authRoutes = require("./routes/auth-routes");
@@ -24,18 +25,23 @@ const app = express();
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 
-app.use((_req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://mascotapps.vercel.app");
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // update to match the domain you will make the request from
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-  next();
-});
-
+// app.use((_req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "https://mascotapps.vercel.app");
+//   res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // update to match the domain you will make the request from
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+//   next();
+// });
+app.use(
+  cors({
+    origin: "https://mascotapps.vercel.app",
+    credentials: true,
+  })
+);
 //ruta para testear que responde la api:
 app.get("/ping", (_req, res) => {
   // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
@@ -67,16 +73,15 @@ app.get("/", async (req: any, res) => {
   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
   try {
     let newVisitor: visitor = {
-      id: undefined
-    }
-    let newVisit = await db.Visitor.create(newVisitor)
-    res.send(req.user)
+      id: undefined,
+    };
+    let newVisit = await db.Visitor.create(newVisitor);
+    res.send(req.user);
   } catch (error) {
-    res.status(404).send(error)
+    res.status(404).send(error);
   }
   //res.render("home", { usuario: req.user });
 });
-
 
 module.exports = app;
 
