@@ -17,7 +17,7 @@ passport.serializeUser((user, done) => {
   console.log(`User displayName: ${user.displayName}`);
   //le paso el id que crea la DB, y NO la id de google.
   
-  done(null, user.id);
+  return done(null, user.id);
 });
 // esta serializeUser se la meto adentro del try del passport callback function.
 // el primer parámetro del done() es para manejar errores. Pero no deberían haber..
@@ -29,7 +29,7 @@ passport.deserializeUser(async (id, done) => {
   let user = await db.User.findByPk(id);
   console.log("Soy el user adentro de deserializeUser:");
   console.log(user);
-  done(null, user);
+  return  done(null, user);
   // db.User.findByPk(id).then((user) => {
   //   done(null, user);
   // lo que hace este done es meterle una key "user" al objeto req de la ruta app.get("/")

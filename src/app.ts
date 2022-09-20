@@ -26,13 +26,8 @@ app.use(express.json()); // middleware que transforma la req.body a un json
 
 app.use(expressSession({ 
   secret: SESSION_COOKIE_KEY || 'some-secret', 
-  resave: false,
+  resave: true,
   saveUninitialized: true, 
-  cookie: { 
-    maxAge: 24 * 60 * 60 * 1000,
-    sameSite: 'none',
-    secure: true,
-  }
 })); 
 
 app.use((req, res, next) => {
