@@ -44,7 +44,7 @@ app.use(cors(corsOptions));
     authRequired: false,
     auth0Logout: true,
     secret: process.env.SECRET,
-    baseURL: 'https://mascotapps.vercel.app/',
+    baseURL: 'https://worker-production-2aad.up.railway.app',
     clientID: 'YKWqA32lwyrttvqr5ce3sWfmkY1y9CME',
     issuerBaseURL: 'https://dev-nxuk8wmn.us.auth0.com'
   };
