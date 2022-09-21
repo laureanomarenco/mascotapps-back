@@ -13,6 +13,9 @@ import checkoutRouter from "./routes/checkout";
 import dotenv from "dotenv";
 import cors from "cors";
 
+const { auth } = require('express-openid-connect');
+const { requiresAuth } = require('express-openid-connect');
+
 dotenv.config();
 
 const app = express();
@@ -30,18 +33,39 @@ app.use(cors(corsOptions));
 
 // ruta para testear que responde la api:
 // app.get("/ping", (_req, res) => {
-//   // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
-//   console.log("Someone pinged here!!!");
-//   res.send("pong");
-// });
+  //   // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
+  //   console.log("Someone pinged here!!!");
+  //   res.send("pong");
+  // });
 
-// RUTAS:
+  
 
-app.use("/users", usersRouter);
-app.use("/pets", animalRouter);
-app.use("/checkout", checkoutRouter);
+  const config = {
+    authRequired: false,
+    auth0Logout: true,
+    secret: process.env.SECRET,
+    baseURL: 'https://mascotapps.vercel.app/',
+    clientID: 'YKWqA32lwyrttvqr5ce3sWfmkY1y9CME',
+    issuerBaseURL: 'https://dev-nxuk8wmn.us.auth0.com'
+  };
 
-//! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page. Voy a comentarla ahora para probar passport. Pero habría que mover esta ruta a otra ruta más específica y que desde el front le tiren GETs cada vez que se monta el landing por ejemplo.
+  // auth router attaches /login, /logout, and /callback routes to the baseURL
+  app.use(auth(config));
+  
+  // req.isAuthenticated is provided from the auth router
+  app.get('/', (req: any, res) => {
+    res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+  });
+  
+  app.get('/profile', requiresAuth(), (req: any, res) => {    
+    res.send(req.oidc.user);
+  });
+  // RUTAS:
+  app.use("/users", usersRouter);
+  app.use("/pets", animalRouter);
+  app.use("/checkout", checkoutRouter);
+  
+  //! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page. Voy a comentarla ahora para probar passport. Pero habría que mover esta ruta a otra ruta más específica y que desde el front le tiren GETs cada vez que se monta el landing por ejemplo.
 // app.get("/", async (req: any, res) => {
 //   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
 //   try {
