@@ -17,26 +17,110 @@ const users_1 = __importDefault(require("./routes/users"));
 const pets_1 = __importDefault(require("./routes/pets"));
 const checkout_1 = __importDefault(require("./routes/checkout"));
 const models_1 = __importDefault(require("../models"));
+// import { visitor } from "./types/visitorTypes";
 //! ---- nuevo para passport:
-const authRoutes = require("./routes/auth-routes");
+// const authRoutes = require("./routes/auth-routes");
 const profileRoutes = require("./routes/profile-routes");
-const passportSetup = require("../config/passport-setup");
+// const passportSetup = require("../config/passport-setup");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../config/config.js")[env];
-const cookieSession = require("cookie-session");
+//const cookieSession = require("cookie-session");
+//const cookieParser = require("cookie-parser");
+// const expressSession = require("express-session");
 const passport = require("passport");
+// const { SESSION_COOKIE_KEY } = process.env;
 //!---fin nuevo para passport ----
-// import db from "./src/models";
+//!-- video nuevo: --
+const dotenv_1 = __importDefault(require("dotenv"));
+const cors_1 = __importDefault(require("cors"));
+const express_session_1 = __importDefault(require("express-session"));
+const UserValidators_1 = require("./auxiliary/UserValidators");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+// const GitHubStrategy = require("passport-github").Strategy;
+dotenv_1.default.config();
+//!--------------
 const app = (0, express_1.default)();
-//const Stripe = require('stripe')
-//export const stripe = new Stripe("sk_test_51LhyryGUTOi474cy1H3QDqeKpzGNU83MUMej4yzD3Rr4K7o0EonNQkpgN51HTb12T4p0tq4Uzx5KFN6scOdrAJEX00PdF4emQp")
-const cors = require("cors");
 app.use(express_1.default.json()); // middleware que transforma la req.body a un json
-// //!comenté el app.use() de acá abajo para darle lugar al otro de más abajo para CORS.
-// app.use(cors());
-// // app.use(cors({ credentials: true, origin: true, exposedHeaders: "*" }));
-// app.use((_req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+app.use((0, cors_1.default)({ origin: "https://mascotapps.vercel.app", credentials: true }));
+app.set("trust proxy", 1);
+app.use((0, express_session_1.default)({
+    secret: "secretcode",
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+        sameSite: "none",
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24,
+    },
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+//4: Serializa el usuario. El user que recibe como argumento el serialize es el "newUser" que se crea (o encuntra) en la callback function de la estrategia.
+passport.serializeUser((user, done) => {
+    return done(null, user.id);
+});
+// Cada vez que tengamos una req, vamos a agarrar la cookie y deserializarla:
+// Llega el id que acabo de meter en el done(null, user._id) del serializeUser
+passport.deserializeUser((id, done) => __awaiter(void 0, void 0, void 0, function* () {
+    let userFound = yield models_1.default.User.findByPk(id);
+    return done(null, userFound);
+}));
+passport.use(new GoogleStrategy({
+    clientID: `${process.env.GOOGLE_CLIENT_ID}`,
+    clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
+    callbackURL: "/auth/google/redirect",
+}, function (accessToken, refreshToken, profile, cb) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(`GoogleStrategy callback disparada...`);
+        console.log(`Soy el profile:`);
+        console.log(profile);
+        try {
+            //esta función corre cuando hay una autenticación exitosa!
+            //Las funciones cb() lo que hacen es decirle a Passport "to move on and go to the next step". Le pasamos algunos params para el próximo paso también.
+            let userInDB = yield models_1.default.User.findOne({
+                where: {
+                    googleId: profile.id,
+                },
+            });
+            if (!userInDB) {
+                console.log(`User in DB no encontrado. Creando uno nuevo...`);
+                let validatedUser = (0, UserValidators_1.validateNewUser)(profile);
+                console.log("usuario validado correctamente y listo para crearse...");
+                let createdUser = yield models_1.default.User.create(validatedUser);
+                console.log(`Nuevo usuario creado: `);
+                console.log(createdUser);
+                cb(null, createdUser);
+            }
+            else {
+                cb(null, userInDB);
+            }
+        }
+        catch (error) {
+            console.log(`Error en el Google Stgy callback: ${error.message}`);
+            return error.message;
+        }
+    });
+}));
+// 1: Cuando el usuario hace un get a /auth/google va a ir al paso 2 a correr la googleStrategy.
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+//3: Corre este callback y se va a serializar el usuario.
+app.get("/auth/google/redirect", passport.authenticate("google", { failureRedirect: "/login" }), function (req, res) {
+    // Successful authentication, redirect home.
+    res.redirect("https://mascotapps.vercel.app"); //homepage de la aplicación en React.
+});
+app.get("/getuser", (req, res) => {
+    res.send(req.user);
+});
+//!-------
+// app.use((req, res, next) => {
+//   var allowedDomains = [
+//     "http://localhost:3000",
+//     "https://mascotapps.vercel.app",
+//   ];
+//   const origin: any = req.headers.origin;
+//   if (allowedDomains.includes(origin)) {
+//     res.setHeader("Access-Control-Allow-Origin", origin);
+//   }
 //   res.setHeader(
 //     "Access-Control-Allow-Methods",
 //     "GET, POST, OPTIONS, PUT, DELETE"
@@ -48,88 +132,39 @@ app.use(express_1.default.json()); // middleware que transforma la req.body a un
 //   res.setHeader("Access-Control-Allow-Credentials", "true");
 //   next();
 // });
-app.use(cors({
-    origin: "https://mascotapps.vercel.app",
-    credentials: true,
-}));
-//!_---
-// app.use(function (req, res, next) {
-//   var allowedDomains: string[] = [
-//     "https://mascotapps.vercel.app/",
-//     "https://accounts.google.com",
-//   ];
-//   var origin: any = req.headers.origin;
-//   if (allowedDomains.indexOf(origin) > -1) {
-//     res.setHeader("Access-Control-Allow-Origin", origin);
-//   }
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "X-Requested-With,content-type, Accept"
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
-//   next();
-// });
-//!--------- probando CORS: ----
-// app.use((req, res, next) => {
-//   const allowedOrigins = [
-//     "https://mascotapps.vercel.app",
-//     "https://accounts.google.com",
-//     "www.example3.com",
-//   ];
-//   const origin: any = req.headers.origin;
-//   if (allowedOrigins.includes(origin)) {
-//     res.setHeader("Access-Control-Allow-Origin", origin);
-//   }
-//   console.log("PASÉ POR EL APP.USE DE CORS");
-//   next();
-// });
-//!--------------------------------------
 //ruta para testear que responde la api:
-app.get("/ping", (_req, res) => {
-    // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
-    console.log("Someone pinged here!!!");
-    res.send("pong");
-});
-//! set up view engine. No debería estar, pero lo pongo para testeos provisorios:
-app.set("view engine", "ejs");
+// app.get("/ping", (_req, res) => {
+//   // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
+//   console.log("Someone pinged here!!!");
+//   res.send("pong");
+// });
 // middlewares para encriptar la cookie que voy a enviar al browser:
-app.use(cookieSession({
-    name: "LaSesionEnMascotapps",
-    maxAge: 24 * 60 * 60 * 1000,
-    keys: ["lakeyparahashear"],
-}));
-//Inicializar passport:
-app.use(passport.initialize());
-app.use(passport.session());
-//!vuelvo a agregar cors abajo de el tema de las cookies o lo que se que haga acá arriba: NUEVO
-app.use(cors({
-    origin: "https://mascotapps.vercel.app",
-    credentials: true,
-}));
+// app.use(
+//   cookieSession({
+//     name: "LaSesionEnMascotapps",
+//     maxAge: 24 * 60 * 60 * 1000,
+//     keys: [SESSION_COOKIE_KEY],
+//   })
+// );
 // RUTAS:
-app.use("/auth", authRoutes);
+// app.use("/auth", authRoutes); //! comento esta para que no moleste
 app.use("/profile", profileRoutes);
 app.use("/users", users_1.default);
 app.use("/pets", pets_1.default);
 app.use("/checkout", checkout_1.default);
 //! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page. Voy a comentarla ahora para probar passport. Pero habría que mover esta ruta a otra ruta más específica y que desde el front le tiren GETs cada vez que se monta el landing por ejemplo.
-app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
-    try {
-        let newVisitor = {
-            id: undefined,
-        };
-        let newVisit = yield models_1.default.Visitor.create(newVisitor);
-        // res.send(req.user);
-    }
-    catch (error) {
-        res.status(404).send(error);
-    }
-    //res.render("home", { usuario: req.user });
-}));
+// app.get("/", async (req: any, res) => {
+//   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
+//   try {
+//     let newVisitor: visitor = {
+//       id: undefined,
+//     };
+//     let newVisit = await db.Visitor.create(newVisitor);
+//     // res.send(req.user);
+//   } catch (error) {
+//     res.status(404).send(error);
+//   }
+//   //res.render("home", { usuario: req.user });
+// });
 module.exports = app;
 //! este archivo está siendo importado en index.ts de la raíz

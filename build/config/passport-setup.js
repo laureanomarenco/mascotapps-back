@@ -28,24 +28,24 @@ passport.serializeUser((user, done) => {
     console.log(`User id = ${user.id}`);
     console.log(`User displayName: ${user.displayName}`);
     //le paso el id que crea la DB, y NO la id de google.
-    done(null, user.id);
+    done(null, user);
 });
 // esta serializeUser se la meto adentro del try del passport callback function.
 // el primer parámetro del done() es para manejar errores. Pero no deberían haber..
 //! cuando un método done() se usa adentro del passport callback de acá abajo, lo que hace es ejercutar la función serializeUser de acá arriba, el cual recibe como argumento el user, y adentro de la función usa un done pero pasandole como argumento el user.id
-passport.deserializeUser((id, done) => __awaiter(void 0, void 0, void 0, function* () {
+passport.deserializeUser((id, done) => {
     console.log("ESTOY EN EL DESERIALIZE USER");
     // acá sólo recibimos como argumento el id, porque al momento de hacer la serialización y enviar la cookie, sólo enviamos el id serializado.
     // a continuación busco el User en la DB, según el id que nos pasaron mediante la cookie y nosotros deserializamos, y cuando encuentro el user en la DB, le paso ese user como argumento al done().
-    let user = yield index_1.default.User.findByPk(id);
-    console.log("Soy el user adentro de deserializeUser:");
-    console.log(user);
-    done(null, user);
-    // db.User.findByPk(id).then((user) => {
+    // let user = db.User.findByPk(id)
+    //   console.log("Soy el user adentro de deserializeUser:");
+    //   console.log(user);
     //   done(null, user);
-    // lo que hace este done es meterle una key "user" al objeto req de la ruta app.get("/")
-    // });
-}));
+    index_1.default.User.findByPk(id).then((user) => {
+        done(null, user);
+        // lo que hace este done es meterle una key "user" al objeto req de la ruta app.get("/")
+    });
+});
 passport.use(new GoogleStrategy({
     //options for the strategy
     callbackURL: "/auth/google/redirect",
