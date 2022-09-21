@@ -106,7 +106,7 @@ app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "em
 //3: Corre este callback y se va a serializar el usuario.
 app.get("/auth/google/redirect", passport.authenticate("google", { failureRedirect: "/login" }), function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect("https://mascotapps.vercel.app"); //homepage de la aplicación en React.
+    res.redirect("https://mascotapps.vercel.app/home"); //homepage de la aplicación en React.
 });
 app.get("/getuser", (req, res) => {
     res.send(req.user);

@@ -118,7 +118,7 @@ app.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect("https://mascotapps.vercel.app"); //homepage de la aplicación en React.
+    res.redirect("https://mascotapps.vercel.app/home"); //homepage de la aplicación en React.
   }
 );
 
