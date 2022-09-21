@@ -2,7 +2,7 @@ import express from "express";
 import usersRouter from "./routes/users";
 import animalRouter from "./routes/pets";
 import checkoutRouter from "./routes/checkout";
-import db from "../models";
+// import db from "../models";
 // import { visitor } from "./types/visitorTypes";
 
 //! ---- nuevo para passport:
@@ -21,9 +21,9 @@ const passport = require("passport");
 import dotenv from "dotenv";
 import cors from "cors";
 import session from "express-session";
-import { validateNewUser } from "./auxiliary/UserValidators";
-import { UserAttributes } from "./types/userTypes";
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+// import { validateNewUser } from "./auxiliary/UserValidators";
+// import { UserAttributes } from "./types/userTypes";
+// const GoogleStrategy = require("passport-google-oauth20").Strategy;
 // const GitHubStrategy = require("passport-github").Strategy;
 
 dotenv.config();
@@ -33,9 +33,9 @@ const app = express();
 app.use(express.json()); // middleware que transforma la req.body a un json
 
 var corsOptions = {
-  origin: ["https://mascotapps.vercel.app","http://localhost:3000"],
-  credentials: true
-  }
+  origin: ["https://mascotapps.vercel.app", "http://localhost:3000"],
+  credentials: true,
+};
 
 app.use(cors(corsOptions));
 
@@ -53,72 +53,17 @@ app.use(
     },
   })
 );
+require("../config/pass-setup");
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-//4: Serializa el usuario. El user que recibe como argumento el serialize es el "newUser" que se crea (o encuntra) en la callback function de la estrategia.
-passport.serializeUser((user: any, done: any) => {
-  return done(null, user.id);
-});
-
-// Cada vez que tengamos una req, vamos a agarrar la cookie y deserializarla:
-// Llega el id que acabo de meter en el done(null, user._id) del serializeUser
-passport.deserializeUser(async (id: string, done: any) => {
-  let userFound = await db.User.findByPk(id);
-
-  return done(null, userFound);
-});
-
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: `${process.env.GOOGLE_CLIENT_ID}`,
-      clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
-      callbackURL: "/auth/google/redirect",
-    },
-    async function (
-      accessToken: any,
-      refreshToken: any,
-      profile: any,
-      cb: any
-    ) {
-      console.log(`GoogleStrategy callback disparada...`);
-      console.log(`Soy el profile:`);
-      console.log(profile);
-      try {
-        //esta función corre cuando hay una autenticación exitosa!
-        //Las funciones cb() lo que hacen es decirle a Passport "to move on and go to the next step". Le pasamos algunos params para el próximo paso también.
-        let userInDB = await db.User.findOne({
-          where: {
-            googleId: profile.id,
-          },
-        });
-        if (!userInDB) {
-          console.log(`User in DB no encontrado. Creando uno nuevo...`);
-          let validatedUser: UserAttributes = validateNewUser(profile);
-          console.log("usuario validado correctamente y listo para crearse...");
-          let createdUser = await db.User.create(validatedUser);
-          console.log(`Nuevo usuario creado: `);
-          console.log(createdUser);
-          cb(null, createdUser);
-        } else {
-          cb(null, userInDB);
-        }
-      } catch (error: any) {
-        console.log(`Error en el Google Stgy callback: ${error.message}`);
-        return error.message;
-      }
-    }
-  )
-);
-
-// 1: Cuando el usuario hace un get a /auth/google va a ir al paso 2 a correr la googleStrategy.
 app.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-//3: Corre este callback y se va a serializar el usuario.
+// Corre este callback y se va a serializar el usuario.
 app.get(
   "/auth/google/redirect",
   passport.authenticate("google", { failureRedirect: "/login" }),
@@ -199,7 +144,7 @@ app.get("/auth/logout", (req: any, res) => {
     req.logout();
     res.send("done");
   }
-})
+});
 
 module.exports = app;
 

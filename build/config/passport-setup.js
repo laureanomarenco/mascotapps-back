@@ -28,7 +28,7 @@ passport.serializeUser((user, done) => {
     console.log(`User id = ${user.id}`);
     console.log(`User displayName: ${user.displayName}`);
     //le paso el id que crea la DB, y NO la id de google.
-    done(null, user);
+    done(null, user.id);
 });
 // esta serializeUser se la meto adentro del try del passport callback function.
 // el primer parámetro del done() es para manejar errores. Pero no deberían haber..

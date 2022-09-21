@@ -24,13 +24,13 @@ const authCheck = (req, res, next) => {
     console.log(req.user);
     if (!req.user) {
         console.log("RESPONDIENDO CON UN STRING:");
-        return res.status(200).send({ displayName: "Soy el USER HARDCODEADO!" });
+        return res.status(200).send({ displayName: "USER NO AUTENTICADO" });
         // console.log("redirigiendo a https://mascotapps.vercel.app/");
         // res.redirect("https://mascotapps.vercel.app/");
     }
     else {
         console.log("continuando con el siguiente middleware");
-        next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
+        return next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
     }
 };
 //! en esta ruta podría hacer que si pasa la authenticación, por lo que me llegaría por req.user los datos del usuario, le respondo al front con un:
