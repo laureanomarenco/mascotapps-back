@@ -17,8 +17,7 @@ const authCheck = (req, res, next) => {
     // res.redirect("https://mascotapps.vercel.app/");
   } else {
     console.log("continuando con el siguiente middleware");
-    res.send(user)
-    next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
+    return next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
   }
 };
 
