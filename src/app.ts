@@ -27,7 +27,7 @@ app.use(express.json()); // middleware que transforma la req.body a un json
 app.set('trust proxy', 1)
 
 app.use(expressSession({ 
-  secret: SESSION_COOKIE_KEY || 'some-secret', 
+  secret: 'hardcode' || 'some-secret', 
   resave: true,
   saveUninitialized: true, 
   cookie: {
