@@ -33,7 +33,11 @@ const app = express();
 app.use(express.json()); // middleware que transforma la req.body a un json
 
 var corsOptions = {
-  origin: ["https://mascotapps.vercel.app", "http://localhost:3000"],
+  origin: [
+    "https://mascotapps.vercel.app",
+    "http://localhost:3000",
+    "https://mascotapps-front-pass-mb57.vercel.app",
+  ],
   credentials: true,
 };
 
@@ -69,7 +73,7 @@ app.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect("https://mascotapps.vercel.app/home"); //homepage de la aplicación en React.
+    res.redirect("https://mascotapps-front-pass-mb57.vercel.app/home"); //homepage de la aplicación en React.
   }
 );
 
@@ -78,36 +82,9 @@ app.get("/getuser", (req, res) => {
 });
 
 //!-------
-// app.use((req, res, next) => {
-//   var allowedDomains = [
-//     "http://localhost:3000",
-//     "https://mascotapps.vercel.app",
-//   ];
-//   const origin: any = req.headers.origin;
-//   if (allowedDomains.includes(origin)) {
-//     res.setHeader("Access-Control-Allow-Origin", origin);
-//   }
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, DELETE"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
 
-//   next();
-// });
-
-//ruta para testear que responde la api:
-// app.get("/ping", (_req, res) => {
-//   // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
-//   console.log("Someone pinged here!!!");
-//   res.send("pong");
-// });
-
-// middlewares para encriptar la cookie que voy a enviar al browser:
+//! middlewares para encriptar la cookie que voy a enviar al browser:
+//! NO LA USAMOS A ESTA? SE REEMPLAZA POR SESSION?
 
 // app.use(
 //   cookieSession({
@@ -125,19 +102,9 @@ app.use("/pets", animalRouter);
 app.use("/checkout", checkoutRouter);
 
 //! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page. Voy a comentarla ahora para probar passport. Pero habría que mover esta ruta a otra ruta más específica y que desde el front le tiren GETs cada vez que se monta el landing por ejemplo.
-// app.get("/", async (req: any, res) => {
-//   console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
-//   try {
-//     let newVisitor: visitor = {
-//       id: undefined,
-//     };
-//     let newVisit = await db.Visitor.create(newVisitor);
-//     // res.send(req.user);
-//   } catch (error) {
-//     res.status(404).send(error);
-//   }
-//   //res.render("home", { usuario: req.user });
-// });
+app.get("/", async (req: any, res) => {
+  console.log("ENTRÉ AL GET DE '/' y el req.user es " + req.user);
+});
 
 app.get("/auth/logout", (req: any, res) => {
   if (req.user) {

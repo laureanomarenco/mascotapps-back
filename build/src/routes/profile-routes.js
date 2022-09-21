@@ -30,7 +30,7 @@ const authCheck = (req, res, next) => {
     }
     else {
         console.log("continuando con el siguiente middleware");
-        return next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
+        next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
     }
 };
 //! en esta ruta podría hacer que si pasa la authenticación, por lo que me llegaría por req.user los datos del usuario, le respondo al front con un:
