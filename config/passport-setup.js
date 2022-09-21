@@ -26,14 +26,16 @@ passport.deserializeUser((id, done) => {
   console.log("ESTOY EN EL DESERIALIZE USER");
   // acá sólo recibimos como argumento el id, porque al momento de hacer la serialización y enviar la cookie, sólo enviamos el id serializado.
   // a continuación busco el User en la DB, según el id que nos pasaron mediante la cookie y nosotros deserializamos, y cuando encuentro el user en la DB, le paso ese user como argumento al done().
-  let user = db.User.findByPk(id);
-  console.log("Soy el user adentro de deserializeUser:");
-  console.log(user);
-  done(null, user);
-  // db.User.findByPk(id).then((user) => {
+  // let user = db.User.findByPk(id)
+    
+  //   console.log("Soy el user adentro de deserializeUser:");
+  //   console.log(user);
   //   done(null, user);
+  
+  db.User.findByPk(id).then((user) => {
+    done(null, user);
   // lo que hace este done es meterle una key "user" al objeto req de la ruta app.get("/")
-  // });
+  });
 });
 
 passport.use(
