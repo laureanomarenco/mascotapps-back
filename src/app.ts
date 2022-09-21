@@ -188,6 +188,13 @@ app.use("/checkout", checkoutRouter);
 //   //res.render("home", { usuario: req.user });
 // });
 
+app.get("/auth/logout", (req: any, res) => {
+  if (req.user) {
+    req.logout();
+    res.send("done");
+  }
+})
+
 module.exports = app;
 
 //! este archivo está siendo importado en index.ts de la raíz
