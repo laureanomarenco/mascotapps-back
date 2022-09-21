@@ -24,18 +24,6 @@ const app = express();
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 
-app.set('trust proxy', 1)
-
-app.use(expressSession({ 
-  secret: 'hardcode' || 'some-secret', 
-  resave: true,
-  saveUninitialized: true, 
-  cookie: {
-    secure: true,
-    maxAge: 24 * 60 * 60 * 1000
-  }
-})); 
-
 app.use((req, res, next) => {
   var allowedDomains = ['http://localhost:3000','https://mascotapps.vercel.app'];
   const origin: any = req.headers.origin;
@@ -54,6 +42,19 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.set('trust proxy', 1)
+
+app.use(expressSession({ 
+  secret: 'hardcode' || 'some-secret', 
+  resave: false,
+  saveUninitialized: false, 
+  cookie: {
+    secure: false,
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000
+  }
+})); 
 
 //ruta para testear que responde la api:
 app.get("/ping", (_req, res) => {
