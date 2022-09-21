@@ -29,6 +29,7 @@ router.get("/", authCheck, async (req, res) => {
       `En ruta /profile. El user.displayName es: ${req?.user?.displayName}`
     );
     // buscar los datos de este user id en la DB y devolver los datos de esa instancia:
+    console.log(`req.user.id = ${req?.user?.id}`);
     let userID = req.user.id;
     let userDataInDB = await db.User.findByPk(userID);
     console.log(`User encontrado por id en la db:`);

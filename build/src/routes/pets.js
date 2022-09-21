@@ -179,7 +179,7 @@ function getAllInAdoption() {
         }
     });
 }
-function getAllByNameOrRace(input) {
+function getAllBy(input) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`En la function getAllByNameOrRace`);
         try {
@@ -197,7 +197,21 @@ function getAllByNameOrRace(input) {
                     },
                 },
             });
-            const allPets = searchedPets.concat(searchedPetsRace);
+            const searchedPetsSpecie = yield index_1.default.Animal.findAll({
+                where: {
+                    specie: {
+                        [sequelize_1.Op.iLike]: "%" + input + "%",
+                    },
+                },
+            });
+            const searchedPetsGender = yield index_1.default.Animal.findAll({
+                where: {
+                    gender: {
+                        [sequelize_1.Op.iLike]: "%" + input + "%",
+                    },
+                },
+            });
+            const allPets = [...searchedPets, ...searchedPetsGender, ...searchedPetsRace, ...searchedPetsSpecie];
             return allPets;
         }
         catch (error) {
@@ -360,7 +374,7 @@ router.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const { input } = req.query;
         console.log(`input = ${input}`);
-        let result = yield getAllByNameOrRace(input);
+        let result = yield getAllBy(input);
         return res.status(200).send(result);
     }
     catch (error) {
