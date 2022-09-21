@@ -31,7 +31,13 @@ dotenv.config();
 const app = express();
 
 app.use(express.json()); // middleware que transforma la req.body a un json
-app.use(cors({ origin: "https://mascotapps.vercel.app", credentials: true }));
+
+var corsOptions = {
+  origin: ["https://mascotapps.vercel.app","http://localhost:3000"],
+  credentials: true
+  }
+
+app.use(cors(corsOptions));
 
 app.set("trust proxy", 1);
 
