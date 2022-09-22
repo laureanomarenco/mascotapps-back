@@ -21,7 +21,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 // import { validateNewUser } from "./auxiliary/UserValidators";
 // import { UserAttributes } from "./types/userTypes";
-
+require("../config/pass-setup");
 dotenv.config();
 //!--------------
 const app = express();
@@ -66,13 +66,16 @@ sessionStore.sync();
 
 app.use(
   session({
-    secret: "keyboard cat",
+    secret: "some secret",
+    resave: false,
+    saveUnitialized: true,
     store: sessionStore,
     // store: new SequelizeStore({
     //   db: sequelize,
     // }),
-    resave: false,
-    proxy: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+    },
   })
 );
 
@@ -91,18 +94,17 @@ app.use(cors(corsOptions));
 
 app.set("trust proxy", 1);
 
-app.use(
-  session({
-    secret: "secretcode",
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-      sameSite: "none",
-      secure: true,
-      maxAge: 1000 * 60 * 60 * 24,
-    },
-  })
-);
+// app.use(
+//   session({
+//     secret: "secretcode",
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//       sameSite: "none",
+//       maxAge: 1000 * 60 * 60 * 24,
+//     },
+//   })
+// );
 import passport from "../config/pass-setup";
 import { MemoryStore } from "express-session";
 
