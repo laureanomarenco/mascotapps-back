@@ -24,8 +24,8 @@ const profileRoutes = require("./routes/profile-routes");
 // const passportSetup = require("../config/passport-setup");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../config/config.js")[env];
-//const cookieSession = require("cookie-session");
-//const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
+const cookieParser = require("cookie-parser");
 // const expressSession = require("express-session");
 // const passport = require("passport");
 // const { SESSION_COOKIE_KEY } = process.env;
@@ -52,6 +52,11 @@ var corsOptions = {
 };
 app.use((0, cors_1.default)(corsOptions));
 app.set("trust proxy", 1);
+app.use(cookieSession({
+    name: "LaSesionEnMascotapps",
+    maxAge: 24 * 60 * 60 * 1000,
+    keys: ["unaKeyParaLaSession"],
+}));
 app.use((0, express_session_1.default)({
     secret: "secretcode",
     resave: true,
@@ -79,13 +84,6 @@ app.get("/getuser", (req, res) => {
 //!-------
 //! middlewares para encriptar la cookie que voy a enviar al browser:
 //! NO LA USAMOS A ESTA? SE REEMPLAZA POR SESSION?
-// app.use(
-//   cookieSession({
-//     name: "LaSesionEnMascotapps",
-//     maxAge: 24 * 60 * 60 * 1000,
-//     keys: [SESSION_COOKIE_KEY],
-//   })
-// );
 // RUTAS:
 // app.use("/auth", authRoutes); //! comento esta para que no moleste
 app.use("/profile", profileRoutes);
