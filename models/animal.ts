@@ -74,10 +74,7 @@ module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
         allowNull: true,
       },
       image: {
-        type: DataTypes.STRING,
-        validate: {
-          len: [1, 3000],
-        },
+        type: DataTypes.STRING(3000),
         allowNull: true,
       },
       comments: {
