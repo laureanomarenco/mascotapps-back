@@ -221,30 +221,28 @@ function getAllBy(input) {
     });
 }
 //! ----- MIDDLEWARE PARA AUTH : ------
-const authCheck = (req, res, next) => {
-    //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
-    console.log("En el authCheck de pets!");
-    console.log(req.user);
-    if (!req.user) {
-        console.log("redirigiendo al /auth/google");
-        res.redirect("/auth/google");
-    }
-    else {
-        console.log("continuando con el siguiente middleware");
-        next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
-    }
-};
+// const authCheck = (req: any, res: any, next: any) => {
+//   //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
+//   console.log("En el authCheck de pets!");
+//   console.log(req.user);
+//   if (!req.user) {
+//     console.log("redirigiendo al /auth/google");
+//     res.redirect("/auth/google");
+//   } else {
+//     console.log("continuando con el siguiente middleware");
+//     next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
+//   }
+// };
 //! ruta de prueba con authCheck:
-router.get("/secretos", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("en /secretos");
-    try {
-        let allCats = yield getAllCats();
-        return res.status(200).send(allCats);
-    }
-    catch (error) {
-        return res.status(404).send(error.message);
-    }
-}));
+// router.get("/secretos", authCheck, async (req, res) => {
+//   console.log("en /secretos");
+//   try {
+//     let allCats = await getAllCats();
+//     return res.status(200).send(allCats);
+//   } catch (error: any) {
+//     return res.status(404).send(error.message);
+//   }
+// });
 // ----- ------ ------- RUTAS :  ------ ------- -------
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:

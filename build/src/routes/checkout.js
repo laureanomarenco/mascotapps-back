@@ -12,14 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const models_1 = __importDefault(require("../../models"));
-const Stripe = require('stripe');
-//const stripe = require('../app')
-const router = (0, express_1.Router)();
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER } = process.env;
+const express_1 = require("express");
+const models_1 = __importDefault(require("../../models"));
+const Stripe = require('stripe');
+const router = (0, express_1.Router)();
 let stripe;
 if (config.stripeKeyProd) {
     stripe = new Stripe(process.env[config.stripeKeyProd]);

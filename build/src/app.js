@@ -1,13 +1,6 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
+//const env = process.env.NODE_ENV || "development";
+//const config = require(__dirname + "../../config/config.js")[env];
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,139 +9,47 @@ const express_1 = __importDefault(require("express"));
 const users_1 = __importDefault(require("./routes/users"));
 const pets_1 = __importDefault(require("./routes/pets"));
 const checkout_1 = __importDefault(require("./routes/checkout"));
-const models_1 = __importDefault(require("../models"));
+// import db from "../models";
 // import { visitor } from "./types/visitorTypes";
-//! ---- nuevo para passport:
-// const authRoutes = require("./routes/auth-routes");
-const profileRoutes = require("./routes/profile-routes");
-// const passportSetup = require("../config/passport-setup");
-const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "../../config/config.js")[env];
-//const cookieSession = require("cookie-session");
-//const cookieParser = require("cookie-parser");
-// const expressSession = require("express-session");
-const passport = require("passport");
-// const { SESSION_COOKIE_KEY } = process.env;
-//!---fin nuevo para passport ----
-//!-- video nuevo: --
+// import { validateNewUser } from "./auxiliary/UserValidators";
+// import { UserAttributes } from "./types/userTypes";
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
-const express_session_1 = __importDefault(require("express-session"));
-const UserValidators_1 = require("./auxiliary/UserValidators");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-// const GitHubStrategy = require("passport-github").Strategy;
+// const { auth } = require('express-openid-connect');
+// const { requiresAuth } = require('express-openid-connect');
 dotenv_1.default.config();
-//!--------------
 const app = (0, express_1.default)();
-app.use(express_1.default.json()); // middleware que transforma la req.body a un json
-app.use((0, cors_1.default)({ origin: "https://mascotapps.vercel.app", credentials: true }));
-app.set("trust proxy", 1);
-app.use((0, express_session_1.default)({
-    secret: "secretcode",
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-        sameSite: "none",
-        secure: true,
-        maxAge: 1000 * 60 * 60 * 24,
-    },
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-//4: Serializa el usuario. El user que recibe como argumento el serialize es el "newUser" que se crea (o encuntra) en la callback function de la estrategia.
-passport.serializeUser((user, done) => {
-    return done(null, user.id);
-});
-// Cada vez que tengamos una req, vamos a agarrar la cookie y deserializarla:
-// Llega el id que acabo de meter en el done(null, user._id) del serializeUser
-passport.deserializeUser((id, done) => __awaiter(void 0, void 0, void 0, function* () {
-    let userFound = yield models_1.default.User.findByPk(id);
-    return done(null, userFound);
-}));
-passport.use(new GoogleStrategy({
-    clientID: `${process.env.GOOGLE_CLIENT_ID}`,
-    clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
-    callbackURL: "/auth/google/redirect",
-}, function (accessToken, refreshToken, profile, cb) {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.log(`GoogleStrategy callback disparada...`);
-        console.log(`Soy el profile:`);
-        console.log(profile);
-        try {
-            //esta función corre cuando hay una autenticación exitosa!
-            //Las funciones cb() lo que hacen es decirle a Passport "to move on and go to the next step". Le pasamos algunos params para el próximo paso también.
-            let userInDB = yield models_1.default.User.findOne({
-                where: {
-                    googleId: profile.id,
-                },
-            });
-            if (!userInDB) {
-                console.log(`User in DB no encontrado. Creando uno nuevo...`);
-                let validatedUser = (0, UserValidators_1.validateNewUser)(profile);
-                console.log("usuario validado correctamente y listo para crearse...");
-                let createdUser = yield models_1.default.User.create(validatedUser);
-                console.log(`Nuevo usuario creado: `);
-                console.log(createdUser);
-                cb(null, createdUser);
-            }
-            else {
-                cb(null, userInDB);
-            }
-        }
-        catch (error) {
-            console.log(`Error en el Google Stgy callback: ${error.message}`);
-            return error.message;
-        }
-    });
-}));
-// 1: Cuando el usuario hace un get a /auth/google va a ir al paso 2 a correr la googleStrategy.
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-//3: Corre este callback y se va a serializar el usuario.
-app.get("/auth/google/redirect", passport.authenticate("google", { failureRedirect: "/login" }), function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect("https://mascotapps.vercel.app/home"); //homepage de la aplicación en React.
-});
-app.get("/getuser", (req, res) => {
-    res.send(req.user);
-});
-//!-------
-// app.use((req, res, next) => {
-//   var allowedDomains = [
-//     "http://localhost:3000",
-//     "https://mascotapps.vercel.app",
-//   ];
-//   const origin: any = req.headers.origin;
-//   if (allowedDomains.includes(origin)) {
-//     res.setHeader("Access-Control-Allow-Origin", origin);
-//   }
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, DELETE"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
-//   next();
-// });
-//ruta para testear que responde la api:
+app.use(express_1.default.json());
+var corsOptions = {
+    origin: ["https://mascotapps.vercel.app", "http://localhost:3000"],
+    credentials: true
+};
+app.use((0, cors_1.default)(corsOptions));
+//app.set("trust proxy", 1);
+// ruta para testear que responde la api:
 // app.get("/ping", (_req, res) => {
 //   // le puse el guión bajo al req para decirle a typescript que ignore el hecho de que no uso esa variable req.
 //   console.log("Someone pinged here!!!");
 //   res.send("pong");
 // });
-// middlewares para encriptar la cookie que voy a enviar al browser:
-// app.use(
-//   cookieSession({
-//     name: "LaSesionEnMascotapps",
-//     maxAge: 24 * 60 * 60 * 1000,
-//     keys: [SESSION_COOKIE_KEY],
-//   })
-// );
+// const config = {
+//   authRequired: false,
+//   auth0Logout: true,
+//   secret: process.env.SECRET,
+//   baseURL: 'https://worker-production-2aad.up.railway.app',
+//   clientID: 'YKWqA32lwyrttvqr5ce3sWfmkY1y9CME',
+//   issuerBaseURL: 'https://dev-nxuk8wmn.us.auth0.com'
+// };
+// // auth router attaches /login, /logout, and /callback routes to the baseURL
+// app.use(auth(config));
+// // req.isAuthenticated is provided from the auth router
+// app.get('/', (req: any, res) => {
+//   res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+// });
+// app.get('/profile', requiresAuth(), (req: any, res) => {    
+//   res.send(req.oidc.user);
+// });
 // RUTAS:
-// app.use("/auth", authRoutes); //! comento esta para que no moleste
-app.use("/profile", profileRoutes);
 app.use("/users", users_1.default);
 app.use("/pets", pets_1.default);
 app.use("/checkout", checkout_1.default);

@@ -200,4 +200,19 @@ router.get('/numbervisitors', (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 }));
 // Hacer más rutas
+router.post('/newuser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id, name, email, postalCode } = req.body;
+    console.log('new user..');
+    try {
+        let newUser = yield index_1.default.User.findOrCreate({
+            id,
+            name,
+            email,
+            postalCode,
+        });
+    }
+    catch (error) {
+        res.status(404).send(error);
+    }
+}));
 exports.default = router;

@@ -25,10 +25,6 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             // allowNull: true,
         },
-        googleId: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
         displayName: {
             type: DataTypes.STRING,
             allowNull: true,
