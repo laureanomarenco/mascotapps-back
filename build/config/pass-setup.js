@@ -74,3 +74,4 @@ passport.use(new GoogleStrategy({
         }
     });
 }));
+exports.default = passport;

@@ -14,7 +14,7 @@ const config = require(__dirname + "../../config/config.js")[env];
 //const cookieSession = require("cookie-session");
 //const cookieParser = require("cookie-parser");
 // const expressSession = require("express-session");
-const passport = require("passport");
+// const passport = require("passport");
 // const { SESSION_COOKIE_KEY } = process.env;
 //!---fin nuevo para passport ----
 //!-- video nuevo: --
@@ -57,7 +57,7 @@ app.use(
     },
   })
 );
-require("../config/pass-setup");
+import passport from "../config/pass-setup";
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -70,7 +70,9 @@ app.get(
 // Corre este callback y se va a serializar el usuario.
 app.get(
   "/auth/google/redirect",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", {
+    failureRedirect: "https://mascotapps-front-pass-mb57.vercel.app/",
+  }),
   function (req, res) {
     // Successful authentication, redirect home.
     res.redirect("https://mascotapps-front-pass-mb57.vercel.app/home"); //homepage de la aplicación en React.
