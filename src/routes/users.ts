@@ -1,10 +1,7 @@
 import { Router } from "express";
-import { UUIDV4 } from "sequelize";
 import db from "../../models/index";
-import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet } from "../types/petTypes";
 import { UserAttributes } from "../types/userTypes";
-// import axios from "axios";
 
 const router = Router();
 
@@ -54,23 +51,13 @@ router.get("/numberOfUsersInDB", async (req, res) => {
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req: any, res: any, next: any) => {
   //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
-  const { id } = req.body
+  const { id } = req.body;
   if (!id) {
-    res.send({msg: 'el usuario no existe'})
+    res.send({ msg: "el usuario no existe" });
   } else {
     next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
   }
 };
-
-// GET CONTACT INFO OF USER (AUTH):
-// La info de contacto del usuario vamos a obtenerla gracias al :petid. Desde el front tienen que enviarnos el id de la mascota por params, y nosotros buscamos el id de la mascota en la DB para obtener su UserId que tiene asociado.
-// Una vez que tener el UserId, vamos a la tabla de Users en la DB y buscamos ese ID.
-// Una vez encontrado ese User mediante el ID, obtenemos cierta información para retornarle al cliente. info a obtener: diplayName, email, aditionalContactInfo.
-// --
-// obtener petID
-// buscar en la DB ese petID
-// obtener el UserId de esa instancia de Pet
-// buscar en la DB en la tabla de Users el id = UserID
 
 router.get("/contactinfo/:petid", async (req, res) => {
   console.log(`Entré a la ruta /users/contactinfo/:petid`);
@@ -96,14 +83,14 @@ router.get("/contactinfo/:petid", async (req, res) => {
   }
 });
 
-// GET ALL PETS OF AUTH USER ID:
+// GET(post) ALL PETS OF AUTH USER ID:
 // obtener todas las instancias de mascotas que tienen como UserId el id del usuario que quiere obtener el listado de mascotas.
 // Esta ruta serviría para que un usuario pueda ver su listado de mascotas posteadas, desde su perfíl.
 // Hay que ver el req.user.id de la cookie, y buscar en la tabla Animals (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
 // Recolectamos esas instancias en un arreglo y enviamos ese arreglo al cliente.
 //---
 // /users/getallpetsofuser
-router.get("/getallpetsofuser", async (req: any, res) => {
+router.post("/getallpetsofuser", async (req: any, res) => {
   console.log(`Entré a la ruta /users/getallpetsofuser`);
   console.log(`user ID = ${req.body.id}`);
   try {
@@ -120,9 +107,6 @@ router.get("/getallpetsofuser", async (req: any, res) => {
   }
 });
 
-// DELETE PET:
-// Esta ruta va a intentar eliminar de la DB una instancia de Animal.
-// va a obtener el req.user.id de la cookie, y va a obtener el id de la mascota a eliminar, buscando el req.params.petid.
 router.delete("/deletepet/:petid", async (req: any, res) => {
   console.log(`En la ruta users/deletepet/:petid.`);
   console.log(`:petid = ${req.body.petid}`);
@@ -154,23 +138,21 @@ router.delete("/deletepet/:petid", async (req: any, res) => {
   }
 });
 
-router.get('/numbervisitors', async(req,res)=>{
-  console.log('Entré a /numbervisitors')
+router.get("/numbervisitors", async (req, res) => {
+  console.log("Entré a /numbervisitors");
   try {
-    let arrayVisitors = await db.Visitor.findAll()
-    let numberOfVisitors = arrayVisitors.length
-    res.status(200).send(`${numberOfVisitors}`)
+    let arrayVisitors = await db.Visitor.findAll();
+    let numberOfVisitors = arrayVisitors.length;
+    res.status(200).send(`${numberOfVisitors}`);
   } catch (error) {
-    res.status(404).send(error)
+    res.status(404).send(error);
   }
-})
+});
 
-// Hacer más rutas
-
-router.post('/newuser', async(req,res) => {
-  const { email, name, city, contact, image, id } = req.body
-  try{
-    console.log('new user..', name) 
+router.post("/newuser", async (req, res) => {
+  const { email, name, city, contact, image, id } = req.body;
+  try {
+    console.log("new user..", name);
     let [newUser, created] = await db.User.findOrCreate({
       where: {
         name,
@@ -179,38 +161,37 @@ router.post('/newuser', async(req,res) => {
         city,
         contact,
         image,
-      }
+      },
     });
-    if(!created){
-      res.status(409).send('el usuario ya existe')
+    if (!created) {
+      res.status(409).send("el usuario ya existe");
     } else {
-      console.log('se creo')
-      res.send(newUser)
+      console.log("se creo");
+      res.send(newUser);
     }
   } catch (error) {
-    console.log(error)
-    res.status(404).send(error)
+    console.log(error);
+    res.status(404).send(error);
   }
-})
+});
 
-
-router.post('/exists', async(req,res) => {
-  const { id } = req.body
-  try{
-    console.log('buscando si existe el usuario') 
+router.post("/exists", async (req, res) => {
+  const { id } = req.body;
+  try {
+    console.log("buscando si existe el usuario");
     let user = await db.User.findOne({
       where: {
         id: id,
-      }
+      },
     });
-    if(user === null){
-      res.send({msg: false})
+    if (user === null) {
+      res.send({ msg: false });
     } else {
-      res.send({msg: true})
+      res.send({ msg: true });
     }
   } catch (error) {
-    console.log(error)
-    res.status(404).send(error)
+    console.log(error);
+    res.status(404).send(error);
   }
 });
 

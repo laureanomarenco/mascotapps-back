@@ -252,13 +252,9 @@ function getAllBy(input) {
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
 router.post("/postnewpet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
     console.log(`Entré a users/postnewpet`);
-    let id = (_b = (_a = req.body) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b.id;
-    try {
-        console.log(`user = ${id}`);
-        console.log(`req.body = `);
-        console.log(req.body);
+    const id = req.body.user.id;
+    try { //refactorizar viendo que exista el usuario o crear middleware
         let validatedPet = (0, AnimalValidators_1.validateNewPet)(req.body.pet);
         console.log("SOY VALIDATED PET: ");
         console.log(validatedPet);
@@ -396,8 +392,8 @@ router.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* 
 }));
 //GET BY ID:
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
-    console.log(`Entré al GET pets/:id con params.id = ${(_c = req === null || req === void 0 ? void 0 : req.params) === null || _c === void 0 ? void 0 : _c.id}`);
+    var _a;
+    console.log(`Entré al GET pets/:id con params.id = ${(_a = req === null || req === void 0 ? void 0 : req.params) === null || _a === void 0 ? void 0 : _a.id}`);
     try {
         let paramsID = req.params.id;
         let petFoundById = yield getPetById(paramsID);
