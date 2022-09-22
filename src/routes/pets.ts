@@ -256,7 +256,7 @@ async function getAllBy(input: any): Promise<Pet[]> {
 //POST A PET:
 router.post("/postnewpet", async (req: any, res) => {
   console.log(`Entré a users/postnewpet`);
-  let id = req.body?.user?.id;
+  const id = req.body.user.id;
   try { //refactorizar viendo que exista el usuario o crear middleware
     let validatedPet: Pet = validateNewPet(req.body.pet);
     console.log("SOY VALIDATED PET: ");
