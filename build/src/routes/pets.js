@@ -246,14 +246,20 @@ function getAllBy(input) {
 // ----- ------ ------- RUTAS :  ------ ------- -------
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
-router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("entré al POST de Animal!");
+router.post("/postnewpet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré a users/postnewpet`);
     try {
-        let validatedPet = (0, AnimalValidators_1.validateNewPet)(req.body);
+        let id = req.body.user.id;
+        console.log(`user = ${id}`);
+        console.log(`req.body = `);
+        console.log(req.body);
+        let validatedPet = (0, AnimalValidators_1.validateNewPet)(req.body.pet);
         console.log("SOY VALIDATED PET: ");
         console.log(validatedPet);
         let createdPet = yield index_1.default.Animal.create(validatedPet);
-        return res.status(201).send(createdPet);
+        //asociar createdPet con el userID:
+        let associatedPetWithUser = yield createdPet.setUser(id);
+        return res.status(200).send(associatedPetWithUser);
     }
     catch (error) {
         return res.status(404).send(error.message);

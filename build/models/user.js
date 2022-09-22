@@ -21,13 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     User.init({
         id: {
             type: DataTypes.STRING,
-            defaultValue: sequelize_1.UUIDV4,
             primaryKey: true,
-            // allowNull: true,
-        },
-        displayName: {
-            type: DataTypes.STRING,
-            allowNull: true,
+            allowNull: false,
         },
         name: {
             type: DataTypes.STRING,
@@ -38,15 +33,17 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             unique: false,
         },
-        postalCode: {
+        city: {
             type: DataTypes.STRING,
             allowNull: true,
+            unique: false,
         },
-        aditionalContactInfo: {
+        contact: {
             type: DataTypes.STRING,
             allowNull: true,
+            unique: false,
         },
-        thumbnail: {
+        image: {
             type: DataTypes.STRING,
             allowNull: true,
         },

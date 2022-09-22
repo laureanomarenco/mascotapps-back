@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
-const AnimalValidators_1 = require("../auxiliary/AnimalValidators");
 // import axios from "axios";
 //import { UserAttributes } from "../../models/user"
 const router = (0, express_1.Router)();
@@ -71,44 +70,16 @@ const authCheck = (req, res, next) => {
         next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
     }
 };
-//POST NEW PET:
-// validar usuario que sea uno registrado.
-// obtener su ID que lo voy a usar para asociarlo a la new pet.
-// obtener el req.body que va a tener los datos de la new pet.
-// validar el req.body antes de crear el new pet en la DB.
-// crear la validatedPet en la DB
-// asociar la validatedPet con el userID del que la posteó
-//! retonar la associatedPetWithUser o la createdPet?????
-router.post("/postnewpet", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(`Entré a users/postnewpet`);
-    try {
-        console.log(`req.user es = ${req === null || req === void 0 ? void 0 : req.user}`);
-        let userID = req.user.id;
-        console.log(`userID = ${userID}`);
-        console.log(`req.body = `);
-        console.log(req.body);
-        let validatedPet = (0, AnimalValidators_1.validateNewPet)(req.body);
-        console.log("SOY VALIDATED PET: ");
-        console.log(validatedPet);
-        let createdPet = yield index_1.default.Animal.create(validatedPet);
-        //asociar createdPet con el userID:
-        let associatedPetWithUser = yield createdPet.setUser(userID);
-        return res.status(200).send(associatedPetWithUser);
-    }
-    catch (error) {
-        return res.status(404).send(error.message);
-    }
-}));
 // GET CONTACT INFO OF USER (AUTH):
 // La info de contacto del usuario vamos a obtenerla gracias al :petid. Desde el front tienen que enviarnos el id de la mascota por params, y nosotros buscamos el id de la mascota en la DB para obtener su UserId que tiene asociado.
 // Una vez que tener el UserId, vamos a la tabla de Users en la DB y buscamos ese ID.
 // Una vez encontrado ese User mediante el ID, obtenemos cierta información para retornarle al cliente. info a obtener: diplayName, email, aditionalContactInfo.
-//--
+// --
 // obtener petID
 // buscar en la DB ese petID
 // obtener el UserId de esa instancia de Pet
 // buscar en la DB en la tabla de Users el id = UserID
-router.get("/contactinfo/:petid", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a la ruta /users/contactinfo/:petid`);
     console.log(`:petid = ${req.params.petid}`);
     try {
@@ -117,12 +88,12 @@ router.get("/contactinfo/:petid", authCheck, (req, res) => __awaiter(void 0, voi
         let ownerID = petInDB.UserId;
         let ownerInDB = yield index_1.default.Users.findByPk(ownerID);
         let contactInfoOfOwner = {
-            displayName: ownerInDB.displayName,
+            //displayName: ownerInDB.displayName,
             name: ownerInDB.name,
             email: ownerInDB.email,
-            postalCode: ownerInDB.postalCode,
-            aditionalContactInfo: ownerInDB.aditionalContactInfo,
-            thumbnail: ownerInDB.thumbnail,
+            city: ownerInDB.city,
+            image: ownerInDB.image,
+            contact: ownerID.contact,
         };
         console.log(`contactInfoOfOwner = ${contactInfoOfOwner}`);
         return res.status(200).send(contactInfoOfOwner);
@@ -139,15 +110,14 @@ router.get("/contactinfo/:petid", authCheck, (req, res) => __awaiter(void 0, voi
 // Recolectamos esas instancias en un arreglo y enviamos ese arreglo al cliente.
 //---
 // /users/getallpetsofuser
-router.get("/getallpetsofuser", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+router.get("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a la ruta /users/getallpetsofuser`);
-    console.log(`user ID = ${(_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id}`);
+    console.log(`user ID = ${req.query.id}`);
     try {
-        let userID = req.user.id;
+        let id = req.query.id;
         let petsPostedByUser = yield index_1.default.Animals.findAll({
             where: {
-                UserId: userID,
+                UserId: id,
             },
         });
         return res.status(200).send(petsPostedByUser);
@@ -160,18 +130,18 @@ router.get("/getallpetsofuser", authCheck, (req, res) => __awaiter(void 0, void 
 // DELETE PET:
 // Esta ruta va a intentar eliminar de la DB una instancia de Animal.
 // va a obtener el req.user.id de la cookie, y va a obtener el id de la mascota a eliminar, buscando el req.params.petid.
-router.delete("/deletepet/:petid", authCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+router.delete("/deletepet/:petid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`En la ruta users/deletepet/:petid.`);
-    console.log(`:petid = ${req.params.petid}`);
-    console.log(`req.user.id = ${(_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.id}`);
+    console.log(`:petid = ${req.body.petid}`);
+    console.log(`req.user.id = ${req.body.id}`);
     try {
-        let petID = req.params.petid;
-        let userID = req.user.id;
+        let petID = req.body.petid;
+        let userID = req.body.id;
         //buscar instancia de mascota en DB:
         let petToDeleteInDB = yield index_1.default.Animals.findByPk(petID);
         if (petToDeleteInDB.UserId == userID) {
             //borrar instancia de la DB:
+            // await petToDeleteInDB.destroy();
             let deletedPet = yield petToDeleteInDB.destroy();
             console.log(`pet with id ${petToDeleteInDB.id} and pet.UserId = ${petToDeleteInDB.UserId}...  soft-destroyed`);
             return res.status(200).send(deletedPet);
@@ -201,17 +171,29 @@ router.get('/numbervisitors', (req, res) => __awaiter(void 0, void 0, void 0, fu
 }));
 // Hacer más rutas
 router.post('/newuser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id, name, email, postalCode } = req.body;
-    console.log('new user..');
+    const { email, name, city, contact, image, id } = req.body;
     try {
-        let newUser = yield index_1.default.User.findOrCreate({
-            id,
-            name,
-            email,
-            postalCode,
+        console.log('new user..', name);
+        let [newUser, created] = yield index_1.default.User.findOrCreate({
+            where: {
+                name,
+                email,
+                id,
+                city,
+                contact,
+                image,
+            }
         });
+        if (!created) {
+            res.send('el usuario ya existe');
+        }
+        else {
+            console.log('se creo');
+            res.send(newUser);
+        }
     }
     catch (error) {
+        console.log(error);
         res.status(404).send(error);
     }
 }));

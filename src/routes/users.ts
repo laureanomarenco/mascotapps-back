@@ -5,7 +5,7 @@ import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet } from "../types/petTypes";
 import { UserAttributes } from "../types/userTypes";
 // import axios from "axios";
-//import { UserAttributes } from "../../models/user"
+
 const router = Router();
 
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------

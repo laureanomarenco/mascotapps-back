@@ -12,6 +12,7 @@ function validateNewPet(reqBody) {
             name: checkName(reqBody.name),
             specie: checkSpecies(reqBody.specie),
             race: checkRace(reqBody.race),
+            city: reqBody.city,
             age: checkAge(reqBody.age),
             gender: checkGender(reqBody.gender),
             status: checkStatus(reqBody.status),
