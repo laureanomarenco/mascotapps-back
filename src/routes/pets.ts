@@ -250,15 +250,20 @@ async function getAllBy(input: any): Promise<Pet[]> {
 
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
-router.post("/", async (req, res) => {
-  console.log("entré al POST de Animal!");
+router.post("/postnewpet", async (req: any, res) => {
+  console.log(`Entré a users/postnewpet`);
   try {
-    let validatedPet: Pet = validateNewPet(req.body);
+    let id = req.body.user.id;
+    console.log(`user = ${id}`);
+    console.log(`req.body = `);
+    console.log(req.body);
+    let validatedPet: Pet = validateNewPet(req.body.pet);
     console.log("SOY VALIDATED PET: ");
     console.log(validatedPet);
-
     let createdPet = await db.Animal.create(validatedPet);
-    return res.status(201).send(createdPet);
+    //asociar createdPet con el userID:
+    let associatedPetWithUser = await createdPet.setUser(id);
+    return res.status(200).send(associatedPetWithUser);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }

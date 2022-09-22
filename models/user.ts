@@ -21,13 +21,12 @@ module.exports = (sequelize: any, DataTypes: any) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    id: string | undefined;
+    id!: string; // sub
     email: string | undefined;
     name: string | undefined;
-    password: string | undefined;
-    postalCode: string | undefined;
-    aditionalContactInfo: string | undefined;
-    thumbnail: string | undefined;
+    city: string | undefined;
+    contact: string | undefined;
+    image: string | undefined;
     static associate(models: any) {
       // define association here
       User.hasMany(models.Animal);
@@ -37,32 +36,29 @@ module.exports = (sequelize: any, DataTypes: any) => {
     {
       id: {
         type: DataTypes.STRING,
-        defaultValue: UUIDV4,
         primaryKey: true,
-        // allowNull: true,
+        allowNull: false,
       },
       name: {
         type: DataTypes.STRING,
         allowNull: true,
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
       },
       email: {
         type: DataTypes.STRING,
         allowNull: true,
         unique: false,
       },
-      postalCode: {
+      city: {
         type: DataTypes.STRING,
         allowNull: true,
+        unique: false,
       },
-      aditionalContactInfo: {
+      contact: {
         type: DataTypes.STRING,
         allowNull: true,
+        unique: false,
       },
-      thumbnail: {
+      image: {
         type: DataTypes.STRING,
         allowNull: true,
       },
