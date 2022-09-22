@@ -256,7 +256,7 @@ async function getAllBy(input: any): Promise<Pet[]> {
 //POST A PET:
 router.post("/postnewpet", async (req: any, res) => {
   console.log(`Entré a users/postnewpet`);
-  let id = req.body.user.id;
+  let id = req.body?.user?.id;
   try {
     console.log(`user = ${id}`);
     console.log(`req.body = `);
