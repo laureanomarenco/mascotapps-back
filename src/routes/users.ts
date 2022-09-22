@@ -78,8 +78,8 @@ router.post("/postnewpet", authCheck, async (req: any, res) => {
   console.log(`Entré a users/postnewpet`);
   try {
     console.log(`req.user es = ${req?.user}`);
-    let userID = req.user.id;
-    console.log(`userID = ${userID}`);
+    let email = req.body.email;
+    console.log(`userID = ${email}`);
     console.log(`req.body = `);
     console.log(req.body);
     let validatedPet: Pet = validateNewPet(req.body);
@@ -87,7 +87,7 @@ router.post("/postnewpet", authCheck, async (req: any, res) => {
     console.log(validatedPet);
     let createdPet = await db.Animal.create(validatedPet);
     //asociar createdPet con el userID:
-    let associatedPetWithUser = await createdPet.setUser(userID);
+    let associatedPetWithUser = await createdPet.setUser(email);
     return res.status(200).send(associatedPetWithUser);
   } catch (error: any) {
     return res.status(404).send(error.message);

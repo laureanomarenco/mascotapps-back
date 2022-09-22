@@ -15,6 +15,7 @@ module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
     name: string | undefined; //! acá pueden enviar un string >= 1 && <= 100 chars; || null || undefined que sería no enviar la propiedad name. Muy similar en todas las string | undefined. Dependiendo del largo del string nada más.
     specie!: Species; //! OBLIGATORIO
     race: string | undefined;
+    city: string | undefined; 
     age: Ages | undefined;
     gender: Genders | undefined;
     status!: Status; //! OBLIGATORIO
@@ -41,6 +42,10 @@ module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
         primaryKey: true,
       },
       name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      city: {
         type: DataTypes.STRING,
         allowNull: true,
       },

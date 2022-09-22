@@ -54,6 +54,7 @@ export interface Pet {
   name: string | undefined;
   specie: Species; //! OBLIGATORIO
   race: string | undefined;
+  city: string | undefined;
   age: Ages | undefined;
   gender: Genders | undefined;
   status: Status; //! OBLIGATORIO

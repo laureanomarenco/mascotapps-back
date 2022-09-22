@@ -1,3 +1,4 @@
+import { checkServerIdentity } from "tls";
 import {
   Ages,
   Genders,
@@ -18,6 +19,7 @@ export function validateNewPet(reqBody: any): Pet {
       name: checkName(reqBody.name),
       specie: checkSpecies(reqBody.specie),
       race: checkRace(reqBody.race),
+      city: reqBody.city,
       age: checkAge(reqBody.age),
       gender: checkGender(reqBody.gender),
       status: checkStatus(reqBody.status),
