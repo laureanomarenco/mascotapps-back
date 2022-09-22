@@ -57,15 +57,11 @@ router.get("/numberOfUsersInDB", (req, res) => __awaiter(void 0, void 0, void 0,
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req, res, next) => {
     //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
-    console.log("En el authCheck de /users");
-    console.log(req === null || req === void 0 ? void 0 : req.user);
-    if (!req.user) {
-        console.log("redirigiendo al /auth/google");
-        res.redirect("/auth/google");
+    const { id } = req.body;
+    if (!id) {
+        res.send({ msg: 'el usuario no existe' });
     }
     else {
-        console.log("Usuario autenticado (req.user existe)");
-        console.log("continuando con el siguiente middleware");
         next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
     }
 };
@@ -111,9 +107,9 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
 // /users/getallpetsofuser
 router.get("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a la ruta /users/getallpetsofuser`);
-    console.log(`user ID = ${req.query.id}`);
+    console.log(`user ID = ${req.body.id}`);
     try {
-        let id = req.query.id;
+        let id = req.body.id;
         let petsPostedByUser = yield index_1.default.Animals.findAll({
             where: {
                 UserId: id,
@@ -189,6 +185,27 @@ router.post('/newuser', (req, res) => __awaiter(void 0, void 0, void 0, function
         else {
             console.log('se creo');
             res.send(newUser);
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.status(404).send(error);
+    }
+}));
+router.post('/exists', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    try {
+        console.log('buscando si existe el usuario');
+        let user = yield index_1.default.User.findOne({
+            where: {
+                id: id,
+            }
+        });
+        if (user === null) {
+            res.send({ msg: false });
+        }
+        else {
+            res.send({ msg: true });
         }
     }
     catch (error) {
