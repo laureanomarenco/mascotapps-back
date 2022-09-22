@@ -178,14 +178,16 @@ router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(404).send(error);
     }
 }));
-router.post("/exists", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+
+router.post('/exists', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.body;
     try {
-        console.log("buscando si existe el usuario");
+        console.log('buscando si existe el usuario');
         let user = yield index_1.default.User.findOne({
             where: {
                 id: id,
-            },
+            }
+
         });
         if (user === null) {
             res.send({ msg: false });
