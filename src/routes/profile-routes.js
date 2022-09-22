@@ -1,7 +1,6 @@
 // const { default: db } = require("../../models");
 import db from "../../models/index";
 const passport = require("passport");
-
 const router = require("express").Router(); //#18. Esta instancia de router va a controlar las rutas de /profile/
 
 //#18: Creo una función para manejar en caso de que el usuario quiera acceder a /profile/ sin estar logueado.
