@@ -198,7 +198,7 @@ router.post('/exists', async(req,res) => {
   const { id } = req.body
   try{
     console.log('buscando si existe el usuario') 
-    let user = await db.User.findByPk({
+    let user = await db.User.findOne({
       where: {
         id: id,
       }
