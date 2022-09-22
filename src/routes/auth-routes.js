@@ -25,17 +25,23 @@ router.get(
 
 // callback route for google to redirect to
 // entra a esta ruta cuando google me redirecciona, completando la URL/URI con el code que completan en la query de la URL
-router.get("/google/redirect", passport.authenticate("google", { failureRedirect: 'https://mascotapps.vercel.app'}), (req, res) => {
-  console.log("ESTOY DESPUÉS DEL MIDDLEWARE DE AUTHTENTICATE");
-  //#17 Ahora en este req me va a llegar el user en req.user:
-  // res.send(req.user);
-
-  //res.send("you reached the callback URI");
-
-  res.redirect("https://mascotapps.vercel.app/home");
-  //#18 Voy a redirigir y enviar al cliente a una URL particular. Por ejemplo, a /profile. Hago un archivo con las rutas para el perfil.
-  // res.redirect("/profile/");
-});
+router.get(
+  "/google/redirect",
+  passport.authenticate("google", {
+    failureRedirect: "https://mascotapps.vercel.app",
+  }),
+  (req, res) => {
+    console.log("ESTOY DESPUÉS DEL MIDDLEWARE DE AUTHTENTICATE");
+    //#17 Ahora en este req me va a llegar el user en req.user:
+    // res.send(req.user);;
+    console.log(req.user);
+    res.send("you reached the callback URI");
+    // res.redirect("https://mascotapps.vercel.app/account");
+    // res.redirect("https://mascotapps.vercel.app/home");
+    //#18 Voy a redirigir y enviar al cliente a una URL particular. Por ejemplo, a /profile. Hago un archivo con las rutas para el perfil.
+    // res.redirect("/profile/");
+  }
+);
 
 const authCheck = (req, res, next) => {
   //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
@@ -60,7 +66,6 @@ router.get("/logged_in", authCheck, (req, res) => {
     return res.status(404).send(error.message);
   }
 });
-
 
 //------- RUTAS QUE REQUIEREN AUTHENTICACIÓN/AUTORIZACIÓN: ------
 // Todas estas rutas deberían extenderse de un "/auth/" ?

@@ -32,6 +32,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
 // import { validateNewUser } from "./auxiliary/UserValidators";
 // import { UserAttributes } from "./types/userTypes";
+require("../config/pass-setup");
 dotenv_1.default.config();
 //!--------------
 const app = (0, express_1.default)();
@@ -63,13 +64,16 @@ var sessionStore = new SequelizeStore({
 });
 sessionStore.sync();
 app.use(session({
-    secret: "keyboard cat",
+    secret: "some secret",
+    resave: false,
+    saveUnitialized: true,
     store: sessionStore,
     // store: new SequelizeStore({
     //   db: sequelize,
     // }),
-    resave: false,
-    proxy: true,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24,
+    },
 }));
 app.use(express_1.default.json()); // middleware que transforma la req.body a un json
 var corsOptions = {
@@ -83,22 +87,16 @@ var corsOptions = {
 app.use((0, cors_1.default)(corsOptions));
 app.set("trust proxy", 1);
 // app.use(
-//   cookieSession({
-//     name: "LaSesionEnMascotapps",
-//     maxAge: 24 * 60 * 60 * 1000,
-//     keys: ["unaKeyParaLaSession"],
+//   session({
+//     secret: "secretcode",
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//       sameSite: "none",
+//       maxAge: 1000 * 60 * 60 * 24,
+//     },
 //   })
 // );
-app.use(session({
-    secret: "secretcode",
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-        sameSite: "none",
-        secure: true,
-        maxAge: 1000 * 60 * 60 * 24,
-    },
-}));
 const pass_setup_1 = __importDefault(require("../config/pass-setup"));
 app.use(pass_setup_1.default.initialize());
 app.use(pass_setup_1.default.session());
