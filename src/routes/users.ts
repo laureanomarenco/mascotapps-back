@@ -198,4 +198,23 @@ router.post('/newuser', async(req,res) => {
 })
 
 
+router.post('/exists', async(req,res) => {
+  const { id } = req.body
+  try{
+    console.log('buscando si existe el usuario') 
+    let user = await db.User.findByPk({
+      where: {
+        id,
+      }
+    });
+    if(user === null){
+      res.send({msg: true})
+    } else {
+      res.send({msg: false})
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(404).send(error)
+  }
+})
 export default router;
