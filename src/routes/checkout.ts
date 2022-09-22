@@ -1,11 +1,11 @@
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "../../../config/config.js")[env];
+const { GMAIL_PASS, GMAIL_USER } = process.env;
+
 import { Router } from "express";
 import db from "../../models";
 const Stripe = require('stripe')
-//const stripe = require('../app')
 const router = Router();
-const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "../../../config/config.js")[env];
-const { GMAIL_PASS, GMAIL_USER } = process.env
 
 let stripe: any;
 if(config.stripeKeyProd){
