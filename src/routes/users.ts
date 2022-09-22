@@ -78,8 +78,8 @@ router.post("/postnewpet", authCheck, async (req: any, res) => {
   console.log(`Entré a users/postnewpet`);
   try {
     console.log(`req.user es = ${req?.user}`);
-    let email = req.body.email;
-    console.log(`userID = ${email}`);
+    let email = req.query.email;
+    console.log(`user = ${email}`);
     console.log(`req.body = `);
     console.log(req.body);
     let validatedPet: Pet = validateNewPet(req.body);
