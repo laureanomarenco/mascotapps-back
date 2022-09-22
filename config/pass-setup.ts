@@ -9,8 +9,7 @@ import db from "../models/index";
 import { validateNewUser } from "../src/auxiliary/UserValidators";
 //app.ts:
 import dotenv from "dotenv";
-import cors from "cors";
-import session from "express-session";
+
 // import { validateNewUser } from "./auxiliary/UserValidators";
 import { UserAttributes } from "../src/types/userTypes";
 const GoogleStrategy = require("passport-google-oauth20").Strategy;

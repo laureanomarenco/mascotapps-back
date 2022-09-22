@@ -21,7 +21,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 // import { validateNewUser } from "./auxiliary/UserValidators";
 // import { UserAttributes } from "./types/userTypes";
-
+require("../config/pass-setup");
 dotenv.config();
 //!--------------
 const app = express();
