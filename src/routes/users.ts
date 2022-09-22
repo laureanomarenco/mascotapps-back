@@ -186,7 +186,7 @@ router.post('/newuser', async(req,res) => {
       }
     });
     if(!created){
-      res.send('el usuario ya existe')
+      res.status(409).send('el usuario ya existe')
     } else {
       console.log('se creo')
       res.send(newUser)
