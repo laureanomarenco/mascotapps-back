@@ -204,20 +204,23 @@ router.post('/newuser', async(req,res) => {
     console.log('new user..', name) 
 
     let [newUser, created] = await db.User.findOrCreate({
-      email,
-      name,
-      password,
-      aditionalContactInfo,
-      thumbnail,
-      postalCode,
+      where: {
+        email,
+        name,
+        password,
+        aditionalContactInfo,
+        thumbnail,
+        postalCode,
+      }
     });
     if(!created){
       res.send('el usuario ya existe')
     } else {
-
+      console.log('se creo')
       res.send(newUser)
     }
   } catch (error) {
+    console.log(error)
     res.status(404).send(error)
   }
   
