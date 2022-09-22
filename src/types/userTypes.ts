@@ -1,8 +1,8 @@
 export interface UserAttributes {
   id: string | undefined;
-  displayName: string | undefined;
   email: string | undefined;
   name: string | undefined;
+  password: string | undefined;
   postalCode: string | undefined;
   aditionalContactInfo: string | undefined;
   thumbnail: string | undefined;

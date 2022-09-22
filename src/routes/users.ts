@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { UUIDV4 } from "sequelize";
 import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet } from "../types/petTypes";
@@ -112,7 +113,7 @@ router.get("/contactinfo/:petid", authCheck, async (req, res) => {
     let ownerID = petInDB.UserId;
     let ownerInDB: UserAttributes = await db.Users.findByPk(ownerID);
     let contactInfoOfOwner = {
-      displayName: ownerInDB.displayName,
+      //displayName: ownerInDB.displayName,
       name: ownerInDB.name,
       email: ownerInDB.email,
       postalCode: ownerInDB.postalCode,
@@ -198,16 +199,19 @@ router.get('/numbervisitors', async(req,res)=>{
 // Hacer más rutas
 
 router.post('/newuser', async(req,res) => {
-  const { id, name, email, postalCode } = req.body
+  const { email, name, password, aditionalContactInfo, thumbnail, postalCode } = req.body
   console.log('new user..')
   try{
     let newUser = await db.User.findOrCreate({
-      id,
-      name,
       email,
+      name,
+      password,
+      aditionalContactInfo,
+      thumbnail,
       postalCode,
     });
 
+    res.send(newUser)
   } catch (error) {
     res.status(404).send(error)
   }
