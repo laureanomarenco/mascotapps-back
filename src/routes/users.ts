@@ -200,7 +200,7 @@ router.post('/exists', async(req,res) => {
     console.log('buscando si existe el usuario') 
     let user = await db.User.findByPk({
       where: {
-        id,
+        id: id,
       }
     });
     if(user === null){
