@@ -20,7 +20,7 @@ const cookieParser = require("cookie-parser");
 //!-- video nuevo: --
 import dotenv from "dotenv";
 import cors from "cors";
-import session from "express-session";
+// import session from "express-session";
 // import { validateNewUser } from "./auxiliary/UserValidators";
 // import { UserAttributes } from "./types/userTypes";
 // const GoogleStrategy = require("passport-google-oauth20").Strategy;
@@ -29,6 +29,56 @@ import session from "express-session";
 dotenv.config();
 //!--------------
 const app = express();
+const Sequelize = require("sequelize");
+const session = require("express-session");
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
+
+sequelize.define("Session", {
+  sid: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+  },
+  userId: Sequelize.STRING,
+  expires: Sequelize.DATE,
+  data: Sequelize.TEXT,
+});
+
+function extendDefaultFields(
+  defaults: { data: any; expires: any },
+  session: { userId: any }
+) {
+  return {
+    data: defaults.data,
+    expires: defaults.expires,
+    userId: session.userId,
+  };
+}
+
+var sessionStore = new SequelizeStore({
+  db: sequelize,
+  table: "Session",
+  extendDefaultFields: extendDefaultFields,
+});
+sessionStore.sync();
+
+app.use(
+  session({
+    secret: "keyboard cat",
+    store: sessionStore,
+    // store: new SequelizeStore({
+    //   db: sequelize,
+    // }),
+    resave: false,
+    proxy: true,
+  })
+);
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 
@@ -45,13 +95,13 @@ app.use(cors(corsOptions));
 
 app.set("trust proxy", 1);
 
-app.use(
-  cookieSession({
-    name: "LaSesionEnMascotapps",
-    maxAge: 24 * 60 * 60 * 1000,
-    keys: ["unaKeyParaLaSession"],
-  })
-);
+// app.use(
+//   cookieSession({
+//     name: "LaSesionEnMascotapps",
+//     maxAge: 24 * 60 * 60 * 1000,
+//     keys: ["unaKeyParaLaSession"],
+//   })
+// );
 
 app.use(
   session({
@@ -66,6 +116,7 @@ app.use(
   })
 );
 import passport from "../config/pass-setup";
+import { MemoryStore } from "express-session";
 
 app.use(passport.initialize());
 app.use(passport.session());

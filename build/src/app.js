@@ -33,7 +33,7 @@ const cookieParser = require("cookie-parser");
 //!-- video nuevo: --
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
-const express_session_1 = __importDefault(require("express-session"));
+// import session from "express-session";
 // import { validateNewUser } from "./auxiliary/UserValidators";
 // import { UserAttributes } from "./types/userTypes";
 // const GoogleStrategy = require("passport-google-oauth20").Strategy;
@@ -41,6 +41,41 @@ const express_session_1 = __importDefault(require("express-session"));
 dotenv_1.default.config();
 //!--------------
 const app = (0, express_1.default)();
+const Sequelize = require("sequelize");
+const session = require("express-session");
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const sequelize = new Sequelize(config.database, config.username, config.password, config);
+sequelize.define("Session", {
+    sid: {
+        type: Sequelize.STRING,
+        primaryKey: true,
+    },
+    userId: Sequelize.STRING,
+    expires: Sequelize.DATE,
+    data: Sequelize.TEXT,
+});
+function extendDefaultFields(defaults, session) {
+    return {
+        data: defaults.data,
+        expires: defaults.expires,
+        userId: session.userId,
+    };
+}
+var sessionStore = new SequelizeStore({
+    db: sequelize,
+    table: "Session",
+    extendDefaultFields: extendDefaultFields,
+});
+sessionStore.sync();
+app.use(session({
+    secret: "keyboard cat",
+    store: sessionStore,
+    // store: new SequelizeStore({
+    //   db: sequelize,
+    // }),
+    resave: false,
+    proxy: true,
+}));
 app.use(express_1.default.json()); // middleware que transforma la req.body a un json
 var corsOptions = {
     origin: [
@@ -52,12 +87,14 @@ var corsOptions = {
 };
 app.use((0, cors_1.default)(corsOptions));
 app.set("trust proxy", 1);
-app.use(cookieSession({
-    name: "LaSesionEnMascotapps",
-    maxAge: 24 * 60 * 60 * 1000,
-    keys: ["unaKeyParaLaSession"],
-}));
-app.use((0, express_session_1.default)({
+// app.use(
+//   cookieSession({
+//     name: "LaSesionEnMascotapps",
+//     maxAge: 24 * 60 * 60 * 1000,
+//     keys: ["unaKeyParaLaSession"],
+//   })
+// );
+app.use(session({
     secret: "secretcode",
     resave: true,
     saveUninitialized: true,
