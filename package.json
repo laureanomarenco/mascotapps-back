@@ -31,6 +31,7 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
+    "connect-session-sequelize": "^7.1.5",
     "cookie-parser": "^1.4.6",
     "cookie-session": "^2.0.0",
     "cors": "^2.8.5",
@@ -45,6 +46,7 @@
     "pg": "^8.8.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.21.6",
+    "sqlite3": "^5.1.1",
     "stripe": "^10.8.0",
     "ts-node": "^10.9.1"
   }

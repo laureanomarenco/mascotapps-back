@@ -2,7 +2,7 @@ import express from "express";
 import usersRouter from "./routes/users";
 import animalRouter from "./routes/pets";
 import checkoutRouter from "./routes/checkout";
-// import db from "../models";
+import db from "../models";
 // import { visitor } from "./types/visitorTypes";
 
 //! ---- nuevo para passport:
@@ -12,23 +12,69 @@ const profileRoutes = require("./routes/profile-routes");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../config/config.js")[env];
 const cookieSession = require("cookie-session");
-const cookieParser = require("cookie-parser");
-// const expressSession = require("express-session");
+
 // const passport = require("passport");
 // const { SESSION_COOKIE_KEY } = process.env;
 //!---fin nuevo para passport ----
 //!-- video nuevo: --
 import dotenv from "dotenv";
 import cors from "cors";
-import session from "express-session";
 // import { validateNewUser } from "./auxiliary/UserValidators";
 // import { UserAttributes } from "./types/userTypes";
-// const GoogleStrategy = require("passport-google-oauth20").Strategy;
-// const GitHubStrategy = require("passport-github").Strategy;
 
 dotenv.config();
 //!--------------
 const app = express();
+const Sequelize = require("sequelize");
+const session = require("express-session");
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
+//este db.sequelize está bien o será sólo sequelize?
+sequelize.define("Session", {
+  sid: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+  },
+  userId: Sequelize.STRING,
+  expires: Sequelize.DATE,
+  data: Sequelize.TEXT,
+});
+
+function extendDefaultFields(
+  defaults: { data: any; expires: any },
+  session: { userId: any }
+) {
+  return {
+    data: defaults.data,
+    expires: defaults.expires,
+    userId: session.userId,
+  };
+}
+
+var sessionStore = new SequelizeStore({
+  db: sequelize,
+  table: "Session",
+  extendDefaultFields: extendDefaultFields,
+});
+sessionStore.sync();
+
+app.use(
+  session({
+    secret: "keyboard cat",
+    store: sessionStore,
+    // store: new SequelizeStore({
+    //   db: sequelize,
+    // }),
+    resave: false,
+    proxy: true,
+  })
+);
 
 app.use(express.json()); // middleware que transforma la req.body a un json
 
@@ -46,14 +92,6 @@ app.use(cors(corsOptions));
 app.set("trust proxy", 1);
 
 app.use(
-  cookieSession({
-    name: "LaSesionEnMascotapps",
-    maxAge: 24 * 60 * 60 * 1000,
-    keys: ["unaKeyParaLaSession"],
-  })
-);
-
-app.use(
   session({
     secret: "secretcode",
     resave: true,
@@ -66,6 +104,7 @@ app.use(
   })
 );
 import passport from "../config/pass-setup";
+import { MemoryStore } from "express-session";
 
 app.use(passport.initialize());
 app.use(passport.session());
