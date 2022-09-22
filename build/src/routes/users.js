@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
-// import axios from "axios";
 const router = (0, express_1.Router)();
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -57,27 +56,14 @@ router.get("/numberOfUsersInDB", (req, res) => __awaiter(void 0, void 0, void 0,
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req, res, next) => {
     //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
-    console.log("En el authCheck de /users");
-    console.log(req === null || req === void 0 ? void 0 : req.user);
-    if (!req.user) {
-        console.log("redirigiendo al /auth/google");
-        res.redirect("/auth/google");
+    const { id } = req.body;
+    if (!id) {
+        res.send({ msg: "el usuario no existe" });
     }
     else {
-        console.log("Usuario autenticado (req.user existe)");
-        console.log("continuando con el siguiente middleware");
         next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
     }
 };
-// GET CONTACT INFO OF USER (AUTH):
-// La info de contacto del usuario vamos a obtenerla gracias al :petid. Desde el front tienen que enviarnos el id de la mascota por params, y nosotros buscamos el id de la mascota en la DB para obtener su UserId que tiene asociado.
-// Una vez que tener el UserId, vamos a la tabla de Users en la DB y buscamos ese ID.
-// Una vez encontrado ese User mediante el ID, obtenemos cierta información para retornarle al cliente. info a obtener: diplayName, email, aditionalContactInfo.
-// --
-// obtener petID
-// buscar en la DB ese petID
-// obtener el UserId de esa instancia de Pet
-// buscar en la DB en la tabla de Users el id = UserID
 router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a la ruta /users/contactinfo/:petid`);
     console.log(`:petid = ${req.params.petid}`);
@@ -102,18 +88,18 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
         return res.status(404).send(error.message);
     }
 }));
-// GET ALL PETS OF AUTH USER ID:
+// GET(post) ALL PETS OF AUTH USER ID:
 // obtener todas las instancias de mascotas que tienen como UserId el id del usuario que quiere obtener el listado de mascotas.
 // Esta ruta serviría para que un usuario pueda ver su listado de mascotas posteadas, desde su perfíl.
 // Hay que ver el req.user.id de la cookie, y buscar en la tabla Animals (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
 // Recolectamos esas instancias en un arreglo y enviamos ese arreglo al cliente.
 //---
 // /users/getallpetsofuser
-router.get("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a la ruta /users/getallpetsofuser`);
-    console.log(`user ID = ${req.query.id}`);
+    console.log(`user ID = ${req.body.id}`);
     try {
-        let id = req.query.id;
+        let id = req.body.id;
         let petsPostedByUser = yield index_1.default.Animals.findAll({
             where: {
                 UserId: id,
@@ -126,9 +112,6 @@ router.get("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0, 
         return res.status(404).send(error.message);
     }
 }));
-// DELETE PET:
-// Esta ruta va a intentar eliminar de la DB una instancia de Animal.
-// va a obtener el req.user.id de la cookie, y va a obtener el id de la mascota a eliminar, buscando el req.params.petid.
 router.delete("/deletepet/:petid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`En la ruta users/deletepet/:petid.`);
     console.log(`:petid = ${req.body.petid}`);
@@ -157,8 +140,8 @@ router.delete("/deletepet/:petid", (req, res) => __awaiter(void 0, void 0, void 
         return res.status(404).send(error.message);
     }
 }));
-router.get('/numbervisitors', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('Entré a /numbervisitors');
+router.get("/numbervisitors", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Entré a /numbervisitors");
     try {
         let arrayVisitors = yield index_1.default.Visitor.findAll();
         let numberOfVisitors = arrayVisitors.length;
@@ -168,11 +151,10 @@ router.get('/numbervisitors', (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.status(404).send(error);
     }
 }));
-// Hacer más rutas
-router.post('/newuser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, name, city, contact, image, id } = req.body;
     try {
-        console.log('new user..', name);
+        console.log("new user..", name);
         let [newUser, created] = yield index_1.default.User.findOrCreate({
             where: {
                 name,
@@ -181,14 +163,35 @@ router.post('/newuser', (req, res) => __awaiter(void 0, void 0, void 0, function
                 city,
                 contact,
                 image,
-            }
+            },
         });
         if (!created) {
-            res.status(409).send('el usuario ya existe');
+            res.status(409).send("el usuario ya existe");
         }
         else {
-            console.log('se creo');
+            console.log("se creo");
             res.send(newUser);
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.status(404).send(error);
+    }
+}));
+router.post("/exists", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    try {
+        console.log("buscando si existe el usuario");
+        let user = yield index_1.default.User.findOne({
+            where: {
+                id: id,
+            },
+        });
+        if (user === null) {
+            res.send({ msg: false });
+        }
+        else {
+            res.send({ msg: true });
         }
     }
     catch (error) {
