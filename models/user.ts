@@ -22,7 +22,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
      * The `models/index` file will call this method automatically.
      */
     id: string | undefined;
-    googleId: string | undefined;
     displayName: string | undefined;
     name: string | undefined;
     email: string | undefined;
@@ -41,10 +40,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
         defaultValue: UUIDV4,
         primaryKey: true,
         // allowNull: true,
-      },
-      googleId: {
-        type: DataTypes.STRING,
-        allowNull: true,
       },
       displayName: {
         type: DataTypes.STRING,

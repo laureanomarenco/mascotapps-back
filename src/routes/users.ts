@@ -197,4 +197,22 @@ router.get('/numbervisitors', async(req,res)=>{
 
 // Hacer más rutas
 
+router.post('/newuser', async(req,res) => {
+  const { id, name, email, postalCode } = req.body
+  console.log('new user..')
+  try{
+    let newUser = await db.User.findOrCreate({
+      id,
+      name,
+      email,
+      postalCode,
+    });
+
+  } catch (error) {
+    res.status(404).send(error)
+  }
+  
+})
+
+
 export default router;

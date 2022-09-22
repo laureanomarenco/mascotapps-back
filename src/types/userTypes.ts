@@ -1,6 +1,5 @@
 export interface UserAttributes {
   id: string | undefined;
-  googleId: string | undefined;
   displayName: string | undefined;
   email: string | undefined;
   name: string | undefined;
