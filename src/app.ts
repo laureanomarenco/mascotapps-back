@@ -5,7 +5,6 @@ import express from "express";
 import usersRouter from "./routes/users";
 import animalRouter from "./routes/pets";
 import checkoutRouter from "./routes/checkout";
-const profile = require("./routes/profile")
 // import db from "../models";
 // import { visitor } from "./types/visitorTypes";
 // import { validateNewUser } from "./auxiliary/UserValidators";
@@ -65,7 +64,6 @@ app.use(cors(corsOptions));
   app.use("/users", usersRouter);
   app.use("/pets", animalRouter);
   app.use("/checkout", checkoutRouter);
-  app.use("/profile", profile)
   
   //! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page. Voy a comentarla ahora para probar passport. Pero habría que mover esta ruta a otra ruta más específica y que desde el front le tiren GETs cada vez que se monta el landing por ejemplo.
 // app.get("/", async (req: any, res) => {

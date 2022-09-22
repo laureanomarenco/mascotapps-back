@@ -22,7 +22,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
      * The `models/index` file will call this method automatically.
      */
     id!: string; // sub
-    email: string | undefined;
+    email!: string;
     name: string | undefined;
     city: string | undefined;
     contact: string | undefined;
@@ -45,7 +45,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       email: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
         unique: false,
       },
       city: {
