@@ -54,14 +54,10 @@ router.get("/numberOfUsersInDB", async (req, res) => {
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req: any, res: any, next: any) => {
   //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
-  console.log("En el authCheck de /users");
-  console.log(req?.user);
-  if (!req.user) {
-    console.log("redirigiendo al /auth/google");
-    res.redirect("/auth/google");
+  const { id } = req.body
+  if (!id) {
+    res.send({msg: 'el usuario no existe'})
   } else {
-    console.log("Usuario autenticado (req.user existe)");
-    console.log("continuando con el siguiente middleware");
     next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
   }
 };
@@ -109,9 +105,9 @@ router.get("/contactinfo/:petid", async (req, res) => {
 // /users/getallpetsofuser
 router.get("/getallpetsofuser", async (req: any, res) => {
   console.log(`Entré a la ruta /users/getallpetsofuser`);
-  console.log(`user ID = ${req.query.id}`);
+  console.log(`user ID = ${req.body.id}`);
   try {
-    let id = req.query.id;
+    let id = req.body.id;
     let petsPostedByUser: Pet[] = await db.Animals.findAll({
       where: {
         UserId: id,
@@ -172,7 +168,7 @@ router.get('/numbervisitors', async(req,res)=>{
 // Hacer más rutas
 
 router.post('/newuser', async(req,res) => {
-  const { email, name, city, contact, image, id} = req.body
+  const { email, name, city, contact, image, id } = req.body
   try{
     console.log('new user..', name) 
     let [newUser, created] = await db.User.findOrCreate({
@@ -208,13 +204,14 @@ router.post('/exists', async(req,res) => {
       }
     });
     if(user === null){
-      res.send({msg: true})
-    } else {
       res.send({msg: false})
+    } else {
+      res.send({msg: true})
     }
   } catch (error) {
     console.log(error)
     res.status(404).send(error)
   }
-})
+});
+
 export default router;
