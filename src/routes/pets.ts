@@ -204,9 +204,13 @@ async function getAllBy(input: any): Promise<Pet[]> {
         },
       },
     });
-    
-    
-    const allPets = [...searchedPets, ...searchedPetsGender, ...searchedPetsRace, ...searchedPetsSpecie]
+
+    const allPets = [
+      ...searchedPets,
+      ...searchedPetsGender,
+      ...searchedPetsRace,
+      ...searchedPetsSpecie,
+    ];
 
     return allPets;
   } catch (error: any) {
@@ -252,8 +256,8 @@ async function getAllBy(input: any): Promise<Pet[]> {
 //POST A PET:
 router.post("/postnewpet", async (req: any, res) => {
   console.log(`Entré a users/postnewpet`);
+  let id = req.body.user.id;
   try {
-    let id = req.body.user.id;
     console.log(`user = ${id}`);
     console.log(`req.body = `);
     console.log(req.body);
@@ -265,6 +269,8 @@ router.post("/postnewpet", async (req: any, res) => {
     let associatedPetWithUser = await createdPet.setUser(id);
     return res.status(200).send(associatedPetWithUser);
   } catch (error: any) {
+    console.log(`Error en /postnewpet. Error message: ${error.message}`);
+    console.log(`User id: ${id}`);
     return res.status(404).send(error.message);
   }
 });
