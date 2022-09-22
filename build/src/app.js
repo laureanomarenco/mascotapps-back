@@ -16,7 +16,6 @@ const express_1 = __importDefault(require("express"));
 const users_1 = __importDefault(require("./routes/users"));
 const pets_1 = __importDefault(require("./routes/pets"));
 const checkout_1 = __importDefault(require("./routes/checkout"));
-// import db from "../models";
 // import { visitor } from "./types/visitorTypes";
 //! ---- nuevo para passport:
 // const authRoutes = require("./routes/auth-routes");
@@ -25,19 +24,14 @@ const profileRoutes = require("./routes/profile-routes");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../config/config.js")[env];
 const cookieSession = require("cookie-session");
-const cookieParser = require("cookie-parser");
-// const expressSession = require("express-session");
 // const passport = require("passport");
 // const { SESSION_COOKIE_KEY } = process.env;
 //!---fin nuevo para passport ----
 //!-- video nuevo: --
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
-// import session from "express-session";
 // import { validateNewUser } from "./auxiliary/UserValidators";
 // import { UserAttributes } from "./types/userTypes";
-// const GoogleStrategy = require("passport-google-oauth20").Strategy;
-// const GitHubStrategy = require("passport-github").Strategy;
 dotenv_1.default.config();
 //!--------------
 const app = (0, express_1.default)();
@@ -45,6 +39,7 @@ const Sequelize = require("sequelize");
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
+//este db.sequelize está bien o será sólo sequelize?
 sequelize.define("Session", {
     sid: {
         type: Sequelize.STRING,

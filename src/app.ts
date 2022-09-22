@@ -2,7 +2,7 @@ import express from "express";
 import usersRouter from "./routes/users";
 import animalRouter from "./routes/pets";
 import checkoutRouter from "./routes/checkout";
-// import db from "../models";
+import db from "../models";
 // import { visitor } from "./types/visitorTypes";
 
 //! ---- nuevo para passport:
@@ -12,19 +12,15 @@ const profileRoutes = require("./routes/profile-routes");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../config/config.js")[env];
 const cookieSession = require("cookie-session");
-const cookieParser = require("cookie-parser");
-// const expressSession = require("express-session");
+
 // const passport = require("passport");
 // const { SESSION_COOKIE_KEY } = process.env;
 //!---fin nuevo para passport ----
 //!-- video nuevo: --
 import dotenv from "dotenv";
 import cors from "cors";
-// import session from "express-session";
 // import { validateNewUser } from "./auxiliary/UserValidators";
 // import { UserAttributes } from "./types/userTypes";
-// const GoogleStrategy = require("passport-google-oauth20").Strategy;
-// const GitHubStrategy = require("passport-github").Strategy;
 
 dotenv.config();
 //!--------------
@@ -39,7 +35,7 @@ const sequelize = new Sequelize(
   config.password,
   config
 );
-
+//este db.sequelize está bien o será sólo sequelize?
 sequelize.define("Session", {
   sid: {
     type: Sequelize.STRING,
@@ -94,14 +90,6 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 app.set("trust proxy", 1);
-
-// app.use(
-//   cookieSession({
-//     name: "LaSesionEnMascotapps",
-//     maxAge: 24 * 60 * 60 * 1000,
-//     keys: ["unaKeyParaLaSession"],
-//   })
-// );
 
 app.use(
   session({
