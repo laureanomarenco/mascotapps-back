@@ -13,8 +13,8 @@ import checkoutRouter from "./routes/checkout";
 import dotenv from "dotenv";
 import cors from "cors";
 
-const { auth } = require('express-openid-connect');
-const { requiresAuth } = require('express-openid-connect');
+// const { auth } = require('express-openid-connect');
+// const { requiresAuth } = require('express-openid-connect');
 
 dotenv.config();
 
@@ -40,26 +40,26 @@ app.use(cors(corsOptions));
 
   
 
-  const config = {
-    authRequired: false,
-    auth0Logout: true,
-    secret: process.env.SECRET,
-    baseURL: 'https://worker-production-2aad.up.railway.app',
-    clientID: 'YKWqA32lwyrttvqr5ce3sWfmkY1y9CME',
-    issuerBaseURL: 'https://dev-nxuk8wmn.us.auth0.com'
-  };
+  // const config = {
+  //   authRequired: false,
+  //   auth0Logout: true,
+  //   secret: process.env.SECRET,
+  //   baseURL: 'https://worker-production-2aad.up.railway.app',
+  //   clientID: 'YKWqA32lwyrttvqr5ce3sWfmkY1y9CME',
+  //   issuerBaseURL: 'https://dev-nxuk8wmn.us.auth0.com'
+  // };
 
-  // auth router attaches /login, /logout, and /callback routes to the baseURL
-  app.use(auth(config));
+  // // auth router attaches /login, /logout, and /callback routes to the baseURL
+  // app.use(auth(config));
   
-  // req.isAuthenticated is provided from the auth router
-  app.get('/', (req: any, res) => {
-    res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
-  });
+  // // req.isAuthenticated is provided from the auth router
+  // app.get('/', (req: any, res) => {
+  //   res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+  // });
   
-  app.get('/profile', requiresAuth(), (req: any, res) => {    
-    res.send(req.oidc.user);
-  });
+  // app.get('/profile', requiresAuth(), (req: any, res) => {    
+  //   res.send(req.oidc.user);
+  // });
   // RUTAS:
   app.use("/users", usersRouter);
   app.use("/pets", animalRouter);
