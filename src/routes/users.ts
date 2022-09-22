@@ -200,9 +200,10 @@ router.get('/numbervisitors', async(req,res)=>{
 
 router.post('/newuser', async(req,res) => {
   const { email, name, password, aditionalContactInfo, thumbnail, postalCode } = req.body
-  console.log('new user..')
   try{
-    let newUser = await db.User.findOrCreate({
+    console.log('new user..', name) 
+
+    let [newUser, created] = await db.User.findOrCreate({
       email,
       name,
       password,
@@ -210,8 +211,12 @@ router.post('/newuser', async(req,res) => {
       thumbnail,
       postalCode,
     });
+    if(!created){
+      res.send('el usuario ya existe')
+    } else {
 
-    res.send(newUser)
+      res.send(newUser)
+    }
   } catch (error) {
     res.status(404).send(error)
   }
