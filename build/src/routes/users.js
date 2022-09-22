@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
 // import axios from "axios";
-//import { UserAttributes } from "../../models/user"
 const router = (0, express_1.Router)();
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -185,7 +184,7 @@ router.post('/newuser', (req, res) => __awaiter(void 0, void 0, void 0, function
             }
         });
         if (!created) {
-            res.send('el usuario ya existe');
+            res.status(409).send('el usuario ya existe');
         }
         else {
             console.log('se creo');

@@ -211,7 +211,12 @@ function getAllBy(input) {
                     },
                 },
             });
-            const allPets = [...searchedPets, ...searchedPetsGender, ...searchedPetsRace, ...searchedPetsSpecie];
+            const allPets = [
+                ...searchedPets,
+                ...searchedPetsGender,
+                ...searchedPetsRace,
+                ...searchedPetsSpecie,
+            ];
             return allPets;
         }
         catch (error) {
@@ -247,9 +252,10 @@ function getAllBy(input) {
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
 router.post("/postnewpet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     console.log(`Entré a users/postnewpet`);
+    let id = (_b = (_a = req.body) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b.id;
     try {
-        let id = req.body.user.id;
         console.log(`user = ${id}`);
         console.log(`req.body = `);
         console.log(req.body);
@@ -262,6 +268,8 @@ router.post("/postnewpet", (req, res) => __awaiter(void 0, void 0, void 0, funct
         return res.status(200).send(associatedPetWithUser);
     }
     catch (error) {
+        console.log(`Error en /postnewpet. Error message: ${error.message}`);
+        console.log(`User id: ${id}`);
         return res.status(404).send(error.message);
     }
 }));
@@ -388,8 +396,8 @@ router.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* 
 }));
 //GET BY ID:
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    console.log(`Entré al GET pets/:id con params.id = ${(_a = req === null || req === void 0 ? void 0 : req.params) === null || _a === void 0 ? void 0 : _a.id}`);
+    var _c;
+    console.log(`Entré al GET pets/:id con params.id = ${(_c = req === null || req === void 0 ? void 0 : req.params) === null || _c === void 0 ? void 0 : _c.id}`);
     try {
         let paramsID = req.params.id;
         let petFoundById = yield getPetById(paramsID);
