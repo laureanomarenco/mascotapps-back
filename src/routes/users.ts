@@ -103,7 +103,6 @@ router.get("/", async (req, res) => {
 });
 
 // GET NUMBER OF USERS IN DB:
-
 router.get("/numberOfUsersInDB", async (req, res) => {
   console.log("Entré a la route /numberOfUsersInDB");
   try {
@@ -141,13 +140,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
   }
 });
 
-// GET(post) ALL PETS OF AUTH USER ID:
-// obtener todas las instancias de mascotas que tienen como UserId el id del usuario que quiere obtener el listado de mascotas.
-// Esta ruta serviría para que un usuario pueda ver su listado de mascotas posteadas, desde su perfíl.
-// Hay que ver el req.user.id de la cookie, y buscar en la tabla Animal (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
-// Recolectamos esas instancias en un arreglo y enviamos ese arreglo al cliente.
-//---
-// /users/getallpetsofuser
+// GET(post) ALL PETS OF USER ID:
 router.post("/getallpetsofuser", async (req: any, res) => {
   console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
   console.log(req.body);
@@ -216,17 +209,6 @@ router.delete("/deletepet/:petid", async (req: any, res) => {
   }
 });
 
-// router.get("/numbervisitors", async (req, res) => {
-//   console.log("Entré a /numbervisitors");
-//   try {
-//     let arrayVisitors = await db.Visitor.findAll();
-//     let numberOfVisitors = arrayVisitors.length;
-//     res.status(200).send(`${numberOfVisitors}`);
-//   } catch (error) {
-//     res.status(404).send(error);
-//   }
-// });
-
 router.post("/newuser", async (req, res) => {
   const { email, name, city, contact, image, id } = req.body;
   try {
@@ -276,6 +258,9 @@ router.post("/exists", async (req, res) => {
 });
 
 router.put("/update", async (req, res) => {
+  console.log(`Entré a users/update`);
+  console.log(`Me llegó por body: `);
+  console.log(req.body);
   try {
     const { image, contact, city, email, name, id } = req.body;
     const newProfile = await db.User.update(
