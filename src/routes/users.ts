@@ -92,10 +92,12 @@ router.get("/contactinfo/:petid", async (req, res) => {
 // /users/getallpetsofuser
 router.post("/getallpetsofuser", async (req: any, res) => {
   console.log(`Entré a la ruta /users/getallpetsofuser`);
-  console.log(`user ID = ${req.body.id}`);
+  console.log("req.body = ");
+  console.log(req.body);
+  console.log(`user ID = ${req.body?.id}`);
   try {
-    let id = req.body.id;
-    let petsPostedByUser: Pet[] = await db.Animals.findAll({
+    let id = req.body?.id;
+    let petsPostedByUser: Pet[] = await db.Animal.findAll({
       where: {
         UserId: id,
       },
@@ -103,6 +105,7 @@ router.post("/getallpetsofuser", async (req: any, res) => {
     return res.status(200).send(petsPostedByUser);
   } catch (error: any) {
     console.log(`error en el /users/getallpetsofusers: ${error.message}`);
+    console.log(error);
     return res.status(404).send(error.message);
   }
 });

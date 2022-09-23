@@ -225,42 +225,23 @@ function getAllBy(input) {
         }
     });
 }
-//! ----- MIDDLEWARE PARA AUTH : ------
-// const authCheck = (req: any, res: any, next: any) => {
-//   //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
-//   console.log("En el authCheck de pets!");
-//   console.log(req.user);
-//   if (!req.user) {
-//     console.log("redirigiendo al /auth/google");
-//     res.redirect("/auth/google");
-//   } else {
-//     console.log("continuando con el siguiente middleware");
-//     next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
-//   }
-// };
-//! ruta de prueba con authCheck:
-// router.get("/secretos", authCheck, async (req, res) => {
-//   console.log("en /secretos");
-//   try {
-//     let allCats = await getAllCats();
-//     return res.status(200).send(allCats);
-//   } catch (error: any) {
-//     return res.status(404).send(error.message);
-//   }
-// });
 // ----- ------ ------- RUTAS :  ------ ------- -------
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
 router.post("/postnewpet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a users/postnewpet`);
     const id = req.body.user.id;
-    try { //refactorizar viendo que exista el usuario o crear middleware
+    try {
+        //refactorizar viendo que exista el usuario o crear middleware
         let validatedPet = (0, AnimalValidators_1.validateNewPet)(req.body.pet);
         console.log("SOY VALIDATED PET: ");
         console.log(validatedPet);
         let createdPet = yield index_1.default.Animal.create(validatedPet);
         //asociar createdPet con el userID:
         let associatedPetWithUser = yield createdPet.setUser(id);
+        if (createdPet) {
+            console.log(`Mascota creada con éxito y asociada al User con ${id}`);
+        }
         return res.status(200).send(associatedPetWithUser);
     }
     catch (error) {
