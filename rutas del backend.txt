@@ -10,17 +10,6 @@ GET "/addVisitor"  Ruta para sumar instancias de "visitor".
 GET "/numberVisitors"  Retorna un número:string de la cantidad de instancias de visitors.
 
 
-/users
-GET "/numberOfUsersInDB"  Retorna un número:string de cantidad de Users guardados en la DB.
-GET "/contactinfo/:petid"   Retorna un objeto IContactInfoOfOwner con algunos datos del dueño de la mascota.
-POST "/getallpetsofuser" req.body = {id: id del usuario};  Retorna arreglo de mascotas que le pertenecen al UserId que se envió por req.body.id .
-DELETE "/deletepet/:petid"    req.body {petid: id de la mascot a borrar, id: id del User dueño de la mascota};  Borra una mascota.
-POST "/newuser"   req.body = { email, name, city, contact, image, id };
-POST "/exists"    req.body = {id};    Retorna {msg: true/false};
-PUT "/update"     req.body = {image, contact,city,email,name,id};   Ruta para actualizar los datos de un usuario. 
-POST "/someUserInfo"    req.body = {id};    Devuelve cierta información de un usuario (id).  someUserInfo:  {name, city, image, contact};
-
-
 /pets
 POST "/postnewpet"  req.body = {user: {id: idDelUser} , pet: {obj de new pet} ; Ruta para crear una nueva mascota, asociada a un user id. 
 
