@@ -1,7 +1,7 @@
 import { Router } from "express";
 import db from "../../models/index";
 import { Pet } from "../types/petTypes";
-import { UserAttributes } from "../types/userTypes";
+import { SomeUserInfo, UserAttributes } from "../types/userTypes";
 
 const router = Router();
 
@@ -47,6 +47,30 @@ router.get("/numberOfUsersInDB", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
+
+// get Some User Info:
+async function getSomeUserInfo(userId: any) {
+  console.log(`Ejecutando función auxiliar someUserInfo`);
+  console.log(`userId = ${userId}`);
+  try {
+    let userInfo = db.User.findByPk(userId);
+    if (userInfo) {
+      let someUserInfo: SomeUserInfo = {
+        name: userInfo.name,
+        city: userInfo.city,
+        image: userInfo.image,
+        contact: userInfo.contact,
+      };
+      console.log(`retornando someUserInfo: ${someUserInfo}`);
+      return someUserInfo;
+    } else {
+      throw new Error(`usuario no encontrado`);
+    }
+  } catch (error: any) {
+    console.log(`Error en la función auxiliar someUserInfo: ${error.message}`);
+    return error;
+  }
+}
 
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req: any, res: any, next: any) => {
@@ -195,6 +219,24 @@ router.post("/exists", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(404).send(error);
+  }
+});
+
+router.post("/someUserInfo", async (req, res) => {
+  console.log(`Entré a la ruta /users/someUserInfo`);
+  console.log(`req.body.id = ${req.body?.id}`);
+  try {
+    if (req.body.id) {
+      let userId = req.body.id;
+      let someUserInfo: SomeUserInfo = await getSomeUserInfo(userId);
+      console.log(`someUserInfo: ${someUserInfo}`);
+      return res.status(200).send(someUserInfo);
+    } else {
+      throw new Error("El user Id enviado no es válido");
+    }
+  } catch (error: any) {
+    console.log(`Error en /users/someUserInfo. Error: ${error.message}`);
+    return res.status(400).send(error.message);
   }
 });
 
