@@ -269,6 +269,26 @@ router.post("/exists", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(404).send(error);
     }
 }));
+
+router.put("/editProfile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { image, contact, city, email, name, id } = req.body;
+        const newProfile = yield index_1.default.User.update({
+            image: image,
+            contact: contact,
+            city: city,
+            email: email,
+            name: name
+        }, {
+            where: {
+                id: id
+            }
+        });
+        res.status(200).send(newProfile);
+    }
+    catch (error) {
+        res.status(400).send(error);
+
 router.post("/someUserInfo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _f;
     console.log(`Entré a la ruta /users/someUserInfo`);
@@ -287,6 +307,7 @@ router.post("/someUserInfo", (req, res) => __awaiter(void 0, void 0, void 0, fun
     catch (error) {
         console.log(`Error en /users/someUserInfo. Error: ${error.message}`);
         return res.status(400).send(error.message);
+
     }
 }));
 exports.default = router;
