@@ -169,7 +169,7 @@ router.post("/getallpetsofuser", async (req: any, res) => {
       console.log(
         `Retornando petsPostedByUser con .length <= 0. Su length es ${petsPostedByUser?.length}`
       );
-      return petsPostedByUser;
+      return res.status(200).send(petsPostedByUser);
     }
   } catch (error: any) {
     console.log(`error en el /users/getallpetsofusers: ${error.message}`);
