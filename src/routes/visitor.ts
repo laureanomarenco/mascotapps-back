@@ -4,7 +4,7 @@ import { visitor } from "../types/visitorTypes";
 
 const route = Router();
 
-route.get("/", async (req: any, res) => {
+route.get("/addVisitor", async (req: any, res) => {
   console.log(`Entré a /visitor`);
   try {
     let newVisitor: visitor = {
