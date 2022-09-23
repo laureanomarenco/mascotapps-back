@@ -53,6 +53,33 @@ router.get("/numberOfUsersInDB", (req, res) => __awaiter(void 0, void 0, void 0,
         return res.status(404).send(error.message);
     }
 }));
+// get Some User Info:
+function getSomeUserInfo(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(`Ejecutando función auxiliar someUserInfo`);
+        console.log(`userId = ${userId}`);
+        try {
+            let userInfo = index_1.default.User.findByPk(userId);
+            if (userInfo) {
+                let someUserInfo = {
+                    name: userInfo.name,
+                    city: userInfo.city,
+                    image: userInfo.image,
+                    contact: userInfo.contact,
+                };
+                console.log(`retornando someUserInfo: ${someUserInfo}`);
+                return someUserInfo;
+            }
+            else {
+                throw new Error(`usuario no encontrado`);
+            }
+        }
+        catch (error) {
+            console.log(`Error en la función auxiliar someUserInfo: ${error.message}`);
+            return error;
+        }
+    });
+}
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req, res, next) => {
     //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
@@ -69,9 +96,9 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
     console.log(`:petid = ${req.params.petid}`);
     try {
         let petID = req.params.petid;
-        let petInDB = yield index_1.default.Animals.findByPk(petID);
+        let petInDB = yield index_1.default.Animal.findByPk(petID);
         let ownerID = petInDB.UserId;
-        let ownerInDB = yield index_1.default.Users.findByPk(ownerID);
+        let ownerInDB = yield index_1.default.User.findByPk(ownerID);
         let contactInfoOfOwner = {
             //displayName: ownerInDB.displayName,
             name: ownerInDB.name,
@@ -91,16 +118,19 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
 // GET(post) ALL PETS OF AUTH USER ID:
 // obtener todas las instancias de mascotas que tienen como UserId el id del usuario que quiere obtener el listado de mascotas.
 // Esta ruta serviría para que un usuario pueda ver su listado de mascotas posteadas, desde su perfíl.
-// Hay que ver el req.user.id de la cookie, y buscar en la tabla Animals (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
+// Hay que ver el req.user.id de la cookie, y buscar en la tabla Animal (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
 // Recolectamos esas instancias en un arreglo y enviamos ese arreglo al cliente.
 //---
 // /users/getallpetsofuser
 router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     console.log(`Entré a la ruta /users/getallpetsofuser`);
-    console.log(`user ID = ${req.body.id}`);
+    console.log("req.body = ");
+    console.log(req.body);
+    console.log(`user ID = ${(_a = req.body) === null || _a === void 0 ? void 0 : _a.id}`);
     try {
-        let id = req.body.id;
-        let petsPostedByUser = yield index_1.default.Animals.findAll({
+        let id = (_b = req.body) === null || _b === void 0 ? void 0 : _b.id;
+        let petsPostedByUser = yield index_1.default.Animal.findAll({
             where: {
                 UserId: id,
             },
@@ -109,6 +139,7 @@ router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0,
     }
     catch (error) {
         console.log(`error en el /users/getallpetsofusers: ${error.message}`);
+        console.log(error);
         return res.status(404).send(error.message);
     }
 }));
@@ -120,7 +151,7 @@ router.delete("/deletepet/:petid", (req, res) => __awaiter(void 0, void 0, void 
         let petID = req.body.petid;
         let userID = req.body.id;
         //buscar instancia de mascota en DB:
-        let petToDeleteInDB = yield index_1.default.Animals.findByPk(petID);
+        let petToDeleteInDB = yield index_1.default.Animal.findByPk(petID);
         if (petToDeleteInDB.UserId == userID) {
             //borrar instancia de la DB:
             // await petToDeleteInDB.destroy();
@@ -197,6 +228,26 @@ router.post("/exists", (req, res) => __awaiter(void 0, void 0, void 0, function*
     catch (error) {
         console.log(error);
         res.status(404).send(error);
+    }
+}));
+router.post("/someUserInfo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
+    console.log(`Entré a la ruta /users/someUserInfo`);
+    console.log(`req.body.id = ${(_c = req.body) === null || _c === void 0 ? void 0 : _c.id}`);
+    try {
+        if (req.body.id) {
+            let userId = req.body.id;
+            let someUserInfo = yield getSomeUserInfo(userId);
+            console.log(`someUserInfo: ${someUserInfo}`);
+            return res.status(200).send(someUserInfo);
+        }
+        else {
+            throw new Error("El user Id enviado no es válido");
+        }
+    }
+    catch (error) {
+        console.log(`Error en /users/someUserInfo. Error: ${error.message}`);
+        return res.status(400).send(error.message);
     }
 }));
 exports.default = router;
