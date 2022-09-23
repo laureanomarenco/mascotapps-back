@@ -252,10 +252,13 @@ router.post("/postnewpet", async (req: any, res) => {
 });
 
 router.put("/update", async (req, res) => {
+  console.log(`Entré a pets/update`);
+  console.log(`req.body = ${req.body}`);
+
   try {
-    const { UserId } = req.body.user
-    const { id, name, specie, race, city, age, gender, status, vaccinationSchemeStatus, image, comments } = req.body.pet
-    const newProfile = await db.Animal.update({
+    const { userId } = req.body.user;
+    const {
+      id,
       name,
       specie,
       race,
@@ -266,17 +269,32 @@ router.put("/update", async (req, res) => {
       vaccinationSchemeStatus,
       image,
       comments,
-    }, {
-      where: {
-        id: id,
-        UserId: UserId,
+    } = req.body.pet;
+    const newProfile = await db.Animal.update(
+      {
+        name,
+        specie,
+        race,
+        city,
+        age,
+        gender,
+        status,
+        vaccinationSchemeStatus,
+        image,
+        comments,
+      },
+      {
+        where: {
+          id: id,
+          UserId: userId,
+        },
       }
-    })
-    res.status(200).send(newProfile)
+    );
+    res.status(200).send(newProfile);
   } catch (error) {
-    res.status(400).send(error)
+    res.status(400).send(error);
   }
-})
+});
 
 // GET NUMBER OF PETS IN DB:
 router.get("/numberofpetsindb", async (req, res) => {
