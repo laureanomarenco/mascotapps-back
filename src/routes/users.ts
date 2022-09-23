@@ -1,7 +1,7 @@
 import { Router } from "express";
 import db from "../../models/index";
 import { Pet } from "../types/petTypes";
-import { UserAttributes } from "../types/userTypes";
+import { SomeUserInfo, UserAttributes } from "../types/userTypes";
 
 const router = Router();
 
@@ -48,6 +48,30 @@ router.get("/numberOfUsersInDB", async (req, res) => {
   }
 });
 
+// get Some User Info:
+async function getSomeUserInfo(userId: any) {
+  console.log(`Ejecutando función auxiliar someUserInfo`);
+  console.log(`userId = ${userId}`);
+  try {
+    let userInfo = db.User.findByPk(userId);
+    if (userInfo) {
+      let someUserInfo: SomeUserInfo = {
+        name: userInfo.name,
+        city: userInfo.city,
+        image: userInfo.image,
+        contact: userInfo.contact,
+      };
+      console.log(`retornando someUserInfo: ${someUserInfo}`);
+      return someUserInfo;
+    } else {
+      throw new Error(`usuario no encontrado`);
+    }
+  } catch (error: any) {
+    console.log(`Error en la función auxiliar someUserInfo: ${error.message}`);
+    return error;
+  }
+}
+
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req: any, res: any, next: any) => {
   //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
@@ -64,7 +88,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
   console.log(`:petid = ${req.params.petid}`);
   try {
     let petID = req.params.petid;
-    let petInDB = await db.Animals.findByPk(petID);
+    let petInDB = await db.Animal.findByPk(petID);
     let ownerID = petInDB.UserId;
     let ownerInDB: UserAttributes = await db.User.findByPk(ownerID);
     let contactInfoOfOwner = {
@@ -86,7 +110,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
 // GET(post) ALL PETS OF AUTH USER ID:
 // obtener todas las instancias de mascotas que tienen como UserId el id del usuario que quiere obtener el listado de mascotas.
 // Esta ruta serviría para que un usuario pueda ver su listado de mascotas posteadas, desde su perfíl.
-// Hay que ver el req.user.id de la cookie, y buscar en la tabla Animals (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
+// Hay que ver el req.user.id de la cookie, y buscar en la tabla Animal (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
 // Recolectamos esas instancias en un arreglo y enviamos ese arreglo al cliente.
 //---
 // /users/getallpetsofuser
@@ -195,6 +219,24 @@ router.post("/exists", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(404).send(error);
+  }
+});
+
+router.post("/someUserInfo", async (req, res) => {
+  console.log(`Entré a la ruta /users/someUserInfo`);
+  console.log(`req.body.id = ${req.body?.id}`);
+  try {
+    if (req.body.id) {
+      let userId = req.body.id;
+      let someUserInfo: SomeUserInfo = await getSomeUserInfo(userId);
+      console.log(`someUserInfo: ${someUserInfo}`);
+      return res.status(200).send(someUserInfo);
+    } else {
+      throw new Error("El user Id enviado no es válido");
+    }
+  } catch (error: any) {
+    console.log(`Error en /users/someUserInfo. Error: ${error.message}`);
+    return res.status(400).send(error.message);
   }
 });
 

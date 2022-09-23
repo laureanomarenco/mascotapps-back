@@ -233,16 +233,21 @@ router.post("/postnewpet", (req, res) => __awaiter(void 0, void 0, void 0, funct
     const id = req.body.user.id;
     try {
         //refactorizar viendo que exista el usuario o crear middleware
-        let validatedPet = (0, AnimalValidators_1.validateNewPet)(req.body.pet);
-        console.log("SOY VALIDATED PET: ");
-        console.log(validatedPet);
-        let createdPet = yield index_1.default.Animal.create(validatedPet);
-        //asociar createdPet con el userID:
-        let associatedPetWithUser = yield createdPet.setUser(id);
-        if (createdPet) {
-            console.log(`Mascota creada con éxito y asociada al User con ${id}`);
+        if (!id) {
+            res.send({ msg: "no id" });
         }
-        return res.status(200).send(associatedPetWithUser);
+        else {
+            let validatedPet = (0, AnimalValidators_1.validateNewPet)(req.body.pet);
+            console.log("SOY VALIDATED PET: ");
+            console.log(validatedPet);
+            let createdPet = yield index_1.default.Animal.create(validatedPet);
+            //asociar createdPet con el userID:
+            let associatedPetWithUser = yield createdPet.setUser(id);
+            if (createdPet) {
+                console.log(`Mascota creada con éxito y asociada al User con ${id}`);
+            }
+            return res.status(200).send(associatedPetWithUser);
+        }
     }
     catch (error) {
         console.log(`Error en /postnewpet. Error message: ${error.message}`);
