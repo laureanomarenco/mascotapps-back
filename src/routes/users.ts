@@ -27,7 +27,7 @@ async function getSomeUserInfo(userId: any) {
   console.log(`Ejecutando función auxiliar someUserInfo`);
   console.log(`userId = ${userId}`);
   try {
-    let userInfo: UserAttributes = db.User.findByPk(userId);
+    let userInfo: UserAttributes = await db.User.findByPk(userId);
     if (userInfo) {
       let someUserInfo: ISomeUserInfo = {
         name: userInfo.name,
@@ -242,9 +242,9 @@ router.post("/newuser", async (req, res) => {
       },
     });
     if (!created) {
-      res.status(409).send("el usuario ya existe");
+      res.status(409).send(`El usuario con id ${id} ya existe en la DB`);
     } else {
-      console.log("se creo");
+      console.log(`Nuevo usuario creado con name: ${name}`);
       res.send(newUser);
     }
   } catch (error) {
@@ -256,15 +256,17 @@ router.post("/newuser", async (req, res) => {
 router.post("/exists", async (req, res) => {
   const { id } = req.body;
   try {
-    console.log("buscando si existe el usuario");
+    console.log(`Buscando si existe el usuario con id ${id}`);
     let user = await db.User.findOne({
       where: {
         id: id,
       },
     });
     if (user === null) {
+      console.log(`Usuario con id: ${id} no encontrado`);
       res.send({ msg: false });
     } else {
+      console.log(`Usuario con id: ${id} encontrado.`);
       res.send({ msg: true });
     }
   } catch (error) {
@@ -273,25 +275,28 @@ router.post("/exists", async (req, res) => {
   }
 });
 
-
-router.put("/update", async(req,res)=>{
+router.put("/update", async (req, res) => {
   try {
-    const {image, contact,city,email,name,id} = req.body
-    const newProfile = await db.User.update({
-    image:image,
-    contact:contact,
-    city:city,
-    email:email,
-    name:name
-  },{
-    where:{
-    id:id
-  }})
-  res.status(200).send(newProfile)
+    const { image, contact, city, email, name, id } = req.body;
+    const newProfile = await db.User.update(
+      {
+        image: image,
+        contact: contact,
+        city: city,
+        email: email,
+        name: name,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+    res.status(200).send(newProfile);
   } catch (error) {
-    res.status(400).send(error)
+    res.status(400).send(error);
   }
-})
+});
 
 router.post("/someUserInfo", async (req, res) => {
   console.log(`Entré a la ruta /users/someUserInfo`);
