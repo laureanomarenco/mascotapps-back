@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.animalSeeds = void 0;
-const uuid_1 = require("uuid");
 // "mediano"
 exports.animalSeeds = [
     // perdidos
     {
-        id: (0, uuid_1.v4)(),
+        id: "132123",
         name: "Loki",
         specie: "perro",
         race: "labrador",
@@ -18,7 +17,7 @@ exports.animalSeeds = [
         comments: "un gran perro con pelo pincho!",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "13212321",
         name: "Rex",
         specie: "perro",
         race: "otro",
@@ -30,7 +29,7 @@ exports.animalSeeds = [
         comments: "El mejor amigo de la casa",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "1321232123",
         name: "Roque",
         specie: "perro",
         race: "callejero",
@@ -42,7 +41,7 @@ exports.animalSeeds = [
         comments: "Es un amor y en casa lo extrañamos mucho",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "asdasduuidv4()",
         name: "Chalita",
         specie: "perro",
         race: "labrador",
@@ -54,7 +53,7 @@ exports.animalSeeds = [
         comments: "un ovejero aleman",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "uuidv4dsdasdw()",
         name: "Blaky",
         specie: "perro",
         race: "labrador",
@@ -66,7 +65,7 @@ exports.animalSeeds = [
         comments: "tenía puesto un collar verde",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "2312312312223",
         name: "Colorado",
         specie: "gato",
         race: "otro",
@@ -78,7 +77,7 @@ exports.animalSeeds = [
         comments: "gato colorado muy vago",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "432425ssdasfw",
         name: "Lalo",
         specie: "perro",
         race: "labrador",
@@ -90,7 +89,7 @@ exports.animalSeeds = [
         comments: "Lalo está medio loco pero es bueno",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "uiduvdsadasaw4()",
         name: "Matilda",
         specie: "perro",
         race: "mestizo",
@@ -102,7 +101,7 @@ exports.animalSeeds = [
         comments: "Matilda estaba muy vueltera el otro día en la plaza y despues no la vimos más :(",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "dasdadsadadad",
         name: "Toti",
         specie: "perro",
         race: "labrador",
@@ -113,7 +112,7 @@ exports.animalSeeds = [
         comments: "Toti no aparece por casa hace días y no tenemos fotos. Es alto y todo negro",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "3246363423423",
         name: "Lali",
         specie: "perro",
         race: "callejero",
@@ -125,7 +124,7 @@ exports.animalSeeds = [
         comments: "un ovejero aleman",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "5325235234232",
         name: "chorizo",
         specie: "perro",
         race: "salchicha",
@@ -137,7 +136,7 @@ exports.animalSeeds = [
         image: "https://i.pinimg.com/736x/57/cf/98/57cf9899961fb683a2dbb0b37fa3cd42--fat-animals-dog-facts.jpg",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "523sad2123",
         name: "Alfajor",
         specie: "perro",
         race: "pitbull",
@@ -149,7 +148,7 @@ exports.animalSeeds = [
         image: "https://static.misionesonline.news/wp-content/uploads/2021/09/19-17.jpg",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "34sdf23sdfgwre",
         name: "pachorra",
         specie: "perro",
         race: "caniche toy",
@@ -161,7 +160,7 @@ exports.animalSeeds = [
         image: "https://www.caracteristicas.co/wp-content/uploads/2017/02/perro-3-e1561679226953.jpg",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "sdf324sdfwetsdfdfh",
         name: "lyzzie",
         specie: "perro",
         race: "caniche toy",
@@ -173,7 +172,7 @@ exports.animalSeeds = [
         // image: "https://www.muyinteresante.es/mascotas/fotos/impresionantes-curiosidades-sobre-perros-que-fuerte",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "gsdfwersdy46we5",
         name: "Tommy shelby",
         specie: "perro",
         race: "mestizo",
@@ -185,7 +184,7 @@ exports.animalSeeds = [
         image: "https://statics.memondo.com/p/s1/crs/2020/06/CR_1147259_4527b033a6744dd9a6d0e0fd1ca164b3_pug_blinders_thumb_fb.jpg?cb=46469",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "sdfgwersdsfsdsad",
         name: "bryan",
         specie: "perro",
         race: "mestizo",
@@ -197,7 +196,7 @@ exports.animalSeeds = [
         image: "https://cdn.upsocl.com/wp-content/uploads/2021/08/iyesvm3s28e51.jpg",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "423423264dfgsdgdgfsd",
         name: "Marge",
         specie: "perro",
         race: "mastín napolitano",
@@ -209,7 +208,7 @@ exports.animalSeeds = [
         image: "https://i.pinimg.com/550x/7e/5c/cd/7e5ccd8af43f4f7ceb2618ecf57f67bc.jpg",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "asdw34rsdg435sdgsdrt",
         name: "maira",
         specie: "gato",
         race: "bengala",
@@ -221,7 +220,7 @@ exports.animalSeeds = [
         image: "https://2.bp.blogspot.com/-RKxVXO2Kfbo/V7wmJsvWcXI/AAAAAAAABF4/v_cSlNuZWQ0poZvvS56B1VrVnJ1FOlYzwCLcB/s1600/Gato%2Bbengala%2B1.jpg",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "w45sdfw45sdvgersddfsd",
         name: "Roco",
         specie: "perro",
         race: "boxer",
@@ -233,7 +232,7 @@ exports.animalSeeds = [
         comments: "un boxer super amable y bien criado, responde al nombre de Roco, sabemos que es viejito pero nos vamos de viaje y necesitamos ponerlo en adopcion en una famila que lo quiera",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "3w4sdf234rfsdr3w",
         name: "Esteban",
         specie: "otra especie",
         race: "Loro",
@@ -245,6 +244,7 @@ exports.animalSeeds = [
         comments: "lorito recien nacido",
     },
     {
+        id: "safjkejakjrw343",
         specie: "gato",
         race: "siámes",
         age: "joven",
@@ -255,7 +255,7 @@ exports.animalSeeds = [
         comments: "gato hermoso recién nacido, no tiene nombre y tiene todas sus vacunas",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "453te47dfhfgtidfged",
         name: "daenerys",
         race: "otro",
         specie: "perro",
@@ -267,6 +267,7 @@ exports.animalSeeds = [
         comments: "Daenerys Stormborn of House Targaryen, the First of Her Name, Queen of the Andals and the First Men, Protector of the Seven Kingdoms",
     },
     {
+        id: "sutj398sid9jhvfoset",
         name: "Señor Gato",
         specie: "gato",
         race: "otro",
@@ -278,7 +279,7 @@ exports.animalSeeds = [
         comments: "un gato arisco pero cariñoso",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "35wefsersvxd",
         specie: "perro",
         race: "ovejero",
         age: "desconocido",
@@ -289,6 +290,7 @@ exports.animalSeeds = [
         comments: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, veniam maxime nesciunt rem laborum quisquam amet expedita nisi fuga nam accusantium itaque at quaerat deserunt exercitationem, ea, deleniti sed numquam? Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae expedita repellat sint magni, at odit delectus unde, necessitatibus beatae consequatur est. Illum aut ad voluptatibus dolorum omnis aliquam tempora laborum! Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi beatae maiores ea iusto consequatur quod quasi id fuga explicabo tempora vitae, cumque, maxime laudantium odio natus amet ducimus, exercitationem nisi. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corrupti, odit magni ipsa exercitationem consectetur in repellat aspernatur aliquam nostrum unde incidunt ut animi atque nobis consequuntur commodi eveniet at voluptatum! Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nobis, esse in ratione qui eligendi cupiditate modi aperiam eos aliquam quas ullam culpa pariatur, molestiae exercitationem neque reprehenderit quae illo accusantium. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam dolores necessitatibus nihil numquam incidunt accusamus corrupti exercitationem neque ducimus veniam, consectetur hic ab ad facilis quaerat amet, perspiciatis similique rerum Quo porro illum quis, ea dolore hic libero excepturi nemo nam fugit minima totam voluptatum voluptatem odio reprehenderit sed. Sapiente voluptatibus incidunt rr adipisicing elit. Atque enim dolor rem vero? Quod inventore repudiandae maxime, quibusdam ipsa recusandae quis vitae hic, sit, ratione dolorem rem sequi! Esse, reiciendis. dio reprehenderit sed. Sapiente voluptatibus incidunt reprehenderit voluptatem hic corporis eaque aut eveniet sint Et quisquam sint iure illum delectus, ratione, impedit deserunt magni minus libero cupiditate porro inventore assumenda minima eveniet autem quis, debitis dolorum molestiae quibusdam voluptate eos! Dicta suscipit nemo atque! Lorem ipsum dolor, sit amet consectesssss ",
     },
     {
+        id: "w590usdfksje5klsdf",
         name: "Flash",
         specie: "otra especie",
         race: "labrador",
@@ -300,7 +302,7 @@ exports.animalSeeds = [
         comments: "Tortuga super veloz lista para ser adoptada",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "sada4easffgjyy9867d",
         specie: "perro",
         race: "salchicha",
         age: "muy joven",
@@ -311,6 +313,7 @@ exports.animalSeeds = [
         comments: "perrita bebe hermosa super domesticada",
     },
     {
+        id: "8a238q39898sdcjsa22",
         name: "Michi",
         specie: "gato",
         race: "otro",
@@ -322,6 +325,7 @@ exports.animalSeeds = [
         comments: "Gatito",
     },
     {
+        id: "asdj349385ksajf",
         name: "Hachiko",
         specie: "perro",
         race: "Sharpei",
@@ -333,7 +337,7 @@ exports.animalSeeds = [
         comments: "Hachiko está sentado en una estacion de tren esperando que lo adoptes!",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "asdol349389gfdxiy9w3",
         name: "Homero",
         specie: "perro",
         race: "pitbull",
@@ -345,7 +349,7 @@ exports.animalSeeds = [
         image: "https://cnwebsite.blob.core.windows.net/files/2021/01/WhatsApp-Image-2021-01-15-at-13.49.25.jpeg",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "asd34353w5sdfsdfdas",
         name: "thor con commets muy largos",
         specie: "gato",
         race: "otro",
@@ -357,7 +361,7 @@ exports.animalSeeds = [
         image: "https://i.pinimg.com/originals/1a/94/86/1a948614d9f9d3e6dc4b6b742b86c730.jpg",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "aw4345e5tsetr6rdhfg8fg",
         name: "thor",
         specie: "gato",
         race: "otro",
@@ -369,7 +373,7 @@ exports.animalSeeds = [
         image: "https://i.pinimg.com/originals/1a/94/86/1a948614d9f9d3e6dc4b6b742b86c730.jpg",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "wer6axffgugkl86er",
         name: "superman",
         specie: "perro",
         race: "pitbull",
@@ -382,7 +386,7 @@ exports.animalSeeds = [
         //   "https://images.unsplash.com/photo-1532202802379-df93d543bac3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8ZGlzZnJheiUyMGRlJTIwcGVycm98ZW58MHx8MHx8&w=1000&q=80",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "etcger6er6dfgdydr6433",
         name: "akita trump",
         specie: "perro",
         race: "akita",
@@ -394,7 +398,7 @@ exports.animalSeeds = [
         image: "https://viapais.com.ar/resizer/TXjDSl_CamriDPdbL6RWFLJ8ZQ8=/1023x663/smart/cloudfront-us-east-1.images.arcpublishing.com/grupoclarin/G5SDIZJYMIYTAMRZGU4TANJXGM.jpg",
     },
     {
-        id: (0, uuid_1.v4)(),
+        id: "wer5sdf45sdger6",
         name: "Mufasa",
         specie: "perro",
         race: "pitbull",
