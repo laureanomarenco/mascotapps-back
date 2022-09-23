@@ -1,7 +1,11 @@
 import { Router } from "express";
 import db from "../../models/index";
 import { Pet } from "../types/petTypes";
-import { SomeUserInfo, UserAttributes } from "../types/userTypes";
+import {
+  IContactInfoOfOwner,
+  ISomeUserInfo,
+  UserAttributes,
+} from "../types/userTypes";
 
 const router = Router();
 
@@ -55,7 +59,7 @@ async function getSomeUserInfo(userId: any) {
   try {
     let userInfo = db.User.findByPk(userId);
     if (userInfo) {
-      let someUserInfo: SomeUserInfo = {
+      let someUserInfo: ISomeUserInfo = {
         name: userInfo.name,
         city: userInfo.city,
         image: userInfo.image,
@@ -91,7 +95,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
     let petInDB = await db.Animal.findByPk(petID);
     let ownerID = petInDB.UserId;
     let ownerInDB: UserAttributes = await db.User.findByPk(ownerID);
-    let contactInfoOfOwner = {
+    let contactInfoOfOwner: IContactInfoOfOwner = {
       //displayName: ownerInDB.displayName,
       name: ownerInDB.name,
       email: ownerInDB.email,
@@ -228,7 +232,7 @@ router.post("/someUserInfo", async (req, res) => {
   try {
     if (req.body.id) {
       let userId = req.body.id;
-      let someUserInfo: SomeUserInfo = await getSomeUserInfo(userId);
+      let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId);
       console.log(`someUserInfo: ${someUserInfo}`);
       return res.status(200).send(someUserInfo);
     } else {

@@ -7,8 +7,16 @@ export interface UserAttributes {
   image: string | undefined;
 }
 
-export interface SomeUserInfo {
+export interface ISomeUserInfo {
   name: string | undefined;
+  city: string | undefined;
+  image: string | undefined;
+  contact: string | undefined;
+}
+
+export interface IContactInfoOfOwner {
+  name: string | undefined;
+  email: string | undefined;
   city: string | undefined;
   image: string | undefined;
   contact: string | undefined;
