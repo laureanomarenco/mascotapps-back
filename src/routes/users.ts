@@ -240,5 +240,4 @@ router.post("/someUserInfo", async (req, res) => {
   }
 });
 
-router.put('/update', as)
 export default router;
