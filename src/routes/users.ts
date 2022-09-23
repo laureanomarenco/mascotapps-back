@@ -216,16 +216,16 @@ router.delete("/deletepet/:petid", async (req: any, res) => {
   }
 });
 
-router.get("/numbervisitors", async (req, res) => {
-  console.log("Entré a /numbervisitors");
-  try {
-    let arrayVisitors = await db.Visitor.findAll();
-    let numberOfVisitors = arrayVisitors.length;
-    res.status(200).send(`${numberOfVisitors}`);
-  } catch (error) {
-    res.status(404).send(error);
-  }
-});
+// router.get("/numbervisitors", async (req, res) => {
+//   console.log("Entré a /numbervisitors");
+//   try {
+//     let arrayVisitors = await db.Visitor.findAll();
+//     let numberOfVisitors = arrayVisitors.length;
+//     res.status(200).send(`${numberOfVisitors}`);
+//   } catch (error) {
+//     res.status(404).send(error);
+//   }
+// });
 
 router.post("/newuser", async (req, res) => {
   const { email, name, city, contact, image, id } = req.body;

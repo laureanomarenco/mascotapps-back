@@ -5,11 +5,12 @@ import express from "express";
 import usersRouter from "./routes/users";
 import animalRouter from "./routes/pets";
 import checkoutRouter from "./routes/checkout";
+import visitor from "./routes/visitor";
 // import db from "../models";
 // import { visitor } from "./types/visitorTypes";
 // import { validateNewUser } from "./auxiliary/UserValidators";
 // import { UserAttributes } from "./types/userTypes";
-
+ 
 import dotenv from "dotenv";
 import cors from "cors";
 
@@ -64,6 +65,7 @@ app.use(cors(corsOptions));
   app.use("/users", usersRouter);
   app.use("/pets", animalRouter);
   app.use("/checkout", checkoutRouter);
+  app.use("/visitor", visitor)
   
   //! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page. Voy a comentarla ahora para probar passport. Pero habría que mover esta ruta a otra ruta más específica y que desde el front le tiren GETs cada vez que se monta el landing por ejemplo.
 // app.get("/", async (req: any, res) => {
@@ -77,7 +79,7 @@ app.use(cors(corsOptions));
 //   } catch (error) {
 //     res.status(404).send(error);
 //   }
-//   //res.render("home", { usuario: req.user });
+  //res.render("home", { usuario: req.user });
 // });
 
 module.exports = app;
