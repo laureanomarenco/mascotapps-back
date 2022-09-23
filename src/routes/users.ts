@@ -88,7 +88,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
   console.log(`:petid = ${req.params.petid}`);
   try {
     let petID = req.params.petid;
-    let petInDB = await db.Animals.findByPk(petID);
+    let petInDB = await db.Animal.findByPk(petID);
     let ownerID = petInDB.UserId;
     let ownerInDB: UserAttributes = await db.User.findByPk(ownerID);
     let contactInfoOfOwner = {
@@ -110,7 +110,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
 // GET(post) ALL PETS OF AUTH USER ID:
 // obtener todas las instancias de mascotas que tienen como UserId el id del usuario que quiere obtener el listado de mascotas.
 // Esta ruta serviría para que un usuario pueda ver su listado de mascotas posteadas, desde su perfíl.
-// Hay que ver el req.user.id de la cookie, y buscar en la tabla Animals (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
+// Hay que ver el req.user.id de la cookie, y buscar en la tabla Animal (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
 // Recolectamos esas instancias en un arreglo y enviamos ese arreglo al cliente.
 //---
 // /users/getallpetsofuser
