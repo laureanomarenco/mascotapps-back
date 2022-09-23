@@ -65,31 +65,21 @@ export interface Pet {
   backWithItsOwner: undefined | true;
 }
 
-// export type Genero = "hembra" | "macho" | "desconocido"; //desconocido en caso de haber visto el animal por la calle perdido pero no pudiendo parar a chequear (posible mascota perdida)
-
-//-----  Interface y types para PERROS:  -----
-// export type dogSpecie = "perro";
-
-// export interface Dog extends Pet {
-//   // specie: dogSpecie;
-//   race: DogRaces;
-// }
-// export enum DogRaces {
-//   Labrador = "labrador",
-//   OvejeroAleman = "ovejero alemán",
-//   ChowChow = "chow chow",
-//   CanicheToy = "caniche toy",
-//   Pitbull = "pitbull",
-//   MastinNapolitano = "mastín napolitano",
-//   Mestizo = "mestizo",
-//   Salchicha = "salchicha",
-//   Callejero = "callejero",
-//   Akita = "akita",
-//   Chiguagua = "chiguagua",
-//   Otro = "otro",
-// }
-
-// ------- Interface y types para GATOS:  ----
+export interface IPetOfUser {
+  id: string | undefined;
+  name: string | undefined;
+  city: string | undefined;
+  specie: string;
+  race: string | undefined;
+  age: Ages | undefined;
+  gender: Genders | undefined;
+  status: Status;
+  vaccinationSchemeStatus: VaccinationStatus | undefined;
+  image: string | undefined;
+  comments: string | undefined;
+  withNewOwner: undefined | true;
+  backWithItsOwner: undefined | true;
+}
 
 //--------- Interfaces y types para "Otros": -----------
 //! Si la especie no es gato ni perro, que se use la interface de Pet.
@@ -97,9 +87,9 @@ export interface Pet {
 //? PERO ESTA ES UNA MALA IDEA. MEJOR USAR LA INTERFACE DE PET ÚNICAMENTE.
 
 //----------- EXPERIMENTOS Y PRUEBAS: ------------
-export interface PetReviewed extends Pet {
-  review: string;
-}
+// export interface PetReviewed extends Pet {
+//   review: string;
+// }
 
 // console.log(perrito);
 
