@@ -1,6 +1,6 @@
 import { Router } from "express";
 import db from "../../models/index";
-import { Pet } from "../types/petTypes";
+import { IPetOfUser, Pet } from "../types/petTypes";
 import {
   IContactInfoOfOwner,
   ISomeUserInfo,
@@ -19,6 +19,70 @@ const getAllUsers = async () => {
   } catch (error: any) {
     console.log(error.message);
     return error;
+  }
+};
+
+// get Some User Info:
+async function getSomeUserInfo(userId: any) {
+  console.log(`Ejecutando función auxiliar someUserInfo`);
+  console.log(`userId = ${userId}`);
+  try {
+    let userInfo: UserAttributes = db.User.findByPk(userId);
+    if (userInfo) {
+      let someUserInfo: ISomeUserInfo = {
+        name: userInfo.name,
+        city: userInfo.city,
+        image: userInfo.image,
+        contact: userInfo.contact,
+      };
+      console.log(`retornando someUserInfo: ${someUserInfo}`);
+      return someUserInfo;
+    } else {
+      throw new Error(`usuario no encontrado`);
+    }
+  } catch (error: any) {
+    console.log(`Error en la función auxiliar someUserInfo: ${error.message}`);
+    return error;
+  }
+}
+
+//Parse Pets Posted By User ---> deja afuera el UserId
+function parsePetsPostedByUser(petsPostedByUser: Pet[]): IPetOfUser[] {
+  console.log(`En function auxiliary parsePetsPostedByUser`);
+  try {
+    let parsedPets: IPetOfUser[] = petsPostedByUser.map((pet) => {
+      return {
+        id: pet.id,
+        name: pet.name,
+        city: pet.city,
+        specie: pet.specie,
+        race: pet.race,
+        age: pet.age,
+        gender: pet.gender,
+        status: pet.status,
+        vaccinationSchemeStatus: pet.vaccinationSchemeStatus,
+        image: pet.image,
+        comments: pet.comments,
+        withNewOwner: pet.withNewOwner,
+        backWithItsOwner: pet.backWithItsOwner,
+      };
+    });
+    console.log(
+      `Retornando parsedPets. parsedPets.length = ${parsedPets.length}`
+    );
+    return parsedPets;
+  } catch (error: any) {
+    return error;
+  }
+}
+
+//! ----- MIDDLEWARE PARA AUTH : ------
+const authCheck = (req: any, res: any, next: any) => {
+  const { id } = req.body;
+  if (!id) {
+    res.send({ msg: "el usuario no existe" });
+  } else {
+    next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta
   }
 };
 
@@ -52,48 +116,14 @@ router.get("/numberOfUsersInDB", async (req, res) => {
   }
 });
 
-// get Some User Info:
-async function getSomeUserInfo(userId: any) {
-  console.log(`Ejecutando función auxiliar someUserInfo`);
-  console.log(`userId = ${userId}`);
-  try {
-    let userInfo = db.User.findByPk(userId);
-    if (userInfo) {
-      let someUserInfo: ISomeUserInfo = {
-        name: userInfo.name,
-        city: userInfo.city,
-        image: userInfo.image,
-        contact: userInfo.contact,
-      };
-      console.log(`retornando someUserInfo: ${someUserInfo}`);
-      return someUserInfo;
-    } else {
-      throw new Error(`usuario no encontrado`);
-    }
-  } catch (error: any) {
-    console.log(`Error en la función auxiliar someUserInfo: ${error.message}`);
-    return error;
-  }
-}
-
-//! ----- MIDDLEWARE PARA AUTH : ------
-const authCheck = (req: any, res: any, next: any) => {
-  //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
-  const { id } = req.body;
-  if (!id) {
-    res.send({ msg: "el usuario no existe" });
-  } else {
-    next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
-  }
-};
-
+// GET CONTACT INFO / PET ID
 router.get("/contactinfo/:petid", async (req, res) => {
   console.log(`Entré a la ruta /users/contactinfo/:petid`);
   console.log(`:petid = ${req.params.petid}`);
   try {
     let petID = req.params.petid;
     let petInDB = await db.Animal.findByPk(petID);
-    let ownerID = petInDB.UserId;
+    let ownerID = petInDB?.UserId;
     let ownerInDB: UserAttributes = await db.User.findByPk(ownerID);
     let contactInfoOfOwner: IContactInfoOfOwner = {
       //displayName: ownerInDB.displayName,
@@ -119,18 +149,35 @@ router.get("/contactinfo/:petid", async (req, res) => {
 //---
 // /users/getallpetsofuser
 router.post("/getallpetsofuser", async (req: any, res) => {
-  console.log(`Entré a la ruta /users/getallpetsofuser`);
-  console.log("req.body = ");
+  console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
   console.log(req.body);
   console.log(`user ID = ${req.body?.id}`);
   try {
-    let id = req.body?.id;
+    if (!req.body.id) {
+      console.log(
+        `Error en /users/getallpetsofuser. El req.body.id es falso/undefined`
+      );
+      throw new Error(
+        `Error en /users/getallpetsofuser. El req.body.id es falso/undefined`
+      );
+    }
+    let id = req.body.id;
     let petsPostedByUser: Pet[] = await db.Animal.findAll({
       where: {
         UserId: id,
       },
     });
-    return res.status(200).send(petsPostedByUser);
+
+    if (petsPostedByUser?.length > 0) {
+      let parsedPetsPostedByUser: IPetOfUser[] =
+        parsePetsPostedByUser(petsPostedByUser);
+      return res.status(200).send(parsedPetsPostedByUser);
+    } else {
+      console.log(
+        `Retornando petsPostedByUser con .length <= 0. Su length es ${petsPostedByUser?.length}`
+      );
+      return petsPostedByUser;
+    }
   } catch (error: any) {
     console.log(`error en el /users/getallpetsofusers: ${error.message}`);
     console.log(error);
@@ -140,11 +187,11 @@ router.post("/getallpetsofuser", async (req: any, res) => {
 
 router.delete("/deletepet/:petid", async (req: any, res) => {
   console.log(`En la ruta users/deletepet/:petid.`);
-  console.log(`:petid = ${req.body.petid}`);
-  console.log(`req.user.id = ${req.body.id}`);
+  console.log(`:petid = ${req.body?.petid}`);
+  console.log(`req.user.id = ${req.body?.id}`);
   try {
-    let petID = req.body.petid;
-    let userID = req.body.id;
+    let petID = req.body?.petid;
+    let userID = req.body?.id;
     //buscar instancia de mascota en DB:
     let petToDeleteInDB = await db.Animal.findByPk(petID);
     if (petToDeleteInDB.UserId == userID) {
