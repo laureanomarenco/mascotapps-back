@@ -195,4 +195,23 @@ router.post("/exists", async (req, res) => {
   }
 });
 
+router.put("/editProfile", async(req,res)=>{
+  try {
+    const {image, contact,city,email,name,id} = req.body
+  const newProfile = await db.User.update({
+    image:image,
+    contact:contact,
+    city:city,
+    email:email,
+    name:name
+  },{
+    where:{
+    id:id
+  }})
+  res.status(200).send(newProfile)
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+
 export default router;

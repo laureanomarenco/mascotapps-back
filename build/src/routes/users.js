@@ -178,16 +178,14 @@ router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(404).send(error);
     }
 }));
-
-router.post('/exists', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/exists", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.body;
     try {
-        console.log('buscando si existe el usuario');
+        console.log("buscando si existe el usuario");
         let user = yield index_1.default.User.findOne({
             where: {
                 id: id,
-            }
-
+            },
         });
         if (user === null) {
             res.send({ msg: false });
@@ -199,6 +197,26 @@ router.post('/exists', (req, res) => __awaiter(void 0, void 0, void 0, function*
     catch (error) {
         console.log(error);
         res.status(404).send(error);
+    }
+}));
+router.put("/editProfile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { image, contact, city, email, name, id } = req.body;
+        const newProfile = yield index_1.default.User.update({
+            image: image,
+            contact: contact,
+            city: city,
+            email: email,
+            name: name
+        }, {
+            where: {
+                id: id
+            }
+        });
+        res.status(200).send(newProfile);
+    }
+    catch (error) {
+        res.status(400).send(error);
     }
 }));
 exports.default = router;
