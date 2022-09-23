@@ -244,4 +244,19 @@ router.post("/someUserInfo", async (req, res) => {
   }
 });
 
+router.put('/update', async(req, res) => {
+  const { id, email, name, city, contact, image } = req.body;
+  await db.User.update({
+    email,
+    name,
+    city,
+    contact,
+    image,
+    }, {
+    where:{
+      id: id,
+    }
+  });
+  res.send({msg: 'usuario modificado'})
+})
 export default router;
