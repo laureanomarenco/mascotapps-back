@@ -97,7 +97,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
       email: ownerInDB.email,
       city: ownerInDB.city,
       image: ownerInDB.image,
-      contact: ownerID.contact,
+      contact: ownerInDB.contact,
     };
     console.log(`contactInfoOfOwner = ${contactInfoOfOwner}`);
     return res.status(200).send(contactInfoOfOwner);
@@ -240,4 +240,5 @@ router.post("/someUserInfo", async (req, res) => {
   }
 });
 
+router.put('/update', as)
 export default router;
