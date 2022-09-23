@@ -27,32 +27,6 @@ const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         return error;
     }
 });
-// ----- ------ ------- RUTAS :  ------ ------- -------
-//GET ALL USERS FROM DB:  //! Hay que dejarla comentada ( o borrarla) porque no es seguro poder tener toda la data de los users registrados:
-router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("entré al get de Users!");
-    try {
-        let allTheUsers = yield getAllUsers();
-        // console.log(allTheUsers);
-        return res.status(200).send(allTheUsers);
-    }
-    catch (error) {
-        return res.status(404).send(error.message);
-    }
-}));
-// GET NUMBER OF USERS IN DB:
-router.get("/numberOfUsersInDB", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Entré a la route /numberOfUsersInDB");
-    try {
-        let allUsersInDB = yield getAllUsers();
-        let numberOfUsersInDB = allUsersInDB.length;
-        let numberOfUsersInDBtoString = `${numberOfUsersInDB}`;
-        return res.status(200).send(numberOfUsersInDBtoString);
-    }
-    catch (error) {
-        return res.status(404).send(error.message);
-    }
-}));
 // get Some User Info:
 function getSomeUserInfo(userId) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -80,24 +54,78 @@ function getSomeUserInfo(userId) {
         }
     });
 }
+//Parse Pets Posted By User ---> deja afuera el UserId
+function parsePetsPostedByUser(petsPostedByUser) {
+    console.log(`En function auxiliary parsePetsPostedByUser`);
+    try {
+        let parsedPets = petsPostedByUser.map((pet) => {
+            return {
+                id: pet.id,
+                name: pet.name,
+                city: pet.city,
+                specie: pet.specie,
+                race: pet.race,
+                age: pet.age,
+                gender: pet.gender,
+                status: pet.status,
+                vaccinationSchemeStatus: pet.vaccinationSchemeStatus,
+                image: pet.image,
+                comments: pet.comments,
+                withNewOwner: pet.withNewOwner,
+                backWithItsOwner: pet.backWithItsOwner,
+            };
+        });
+        console.log(`Retornando parsedPets. parsedPets.length = ${parsedPets.length}`);
+        return parsedPets;
+    }
+    catch (error) {
+        return error;
+    }
+}
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req, res, next) => {
-    //ya que tenemos acceso a req.user, podemos chequear si existe(está logueado) o no. Lo mando a "/auth/login" si no está logueado:
     const { id } = req.body;
     if (!id) {
         res.send({ msg: "el usuario no existe" });
     }
     else {
-        next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta get.
+        next(); //continuá al siguiente middleware, que sería el (req, res) => {} de la ruta
     }
 };
+// ----- ------ ------- RUTAS :  ------ ------- -------
+//GET ALL USERS FROM DB:  //! Hay que dejarla comentada ( o borrarla) porque no es seguro poder tener toda la data de los users registrados:
+router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("entré al get de Users!");
+    try {
+        let allTheUsers = yield getAllUsers();
+        // console.log(allTheUsers);
+        return res.status(200).send(allTheUsers);
+    }
+    catch (error) {
+        return res.status(404).send(error.message);
+    }
+}));
+// GET NUMBER OF USERS IN DB:
+router.get("/numberOfUsersInDB", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Entré a la route /numberOfUsersInDB");
+    try {
+        let allUsersInDB = yield getAllUsers();
+        let numberOfUsersInDB = allUsersInDB.length;
+        let numberOfUsersInDBtoString = `${numberOfUsersInDB}`;
+        return res.status(200).send(numberOfUsersInDBtoString);
+    }
+    catch (error) {
+        return res.status(404).send(error.message);
+    }
+}));
+// GET CONTACT INFO / PET ID
 router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a la ruta /users/contactinfo/:petid`);
     console.log(`:petid = ${req.params.petid}`);
     try {
         let petID = req.params.petid;
         let petInDB = yield index_1.default.Animal.findByPk(petID);
-        let ownerID = petInDB.UserId;
+        let ownerID = petInDB === null || petInDB === void 0 ? void 0 : petInDB.UserId;
         let ownerInDB = yield index_1.default.User.findByPk(ownerID);
         let contactInfoOfOwner = {
             //displayName: ownerInDB.displayName,
@@ -105,7 +133,7 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
             email: ownerInDB.email,
             city: ownerInDB.city,
             image: ownerInDB.image,
-            contact: ownerID.contact,
+            contact: ownerInDB.contact,
         };
         console.log(`contactInfoOfOwner = ${contactInfoOfOwner}`);
         return res.status(200).send(contactInfoOfOwner);
@@ -123,19 +151,29 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
 //---
 // /users/getallpetsofuser
 router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    console.log(`Entré a la ruta /users/getallpetsofuser`);
-    console.log("req.body = ");
+    var _a;
+    console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
     console.log(req.body);
     console.log(`user ID = ${(_a = req.body) === null || _a === void 0 ? void 0 : _a.id}`);
     try {
-        let id = (_b = req.body) === null || _b === void 0 ? void 0 : _b.id;
+        if (!req.body.id) {
+            console.log(`Error en /users/getallpetsofuser. El req.body.id es falso/undefined`);
+            throw new Error(`Error en /users/getallpetsofuser. El req.body.id es falso/undefined`);
+        }
+        let id = req.body.id;
         let petsPostedByUser = yield index_1.default.Animal.findAll({
             where: {
                 UserId: id,
             },
         });
-        return res.status(200).send(petsPostedByUser);
+        if ((petsPostedByUser === null || petsPostedByUser === void 0 ? void 0 : petsPostedByUser.length) > 0) {
+            let parsedPetsPostedByUser = parsePetsPostedByUser(petsPostedByUser);
+            return res.status(200).send(parsedPetsPostedByUser);
+        }
+        else {
+            console.log(`Retornando petsPostedByUser con .length <= 0. Su length es ${petsPostedByUser === null || petsPostedByUser === void 0 ? void 0 : petsPostedByUser.length}`);
+            return petsPostedByUser;
+        }
     }
     catch (error) {
         console.log(`error en el /users/getallpetsofusers: ${error.message}`);
@@ -144,12 +182,13 @@ router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0,
     }
 }));
 router.delete("/deletepet/:petid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b, _c, _d, _e;
     console.log(`En la ruta users/deletepet/:petid.`);
-    console.log(`:petid = ${req.body.petid}`);
-    console.log(`req.user.id = ${req.body.id}`);
+    console.log(`:petid = ${(_b = req.body) === null || _b === void 0 ? void 0 : _b.petid}`);
+    console.log(`req.user.id = ${(_c = req.body) === null || _c === void 0 ? void 0 : _c.id}`);
     try {
-        let petID = req.body.petid;
-        let userID = req.body.id;
+        let petID = (_d = req.body) === null || _d === void 0 ? void 0 : _d.petid;
+        let userID = (_e = req.body) === null || _e === void 0 ? void 0 : _e.id;
         //buscar instancia de mascota en DB:
         let petToDeleteInDB = yield index_1.default.Animal.findByPk(petID);
         if (petToDeleteInDB.UserId == userID) {
@@ -231,9 +270,9 @@ router.post("/exists", (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 }));
 router.post("/someUserInfo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _f;
     console.log(`Entré a la ruta /users/someUserInfo`);
-    console.log(`req.body.id = ${(_c = req.body) === null || _c === void 0 ? void 0 : _c.id}`);
+    console.log(`req.body.id = ${(_f = req.body) === null || _f === void 0 ? void 0 : _f.id}`);
     try {
         if (req.body.id) {
             let userId = req.body.id;
