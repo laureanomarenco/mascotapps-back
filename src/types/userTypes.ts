@@ -6,3 +6,18 @@ export interface UserAttributes {
   contact: string | undefined;
   image: string | undefined;
 }
+
+export interface ISomeUserInfo {
+  name: string | undefined;
+  city: string | undefined;
+  image: string | undefined;
+  contact: string | undefined;
+}
+
+export interface IContactInfoOfOwner {
+  name: string | undefined;
+  email: string | undefined;
+  city: string | undefined;
+  image: string | undefined;
+  contact: string | undefined;
+}
