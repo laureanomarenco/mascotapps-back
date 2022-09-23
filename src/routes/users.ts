@@ -66,7 +66,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
     let petID = req.params.petid;
     let petInDB = await db.Animals.findByPk(petID);
     let ownerID = petInDB.UserId;
-    let ownerInDB: UserAttributes = await db.Users.findByPk(ownerID);
+    let ownerInDB: UserAttributes = await db.User.findByPk(ownerID);
     let contactInfoOfOwner = {
       //displayName: ownerInDB.displayName,
       name: ownerInDB.name,
@@ -118,7 +118,7 @@ router.delete("/deletepet/:petid", async (req: any, res) => {
     let petID = req.body.petid;
     let userID = req.body.id;
     //buscar instancia de mascota en DB:
-    let petToDeleteInDB = await db.Animals.findByPk(petID);
+    let petToDeleteInDB = await db.Animal.findByPk(petID);
     if (petToDeleteInDB.UserId == userID) {
       //borrar instancia de la DB:
       // await petToDeleteInDB.destroy();
