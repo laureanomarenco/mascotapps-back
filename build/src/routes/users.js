@@ -210,17 +210,16 @@ router.delete("/deletepet/:petid", (req, res) => __awaiter(void 0, void 0, void 
         return res.status(404).send(error.message);
     }
 }));
-router.get("/numbervisitors", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Entré a /numbervisitors");
-    try {
-        let arrayVisitors = yield index_1.default.Visitor.findAll();
-        let numberOfVisitors = arrayVisitors.length;
-        res.status(200).send(`${numberOfVisitors}`);
-    }
-    catch (error) {
-        res.status(404).send(error);
-    }
-}));
+// router.get("/numbervisitors", async (req, res) => {
+//   console.log("Entré a /numbervisitors");
+//   try {
+//     let arrayVisitors = await db.Visitor.findAll();
+//     let numberOfVisitors = arrayVisitors.length;
+//     res.status(200).send(`${numberOfVisitors}`);
+//   } catch (error) {
+//     res.status(404).send(error);
+//   }
+// });
 router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, name, city, contact, image, id } = req.body;
     try {
@@ -269,8 +268,7 @@ router.post("/exists", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(404).send(error);
     }
 }));
-
-router.put("/editProfile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { image, contact, city, email, name, id } = req.body;
         const newProfile = yield index_1.default.User.update({
@@ -288,7 +286,8 @@ router.put("/editProfile", (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
     catch (error) {
         res.status(400).send(error);
-
+    }
+}));
 router.post("/someUserInfo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _f;
     console.log(`Entré a la ruta /users/someUserInfo`);
@@ -307,7 +306,6 @@ router.post("/someUserInfo", (req, res) => __awaiter(void 0, void 0, void 0, fun
     catch (error) {
         console.log(`Error en /users/someUserInfo. Error: ${error.message}`);
         return res.status(400).send(error.message);
-
     }
 }));
 exports.default = router;

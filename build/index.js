@@ -19,7 +19,7 @@ const AnimalValidators_1 = require("./src/auxiliary/AnimalValidators");
 const animal_seeds_1 = require("./seeders/animal-seeds");
 // sync({ alter: true })
 // sync({ force: true })
-models_1.default.sequelize.sync({ force: true }).then(() => {
+models_1.default.sequelize.sync({ alter: true }).then(() => {
     app.listen(config.server.port, () => {
         console.log("**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** ");
         console.log(`App listening on port ${config.server.port}`);

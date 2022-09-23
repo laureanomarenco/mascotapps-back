@@ -255,6 +255,33 @@ router.post("/postnewpet", (req, res) => __awaiter(void 0, void 0, void 0, funct
         return res.status(404).send(error.message);
     }
 }));
+router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { UserId } = req.body.user;
+        const { id, name, specie, race, city, age, gender, status, vaccinationSchemeStatus, image, comments } = req.body.pet;
+        const newProfile = yield index_1.default.Animal.update({
+            name,
+            specie,
+            race,
+            city,
+            age,
+            gender,
+            status,
+            vaccinationSchemeStatus,
+            image,
+            comments,
+        }, {
+            where: {
+                id: id,
+                UserId: UserId,
+            }
+        });
+        res.status(200).send(newProfile);
+    }
+    catch (error) {
+        res.status(400).send(error);
+    }
+}));
 // GET NUMBER OF PETS IN DB:
 router.get("/numberofpetsindb", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("En route pets/numberofpets");
