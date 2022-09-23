@@ -47,6 +47,14 @@ var VaccinationStatus;
     VaccinationStatus["Incompleto"] = "incompleto";
     VaccinationStatus["Desconocido"] = "desconocido";
 })(VaccinationStatus = exports.VaccinationStatus || (exports.VaccinationStatus = {}));
+//--------- Interfaces y types para "Otros": -----------
+//! Si la especie no es gato ni perro, que se use la interface de Pet.
+//! Si la specie === "gato", que use la interface de Pet entendida a Cat. Lo mismo para "dog"...
+//? PERO ESTA ES UNA MALA IDEA. MEJOR USAR LA INTERFACE DE PET ÚNICAMENTE.
+//----------- EXPERIMENTOS Y PRUEBAS: ------------
+// export interface PetReviewed extends Pet {
+//   review: string;
+// }
 // console.log(perrito);
 // console.log(lokiMissing);
 // ----NOTAS Y COMENTARIOS DE TYPES, INTERFACES, OMIT, ETC PARA EL USO DE TypeScript: ---------------------
