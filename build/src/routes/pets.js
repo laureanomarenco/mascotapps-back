@@ -256,9 +256,11 @@ router.post("/postnewpet", (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 }));
 router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré a pets/update`);
+    console.log(`req.body = ${req.body}`);
     try {
-        const { UserId } = req.body.user;
-        const { id, name, specie, race, city, age, gender, status, vaccinationSchemeStatus, image, comments } = req.body.pet;
+        const { userId } = req.body.user;
+        const { id, name, specie, race, city, age, gender, status, vaccinationSchemeStatus, image, comments, } = req.body.pet;
         const newProfile = yield index_1.default.Animal.update({
             name,
             specie,
@@ -273,8 +275,8 @@ router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         }, {
             where: {
                 id: id,
-                UserId: UserId,
-            }
+                UserId: userId,
+            },
         });
         res.status(200).send(newProfile);
     }
