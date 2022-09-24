@@ -5,7 +5,6 @@ export function validateNewReview(reqBody: any): IReview {
     let reviewFromReqChecked: IReview = {
       transaction_id: checkTransactionId(reqBody.transaction_id),
       reviewer_id: checkReviewerId(reqBody.reviewer_id),
-      reviewed_id: checkReviewedId(reqBody.reviewed_id),
       comments: checkComments(reqBody.comments),
       stars: checkStars(reqBody.stars),
     };

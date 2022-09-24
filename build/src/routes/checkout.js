@@ -42,6 +42,8 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req.body);
     try {
         const { id, amount, email } = req.body;
+        const user = models_1.default.Users.findOne({ where: { email: email } });
+        //DONACIÓN
         const payment = yield stripe.paymentIntents.create({
             amount,
             currency: "USD",
@@ -55,6 +57,7 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             amount,
             email
         });
+        // MAILER
         const nodemailer = require('nodemailer');
         console.log(GMAIL_PASS, GMAIL_USER);
         const transporter = nodemailer.createTransport({
@@ -77,8 +80,15 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             else
                 console.log('Email enviado: ' + info.response);
         });
-        console.log('donation: ' + donation);
-        res.send({ msg: 'Succesfull payment' });
+        //CHECK USER
+        if (user) {
+            donation.setUser(user.id);
+            res.send({ msg: 'Succesfull payment from', user });
+        }
+        else {
+            console.log('donation: ' + donation);
+            res.send({ msg: 'Succesfull payment' });
+        }
     }
     catch (err) {
         console.log('error en /checkout');

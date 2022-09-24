@@ -5,6 +5,7 @@ export interface UserAttributes {
   city: string | undefined;
   contact: string | undefined;
   image: string | undefined;
+  isDonator: string | undefined;
 }
 
 export interface ISomeUserInfo {
@@ -12,6 +13,7 @@ export interface ISomeUserInfo {
   city: string | undefined;
   image: string | undefined;
   contact: string | undefined;
+  isDonator: string | undefined;
 }
 
 export interface IContactInfoOfOwner {

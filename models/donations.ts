@@ -8,6 +8,10 @@ module.exports = (sequelize: any, DataTypes: any ) => {
     id!: string; //! le damos la opción al cliente de setear el id como el string que quiera. Si no ingresa nada, se genera un id UUIDV4 por default
     amount: number | undefined;
     email: string | undefined;
+    static associate(models: any) {
+      // define association here
+      Donation.belongsTo(models.User);
+    }
   }
   Donation.init({
         id: {

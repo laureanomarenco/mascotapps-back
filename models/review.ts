@@ -9,7 +9,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
     id: undefined;
     transaction_id!: string;
     reviewer_id!: string;
-    reviewed_id!: string;
     comments: string | undefined;
     stars!: number;
     /**
@@ -18,7 +17,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models: any) {
-      // define association here
+      Review.belongsTo(models.User)
     }
   }
   Review.init(
@@ -33,11 +32,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
         allowNull: false,
       },
       reviewer_id: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-
-      reviewed_id: {
         type: DataTypes.STRING,
         allowNull: false,
       },
