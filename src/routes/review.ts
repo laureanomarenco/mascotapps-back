@@ -42,27 +42,35 @@ router.post("/newReview", async (req, res) => {
     // stars!: number | string
     console.log(`req.body = ${req.body}`);
 
-    let { reviewed_id, reviewer_id, transaction_id } = req.body
+    let { reviewed_id, reviewer_id, transaction_id } = req.body;
 
-    const transaction = await db.Transaction.findOne({ where: { id: transaction_id }})
-    if(!transaction) throw new Error(`La transaccción con id "${transaction_id}" no existe.`)
-    
-      if ((reviewer_id === transaction.user_offering_id && reviewed_id === transaction.user_demanding_id) 
-      || (reviewer_id === transaction.user_demanding_id && reviewed_id === transaction.user_offering_id)) {
+    const transaction = await db.Transaction.findOne({
+      where: { id: transaction_id },
+    });
+    if (!transaction)
+      throw new Error(`La transacción con id "${transaction_id}" no existe.`);
 
+    if (
+      (reviewer_id === transaction.user_offering_id &&
+        reviewed_id === transaction.user_demanding_id) ||
+      (reviewer_id === transaction.user_demanding_id &&
+        reviewed_id === transaction.user_offering_id)
+    ) {
       let validatedReview = validateNewReview(req.body);
       let newReview = await db.Review.create(validatedReview);
-      await newReview.setUser(reviewed_id)
-      
-      console.log(`Nueva Review creada:`);
+      await newReview.setUser(reviewed_id);
+
+      console.log(`Nueva Review creada: `);
       console.log(newReview);
-      
+
       return res.status(200).send(newReview);
-    } 
- 
-    return res.status(404).send({ msg: 'transacción no valida para estos usuarios.' })
+    }
+
+    return res
+      .status(404)
+      .send({ msg: "Transacción no válida para estos usuarios." });
   } catch (error: any) {
-    console.log(`Error en ruta /newReview. Error message: ${error.message}`);
+    console.log(`Error en ruta /newReview.  ${error.message}`);
     return res.status(404).send(error.message);
   }
 });
@@ -80,9 +88,10 @@ router.post("/getReviewsToUser", async (req, res) => {
     let userId = req.body.id;
     let reviewsToUser = await db.Review.findAll({
       where: {
-        reviewed_id: userId,
+        UserId: userId,
       },
     });
+    console.log(`Devolviendo reviews hechas al user con id ${req.body.id}...`);
     return res.status(200).send(reviewsToUser);
   } catch (error: any) {
     console.log(`Error en /reviews/getReviewsOfUser. ${error.message}`);
