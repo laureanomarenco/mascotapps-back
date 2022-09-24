@@ -1,6 +1,7 @@
 import { Router } from "express";
 import db from "../../models/index";
 import { IPetOfUser, Pet } from "../types/petTypes";
+import { Op } from 'sequelize';
 import {
   IContactInfoOfOwner,
   ISomeUserInfo,
@@ -21,6 +22,31 @@ const getAllUsers = async () => {
     return error;
   }
 };
+
+const getAllReviews = async (userId: any) => {
+  try {
+
+    const allReviews = await db.Review.findAll({ where: {
+      UserId: userId
+    }});
+    return allReviews;
+  } catch (error : any) {
+    console.log(error.message)
+    return error
+  }
+}
+
+const getAllTransactions = async (userId:any) => {
+  try {
+    const allTransactions = await db.Transaction.findAll({ where: {
+      [Op.or]: [{user_offering_id: userId}, {user_demanding_id: userId}]
+    }})
+    return allTransactions
+  } catch (error : any) {
+    console.log(error.message)
+    return error
+  }
+}
 
 // get Some User Info:
 async function getSomeUserInfo(userId: any) {
@@ -90,6 +116,8 @@ const authCheck = (req: any, res: any, next: any) => {
 // ----- ------ ------- RUTAS :  ------ ------- -------
 
 //GET ALL USERS FROM DB:  //! Hay que dejarla comentada ( o borrarla) porque no es seguro poder tener toda la data de los users registrados:
+
+
 router.get("/", async (req, res) => {
   console.log("entré al get de Users!");
 
@@ -291,8 +319,13 @@ router.post("/someUserInfo", async (req, res) => {
     if (req.body.id) {
       let userId = req.body.id;
       let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId);
+      let someUserReviews = await getAllReviews(userId)
+      let someUserTransaction = await getAllTransactions(userId)
+
       console.log(`someUserInfo: ${someUserInfo}`);
-      return res.status(200).send(someUserInfo);
+
+      const infoTotal= [someUserInfo, {reviews: [someUserReviews]}, {transactions: someUserTransaction} ]
+      return res.status(200).send(infoTotal);
     } else {
       throw new Error("El user Id enviado no es válido");
     }

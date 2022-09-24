@@ -45,7 +45,7 @@ router.post('/getUserTransactions', async(req, res) => {
   try {
     const { id } = req.body;
 
-    const userTransactions = await db.Transactions.findAll({ where: {
+    const userTransactions = await db.Transaction.findAll({ where: {
       [Op.or]: [{user_offering_id: id}, {user_demanding_id: id}]
     }})
     
