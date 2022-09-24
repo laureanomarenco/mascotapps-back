@@ -44,10 +44,11 @@ router.post("/newReview", async (req, res) => {
 
     let { reviewed_id, reviewer_id, transaction_id } = req.body
 
-    const transaction = await db.Transaction.findByPk(transaction_id)
-
-    if ((reviewer_id === transaction.user_offering_id && reviewed_id === transaction.user_demanding_id) 
-    || (reviewer_id === transaction.user_demanding_id && reviewed_id === transaction.user_offering_id)) {
+    const transaction = await db.Transaction.findOne({ where: { id: transaction_id }})
+    if(!transaction) throw new Error(`La transaccción con id "${transaction_id}" no existe.`)
+    
+      if ((reviewer_id === transaction.user_offering_id && reviewed_id === transaction.user_demanding_id) 
+      || (reviewer_id === transaction.user_demanding_id && reviewed_id === transaction.user_offering_id)) {
 
       let validatedReview = validateNewReview(req.body);
       let newReview = await db.Review.create(validatedReview);
@@ -58,6 +59,7 @@ router.post("/newReview", async (req, res) => {
       
       return res.status(200).send(newReview);
     } 
+ 
     return res.status(404).send({ msg: 'transacción no valida para estos usuarios.' })
   } catch (error: any) {
     console.log(`Error en ruta /newReview. Error message: ${error.message}`);
