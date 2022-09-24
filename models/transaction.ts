@@ -4,7 +4,7 @@ import { UUIDV4, Model } from "sequelize";
 import { ITransaction } from "../src/types/transactionTypes";
 module.exports = (sequelize: any, DataTypes: any) => {
   class Transaction extends Model<ITransaction> implements ITransaction {
-    id: undefined | string;
+    id?: undefined | string;
     user_offering_id!: string;
     user_demanding_id!: string;
     status!: string;

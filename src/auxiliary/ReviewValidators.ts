@@ -16,7 +16,7 @@ export function validateNewReview(reqBody: any): IReview {
   }
 }
 
-function isValidString(argumento: any): boolean {
+export function isValidString(argumento: any): boolean {
   if (typeof argumento === "string" && argumento.length > 0) {
     return true;
   } else {
