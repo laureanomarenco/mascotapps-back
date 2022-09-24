@@ -1,10 +1,16 @@
 "use strict";
 
-import { UUIDV4 } from "sequelize";
-
-const { Model } = require("sequelize");
+import { UUIDV4, Model } from "sequelize";
+import { ITransaction } from "../src/types/transactionTypes";
 module.exports = (sequelize: any, DataTypes: any) => {
-  class Transaction extends Model {
+  class Transaction extends Model<ITransaction> implements ITransaction {
+    id: undefined | string;
+    user_offering_id!: string;
+    user_demanding_id!: string;
+    status!: string;
+    pet_id!: string;
+    user_offering_check!: string | undefined;
+    user_demanding_check!: string | undefined;
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -39,11 +45,11 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       user_offering_check: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       user_demanding_check: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
     },
     {

@@ -1,10 +1,17 @@
 "use strict";
 
+import { Model } from "sequelize";
 import { UUIDV4 } from "sequelize";
+import { IReview } from "../src/types/reviewTypes";
 
-const { Model } = require("sequelize");
 module.exports = (sequelize: any, DataTypes: any) => {
-  class Review extends Model {
+  class Review extends Model<IReview> implements IReview {
+    id: undefined;
+    transaction_id!: string;
+    reviewer_id!: string;
+    reviewed_id!: string;
+    comments: string | undefined;
+    stars!: number;
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -40,7 +47,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
         validate: {
           len: {
             args: [0, 1000],
-            msg: "SQLZ Error. El largo debe ser menor a 1000 caracteres",
+            msg: "SQLZ Error. El largo del comentario debe ser menor a 1000 caracteres",
           },
         },
       },
