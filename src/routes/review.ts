@@ -1,6 +1,7 @@
 import { Router } from "express";
 import db from "../../models/index";
 import { IReview } from "../types/reviewTypes";
+import { validateNewReview } from "../auxiliary/ReviewValidators";
 
 const router = Router();
 
@@ -34,7 +35,8 @@ router.post("/newReview", async (req, res) => {
   console.log(`Entré a la ruta POST /reviews/newReview`);
   try {
     console.log(`req.body = ${req.body}`);
-    let newReview = await db.Review.create(req.body);
+    let validatedReview = validateNewReview(req.body);
+    let newReview = await db.Review.create(validatedReview);
     console.log(`Nueva Review creada:`);
     console.log(newReview);
     return res.status(200).send(newReview);
