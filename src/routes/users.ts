@@ -312,7 +312,7 @@ router.put("/update", async (req, res) => {
   }
 });
 
-router.post("/someUserInfo", async (req, res) => {
+router.post("/getMultipleUserInfo", async (req, res) => {
   console.log(`Entré a la ruta /users/someUserInfo`);
   console.log(`req.body.id = ${req.body?.id}`);
   try {
@@ -320,17 +320,17 @@ router.post("/someUserInfo", async (req, res) => {
       let userId = req.body.id;
       let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId);
       let someUserReviews = await getAllReviews(userId)
-      let someUserTransaction = await getAllTransactions(userId)
+      let someUserTransactions = await getAllTransactions(userId)
 
       console.log(`someUserInfo: ${someUserInfo}`);
 
-      const infoTotal= [someUserInfo, {reviews: [someUserReviews]}, {transactions: someUserTransaction} ]
+      const infoTotal= [someUserInfo, {reviews: someUserReviews}, {transactions: someUserTransactions} ]
       return res.status(200).send(infoTotal);
     } else {
-      throw new Error("El user Id enviado no es válido");
+      throw new Error(`El req.body.id '${req.body.id}'  no es un id válido.`);
     }
   } catch (error: any) {
-    console.log(`Error en /users/someUserInfo. ${error.message}`);
+    console.log(`Error en /users/getMultipleUserInfo. ${error.message}`);
     return res.status(400).send(error.message);
   }
 });
