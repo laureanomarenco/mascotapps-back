@@ -1,6 +1,6 @@
 "use strict";
 import { Model, STRING, UUIDV4 } from "sequelize";
-const User = require("./user");
+// const User = require("./user");
 
 export default (sequelize: any, DataTypes: any) => {
   class Review extends Model {
@@ -11,6 +11,17 @@ export default (sequelize: any, DataTypes: any) => {
      */
     static associate(models: any) {
       // define association here
+
+      models.User.belongsToMany(models.User, {
+        through: "Review",
+        as: "reviewer",
+        foreignKey: "reviewer_id",
+      });
+      models.User.belongsToMany(models.User, {
+        through: "Review",
+        as: "reviewed",
+        foreignKey: "reviewed_id",
+      });
     }
   }
   Review.init(
@@ -23,14 +34,14 @@ export default (sequelize: any, DataTypes: any) => {
       reviewer_id: {
         type: DataTypes.STRING,
         references: {
-          model: User, // 'Movies' would also work
+          model: "User", // 'Movies' would also work
           key: "id",
         },
       },
       reviewed_id: {
         type: DataTypes.STRING,
         references: {
-          model: User, // 'Actors' would also work
+          model: "User", // 'Actors' would also work
           key: "id",
         },
       },
