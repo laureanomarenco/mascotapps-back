@@ -71,7 +71,7 @@ router.post("/newTransaction", async (req, res) => {
     const { id } = req.body;
     const { petId } = req.query;
     const userDemanding = await db.User.findOne({ where: { id: id } });
-    const offeringPet = await db.Pets.findOne({ where: { id: petId } });
+    const offeringPet = await db.Animal.findOne({ where: { id: petId } });
     const userOffering = await db.User.findOne({
       where: { id: offeringPet.UserId },
     });
