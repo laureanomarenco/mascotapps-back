@@ -72,15 +72,16 @@ router.post('/', async (req, res) => {
         })
         //CHECK USER
         if(user){
-          donation.setUser(user.id)
-          res.send({msg: 'Succesfull payment from', user})
+          await donation.setUser(user.id)
+          await db.User.update({ isDonator: "true" }, {where: { id: user.id }})
+          return res.send({msg: 'Succesfull payment from', user})
         } else {
           console.log('donation: ' + donation)
-          res.send({msg: 'Succesfull payment'})
+          return res.send({msg: 'Succesfull payment'})
         }
     } catch(err: any){
         console.log('error en /checkout')
-        res.json({msg: err.raw.message})
+        return res.json({msg: err.raw.message})
     }
 })
 

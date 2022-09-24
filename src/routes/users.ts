@@ -34,7 +34,7 @@ async function getSomeUserInfo(userId: any) {
         city: userInfo.city,
         image: userInfo.image,
         contact: userInfo.contact,
-        //donations
+        isDonator: userInfo.isDonator,
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
@@ -297,7 +297,7 @@ router.post("/someUserInfo", async (req, res) => {
       throw new Error("El user Id enviado no es válido");
     }
   } catch (error: any) {
-    console.log(`Error en /users/someUserInfo. Error: ${error.message}`);
+    console.log(`Error en /users/someUserInfo. ${error.message}`);
     return res.status(400).send(error.message);
   }
 });
