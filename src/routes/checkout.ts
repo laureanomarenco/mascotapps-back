@@ -30,7 +30,10 @@ router.post('/', async (req, res) => {
     console.log(req.body)
     try {
         const { id, amount, email } = req.body
-        
+
+        const user = db.Users.findOne({ where: { email: email }})
+
+        //DONACIÓN
         const payment = await stripe.paymentIntents.create({
             amount,
             currency: "USD",
@@ -44,6 +47,7 @@ router.post('/', async (req, res) => {
             amount,
             email
         })
+        // MAILER
         const nodemailer = require('nodemailer')
         console.log(GMAIL_PASS, GMAIL_USER)
         const transporter = nodemailer.createTransport({
@@ -66,10 +70,14 @@ router.post('/', async (req, res) => {
           if(error) console.log(error)
           else console.log('Email enviado: ' + info.response)
         })
-
-        console.log('donation: ' + donation)
-        res.send({msg: 'Succesfull payment'})
-
+        //CHECK USER
+        if(user){
+          donation.setUser(user.id)
+          res.send({msg: 'Succesfull payment from', user})
+        } else {
+          console.log('donation: ' + donation)
+          res.send({msg: 'Succesfull payment'})
+        }
     } catch(err: any){
         console.log('error en /checkout')
         res.json({msg: err.raw.message})

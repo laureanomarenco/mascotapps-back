@@ -34,6 +34,9 @@ async function getSomeUserInfo(userId: any) {
         city: userInfo.city,
         image: userInfo.image,
         contact: userInfo.contact,
+        //transactions
+        //donations
+        //reviews
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
