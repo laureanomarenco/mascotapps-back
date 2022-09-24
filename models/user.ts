@@ -2,7 +2,6 @@
 
 import { Model, UUIDV4 } from "sequelize";
 import { UserAttributes } from "../src/types/userTypes";
-// import Review from "./review";
 
 // export interface UserAttributes {
 //   id: string | undefined;
@@ -31,16 +30,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
     static associate(models: any) {
       // define association here
       User.hasMany(models.Animal);
-      User.belongsToMany(User, {
-        through: "Review",
-        as: "reviewer",
-        foreignKey: "reviewer_id",
-      });
-      User.belongsToMany(User, {
-        through: "Review",
-        as: "reviewed",
-        foreignKey: "reviewed_id",
-      });
     }
   }
   User.init(

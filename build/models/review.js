@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
-// const User = require("./user");
 exports.default = (sequelize, DataTypes) => {
     class Review extends sequelize_1.Model {
         /**
@@ -11,16 +10,6 @@ exports.default = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            models.User.belongsToMany(models.User, {
-                through: "Review",
-                as: "reviewer",
-                foreignKey: "reviewer_id",
-            });
-            models.User.belongsToMany(models.User, {
-                through: "Review",
-                as: "reviewed",
-                foreignKey: "reviewed_id",
-            });
         }
     }
     Review.init({
@@ -31,20 +20,12 @@ exports.default = (sequelize, DataTypes) => {
         },
         reviewer_id: {
             type: DataTypes.STRING,
-            references: {
-                model: "User",
-                key: "id",
-            },
         },
         reviewed_id: {
             type: DataTypes.STRING,
-            references: {
-                model: "User",
-                key: "id",
-            },
         },
         comments: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING,
         },
         stars: {
             type: DataTypes.INTEGER,
