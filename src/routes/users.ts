@@ -209,7 +209,7 @@ router.post("/getallpetsofuser", async (req: any, res) => {
   }
 });
 
-router.delete("/deletePet", async (req: any, res) => {
+router.post("/deletePet", async (req: any, res) => {
   console.log(`En la ruta users/deletePet.`);
   console.log(`petId = ${req.body?.petId}`);
   console.log(req.body);
