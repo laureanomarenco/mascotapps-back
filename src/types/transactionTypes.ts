@@ -1,5 +1,5 @@
 export interface ITransaction {
-  id: undefined | string;
+  id?: undefined | string;
   user_offering_id: string;
   user_demanding_id: string;
   status: string;
