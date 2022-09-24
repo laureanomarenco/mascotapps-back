@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
-const _1 = __importDefault(require("."));
+const User = require("./user");
 exports.default = (sequelize, DataTypes) => {
     class Review extends sequelize_1.Model {
         /**
@@ -25,21 +22,21 @@ exports.default = (sequelize, DataTypes) => {
         reviewer_id: {
             type: DataTypes.STRING,
             references: {
-                model: _1.default.User,
+                model: User,
                 key: "id",
             },
         },
         reviewed_id: {
             type: DataTypes.STRING,
             references: {
-                model: _1.default.User,
+                model: User,
                 key: "id",
             },
         },
         comments: {
             type: DataTypes.TEXT,
             references: {
-                model: _1.default.User,
+                model: User,
                 key: "id",
             },
         },

@@ -1,6 +1,7 @@
 "use strict";
 import { Model, STRING, UUIDV4 } from "sequelize";
-import models from ".";
+const User = require("./user");
+
 export default (sequelize: any, DataTypes: any) => {
   class Review extends Model {
     /**
@@ -22,21 +23,21 @@ export default (sequelize: any, DataTypes: any) => {
       reviewer_id: {
         type: DataTypes.STRING,
         references: {
-          model: models.User, // 'Movies' would also work
+          model: User, // 'Movies' would also work
           key: "id",
         },
       },
       reviewed_id: {
         type: DataTypes.STRING,
         references: {
-          model: models.User, // 'Actors' would also work
+          model: User, // 'Actors' would also work
           key: "id",
         },
       },
       comments: {
         type: DataTypes.TEXT,
         references: {
-          model: models.User,
+          model: User,
           key: "id",
         },
       },
