@@ -3,6 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
     class Donation extends sequelize_1.Model {
+        static associate(models) {
+            // define association here
+            Donation.belongsTo(models.User);
+        }
     }
     Donation.init({
         id: {

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import db from "../../models/index";
 import { IPetOfUser, Pet } from "../types/petTypes";
+import { Op } from "sequelize";
 import {
   IContactInfoOfOwner,
   ISomeUserInfo,
@@ -22,6 +23,34 @@ const getAllUsers = async () => {
   }
 };
 
+const getAllReviews = async (userId: any) => {
+  try {
+    const allReviews = await db.Review.findAll({
+      where: {
+        UserId: userId,
+      },
+    });
+    return allReviews;
+  } catch (error: any) {
+    console.log(error.message);
+    return error;
+  }
+};
+
+const getAllTransactions = async (userId: any) => {
+  try {
+    const allTransactions = await db.Transaction.findAll({
+      where: {
+        [Op.or]: [{ user_offering_id: userId }, { user_demanding_id: userId }],
+      },
+    });
+    return allTransactions;
+  } catch (error: any) {
+    console.log(error.message);
+    return error;
+  }
+};
+
 // get Some User Info:
 async function getSomeUserInfo(userId: any) {
   console.log(`Ejecutando función auxiliar someUserInfo`);
@@ -34,6 +63,7 @@ async function getSomeUserInfo(userId: any) {
         city: userInfo.city,
         image: userInfo.image,
         contact: userInfo.contact,
+        isDonator: userInfo.isDonator,
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
@@ -89,6 +119,7 @@ const authCheck = (req: any, res: any, next: any) => {
 // ----- ------ ------- RUTAS :  ------ ------- -------
 
 //GET ALL USERS FROM DB:  //! Hay que dejarla comentada ( o borrarla) porque no es seguro poder tener toda la data de los users registrados:
+
 router.get("/", async (req, res) => {
   console.log("entré al get de Users!");
 
@@ -178,16 +209,16 @@ router.post("/getallpetsofuser", async (req: any, res) => {
   }
 });
 
-router.delete("/deletepet/:petid", async (req: any, res) => {
+router.delete("/deletePet", async (req: any, res) => {
   console.log(`En la ruta users/deletepet/:petid.`);
-  console.log(`:petid = ${req.body?.petid}`);
+  console.log(`:petid = ${req.body?.petId}`);
   console.log(`req.user.id = ${req.body?.id}`);
   try {
-    let petID = req.body?.petid;
-    let userID = req.body?.id;
+    let petId = req.body?.petId;
+    let userId = req.body?.id;
     //buscar instancia de mascota en DB:
-    let petToDeleteInDB = await db.Animal.findByPk(petID);
-    if (petToDeleteInDB.UserId == userID) {
+    let petToDeleteInDB = await db.Animal.findByPk(petId);
+    if (petToDeleteInDB.UserId == userId) {
       //borrar instancia de la DB:
       // await petToDeleteInDB.destroy();
       let deletedPet = await petToDeleteInDB.destroy();
@@ -283,20 +314,29 @@ router.put("/update", async (req, res) => {
   }
 });
 
-router.post("/someUserInfo", async (req, res) => {
+router.post("/getMultipleUserInfo", async (req, res) => {
   console.log(`Entré a la ruta /users/someUserInfo`);
   console.log(`req.body.id = ${req.body?.id}`);
   try {
     if (req.body.id) {
       let userId = req.body.id;
       let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId);
+      let someUserReviews = await getAllReviews(userId);
+      let someUserTransactions = await getAllTransactions(userId);
+
       console.log(`someUserInfo: ${someUserInfo}`);
-      return res.status(200).send(someUserInfo);
+
+      const infoTotal = [
+        someUserInfo,
+        { reviews: someUserReviews },
+        { transactions: someUserTransactions },
+      ];
+      return res.status(200).send(infoTotal);
     } else {
-      throw new Error("El user Id enviado no es válido");
+      throw new Error(`El req.body.id '${req.body.id}'  no es un id válido.`);
     }
   } catch (error: any) {
-    console.log(`Error en /users/someUserInfo. Error: ${error.message}`);
+    console.log(`Error en /users/getMultipleUserInfo. ${error.message}`);
     return res.status(400).send(error.message);
   }
 });

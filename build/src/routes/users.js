@@ -33,13 +33,16 @@ function getSomeUserInfo(userId) {
         console.log(`Ejecutando función auxiliar someUserInfo`);
         console.log(`userId = ${userId}`);
         try {
-            let userInfo = index_1.default.User.findByPk(userId);
+            let userInfo = yield index_1.default.User.findByPk(userId);
             if (userInfo) {
                 let someUserInfo = {
                     name: userInfo.name,
                     city: userInfo.city,
                     image: userInfo.image,
                     contact: userInfo.contact,
+                    //transactions
+                    //donations
+                    //reviews
                 };
                 console.log(`retornando someUserInfo: ${someUserInfo}`);
                 return someUserInfo;
@@ -143,13 +146,7 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
         return res.status(404).send(error.message);
     }
 }));
-// GET(post) ALL PETS OF AUTH USER ID:
-// obtener todas las instancias de mascotas que tienen como UserId el id del usuario que quiere obtener el listado de mascotas.
-// Esta ruta serviría para que un usuario pueda ver su listado de mascotas posteadas, desde su perfíl.
-// Hay que ver el req.user.id de la cookie, y buscar en la tabla Animal (mascotas) todas las instancias que tienen como UserId un valor igual al req.user.id.
-// Recolectamos esas instancias en un arreglo y enviamos ese arreglo al cliente.
-//---
-// /users/getallpetsofuser
+// GET(post) ALL PETS OF USER ID:
 router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
@@ -172,7 +169,7 @@ router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0,
         }
         else {
             console.log(`Retornando petsPostedByUser con .length <= 0. Su length es ${petsPostedByUser === null || petsPostedByUser === void 0 ? void 0 : petsPostedByUser.length}`);
-            return petsPostedByUser;
+            return res.status(200).send(petsPostedByUser);
         }
     }
     catch (error) {
@@ -210,16 +207,6 @@ router.delete("/deletepet/:petid", (req, res) => __awaiter(void 0, void 0, void 
         return res.status(404).send(error.message);
     }
 }));
-// router.get("/numbervisitors", async (req, res) => {
-//   console.log("Entré a /numbervisitors");
-//   try {
-//     let arrayVisitors = await db.Visitor.findAll();
-//     let numberOfVisitors = arrayVisitors.length;
-//     res.status(200).send(`${numberOfVisitors}`);
-//   } catch (error) {
-//     res.status(404).send(error);
-//   }
-// });
 router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, name, city, contact, image, id } = req.body;
     try {
@@ -235,10 +222,10 @@ router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function
             },
         });
         if (!created) {
-            res.status(409).send("el usuario ya existe");
+            res.status(409).send(`El usuario con id ${id} ya existe en la DB`);
         }
         else {
-            console.log("se creo");
+            console.log(`Nuevo usuario creado con name: ${name}`);
             res.send(newUser);
         }
     }
@@ -250,16 +237,18 @@ router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function
 router.post("/exists", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.body;
     try {
-        console.log("buscando si existe el usuario");
+        console.log(`Buscando si existe el usuario con id ${id}`);
         let user = yield index_1.default.User.findOne({
             where: {
                 id: id,
             },
         });
         if (user === null) {
+            console.log(`Usuario con id: ${id} no encontrado`);
             res.send({ msg: false });
         }
         else {
+            console.log(`Usuario con id: ${id} encontrado.`);
             res.send({ msg: true });
         }
     }
@@ -269,6 +258,9 @@ router.post("/exists", (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 }));
 router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré a users/update`);
+    console.log(`Me llegó por body: `);
+    console.log(req.body);
     try {
         const { image, contact, city, email, name, id } = req.body;
         const newProfile = yield index_1.default.User.update({
@@ -276,11 +268,11 @@ router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* 
             contact: contact,
             city: city,
             email: email,
-            name: name
+            name: name,
         }, {
             where: {
-                id: id
-            }
+                id: id,
+            },
         });
         res.status(200).send(newProfile);
     }
