@@ -78,7 +78,7 @@ router.post("/getReviewsToUser", async (req, res) => {
       );
     }
     let userId = req.body.id;
-    let reviewsToUser = await db.Review.getAll({
+    let reviewsToUser = await db.Review.findAll({
       where: {
         reviewed_id: userId,
       },
