@@ -1,13 +1,4 @@
-// import { IReview } from "../types/reviewTypes";
-
-export interface IReview {
-  id?: undefined;
-  transaction_id: string;
-  reviewer_id: string;
-  reviewed_id: string;
-  comments: string | undefined;
-  stars: number;
-}
+import { IReview } from "../types/reviewTypes";
 
 export function validateNewReview(reqBody: any): IReview {
   try {
