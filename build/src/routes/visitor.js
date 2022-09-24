@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
 const route = (0, express_1.Router)();
-route.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+route.get("/addVisitor", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a /visitor`);
     try {
         let newVisitor = {
