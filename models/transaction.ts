@@ -33,6 +33,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      pet_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       user_offering_check: {
         type: DataTypes.STRING,
         allowNull: false,
