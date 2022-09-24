@@ -16,8 +16,16 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
             User.hasMany(models.Animal);
-            User.belongsToMany(User, { through: "Transaction" });
-            User.belongsToMany(User, { through: "Transaction" });
+            User.belongsToMany(User, {
+                through: "Review",
+                as: "reviewer",
+                foreignKey: "reviewer_id",
+            });
+            User.belongsToMany(User, {
+                through: "Review",
+                as: "reviewed",
+                foreignKey: "reviewed_id",
+            });
         }
     }
     User.init({
