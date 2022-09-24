@@ -20,12 +20,8 @@ export function validateNewReview(reqBody: any): IReview {
     };
     return reviewFromReqChecked;
   } catch (error: any) {
-    console.log(
-      `Error en la function validateNewReview. Error: ${error.message}`
-    );
-    throw new Error(
-      `Error en la function validateNewReview. Error:${error.message}`
-    );
+    console.log(`Error en la function validateNewReview. ${error.message}`);
+    throw new Error(`Error en la function validateNewReview. ${error.message}`);
   }
 }
 
@@ -108,9 +104,7 @@ function checkReviewerId(reviewerIdFromReq: any) {
 
 function checkTransactionId(transactionIdFromReq: any) {
   if (!isValidString(transactionIdFromReq)) {
-    throw new Error(
-      `Error: El transaction_id "${transactionIdFromReq}"no es válido.`
-    );
+    throw new Error(`El transaction_id "${transactionIdFromReq}"no es válido.`);
   } else {
     return transactionIdFromReq;
   }
