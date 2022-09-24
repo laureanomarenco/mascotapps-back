@@ -30,8 +30,16 @@ module.exports = (sequelize: any, DataTypes: any) => {
     static associate(models: any) {
       // define association here
       User.hasMany(models.Animal);
-      User.belongsToMany(User, { through: "Transaction" });
-      User.belongsToMany(User, { through: "Transaction" });
+      User.belongsToMany(User, {
+        through: "Reviews",
+        as: "reviewer",
+        foreignKey: "reviewer_id",
+      });
+      User.belongsToMany(User, {
+        through: "Reviews",
+        as: "reviewed",
+        foreignKey: "reviewed_id",
+      });
     }
   }
   User.init(
