@@ -210,22 +210,21 @@ router.post("/getallpetsofuser", async (req: any, res) => {
 });
 
 router.delete("/deletePet", async (req: any, res) => {
-  console.log(`En la ruta users/deletepet/:petid.`);
-  console.log(`:petid = ${req.body?.petId}`);
-  console.log(`req.user.id = ${req.body?.id}`);
+  console.log(`En la ruta users/deletePet.`);
+  console.log(`petId = ${req.body?.petId}`);
+  console.log(req.body);
+  console.log(`req.body.id = ${req.body?.id}`);
   try {
-    let petId = req.body?.petId;
-    let userId = req.body?.id;
+    let petId = req.body.petId;
+    let userId = req.body.id;
     //buscar instancia de mascota en DB:
     let petToDeleteInDB = await db.Animal.findByPk(petId);
     if (petToDeleteInDB.UserId == userId) {
       //borrar instancia de la DB:
       // await petToDeleteInDB.destroy();
       let deletedPet = await petToDeleteInDB.destroy();
-      console.log(
-        `pet with id ${petToDeleteInDB.id} and pet.UserId = ${petToDeleteInDB.UserId}...  soft-destroyed`
-      );
-      return res.status(200).send(deletedPet);
+      console.log(`pet with id ${req.body.id} ...  soft-destroyed`);
+      return res.status(200).send({ msg: "Mascota borrada" });
     } else {
       //retornar que no coincide el petToDelete.UserId con el req.user.id
       return res
@@ -233,9 +232,7 @@ router.delete("/deletePet", async (req: any, res) => {
         .send(`El ID del cliente no coincide con el UserId de la mascota.`);
     }
   } catch (error: any) {
-    console.log(
-      `Hubo un error en el users/deletepet/:petid = ${error.message}`
-    );
+    console.log(`Hubo un error en el users/deletepet = ${error.message}`);
     return res.status(404).send(error.message);
   }
 });
