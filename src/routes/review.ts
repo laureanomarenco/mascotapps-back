@@ -46,4 +46,27 @@ router.post("/newReview", async (req, res) => {
   }
 });
 
+router.post("/getReviewsToUser", async (req, res) => {
+  console.log(`En /reviews/getReviewsOfUser`);
+  console.log(`req.body = ${req.body}`);
+  try {
+    console.log(`user id = ${req.body.id}`);
+    if (!req.body.id) {
+      throw new Error(
+        `el req.body.id "${req.body.id}" enviado por body es falso.`
+      );
+    }
+    let userId = req.body.id;
+    let reviewsToUser = await db.Review.getAll({
+      where: {
+        reviewed_id: userId,
+      },
+    });
+    return res.status(200).send(reviewsToUser);
+  } catch (error: any) {
+    console.log(`Error en /reviews/getReviewsOfUser. ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+});
+
 export default router;
