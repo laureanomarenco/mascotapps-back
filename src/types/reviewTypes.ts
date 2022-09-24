@@ -1,5 +1,5 @@
 export interface IReview {
-  id: undefined;
+  id?: undefined;
   transaction_id: string;
   reviewer_id: string;
   reviewed_id: string;
