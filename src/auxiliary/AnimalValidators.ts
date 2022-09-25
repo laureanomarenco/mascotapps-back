@@ -31,6 +31,7 @@ export function validateNewPet(reqBody: any): Pet {
       backWithItsOwner: undefined,
       withNewOwner: undefined,
       comments: reqBody.comments,
+      wasTransacted: undefined,
     };
     return petFromReqChecked;
   } catch (error: any) {

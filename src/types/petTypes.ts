@@ -63,6 +63,7 @@ export interface Pet {
   comments: string | undefined;
   withNewOwner: undefined | true;
   backWithItsOwner: undefined | true;
+  wasTransacted: undefined | string;
 }
 
 export interface IPetOfUser {
