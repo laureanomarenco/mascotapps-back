@@ -22,4 +22,5 @@ export interface IContactInfoOfOwner {
   city: string | undefined;
   image: string | undefined;
   contact: string | undefined;
+  isDonator: string | undefined;
 }
