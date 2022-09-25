@@ -93,6 +93,7 @@ module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
       },
       wasTransacted: {
         type: DataTypes.STRING,
+        defaultValue: "false",
         allowNull: true,
       },
     },
