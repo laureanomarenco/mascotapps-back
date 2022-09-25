@@ -78,7 +78,7 @@ router.post("/newReview", async (req, res) => {
           let newReview = await db.Review.create(validatedReview);
           await newReview.setUser(reviewed_id);
           console.log(`Review creada y asociada al user ${reviewed_id}`);
-          transaction.user_demanding_check === "calificado";
+          transaction.user_demanding_check = "calificado";
           await transaction.save();
           console.log(`user_demanding_check cambiado a "calificado"`);
           console.log(`Retornando la nueva review...`);
