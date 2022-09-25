@@ -46,7 +46,7 @@ function getAllPetsNotTransacted() {
         try {
             let petsInOffer = yield index_1.default.Animal.findAll({
                 where: {
-                    wasTransacted: null,
+                    wasTransacted: "false",
                 },
             });
             return petsInOffer;

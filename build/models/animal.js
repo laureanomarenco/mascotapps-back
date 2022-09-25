@@ -70,6 +70,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         wasTransacted: {
             type: DataTypes.STRING,
+            defaultValue: "false",
             allowNull: true,
         },
     }, {
