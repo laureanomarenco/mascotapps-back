@@ -41,6 +41,21 @@ const getAllPets = () => __awaiter(void 0, void 0, void 0, function* () {
         return error;
     }
 });
+function getAllPetsNotTransacted() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            let petsInOffer = yield index_1.default.Animal.findAll({
+                where: {
+                    wasTransacted: null,
+                },
+            });
+            return petsInOffer;
+        }
+        catch (error) {
+            return error.message;
+        }
+    });
+}
 function getNumberOfPetsInDB() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("En la fn getNumberOfPetsInDB");
@@ -340,9 +355,9 @@ router.get("/especies", (_req, res) => __awaiter(void 0, void 0, void 0, functio
 router.get("/", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("entré al GET pets/ ");
     try {
-        let allThePets = yield getAllPets();
+        let allThePetsNotTransacted = yield getAllPetsNotTransacted();
         // console.log(allThePets);
-        return res.status(200).send(allThePets);
+        return res.status(200).send(allThePetsNotTransacted);
     }
     catch (error) {
         return res.status(404).send(error.message);

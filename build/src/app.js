@@ -19,6 +19,8 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 var corsOptions = {
     origin: ["https://mascotapps.vercel.app", "http://localhost:3000"],
+    headers: "*",
+    methods: "*",
     credentials: true,
 };
 app.use((0, cors_1.default)(corsOptions));

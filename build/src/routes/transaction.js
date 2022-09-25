@@ -16,6 +16,7 @@ const express_1 = require("express");
 const sequelize_1 = require("sequelize");
 const index_1 = __importDefault(require("../../models/index"));
 const TransactionValidators_1 = require("../auxiliary/TransactionValidators");
+const { GMAIL_PASS, GMAIL_USER } = process.env;
 const router = (0, express_1.Router)();
 //-----  FUNCIONES AUXILIARES: -------------------------------
 function getAllTransactions() {
@@ -28,6 +29,50 @@ function getAllTransactions() {
             console.log(`Error en function getAllTransactions. Error message: ${error.message} `);
             throw new Error(error.message);
         }
+    });
+}
+function mailer(userOffering, userDemanding, offeringPet) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const nodemailer = require("nodemailer");
+        console.log(GMAIL_PASS, GMAIL_USER);
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: GMAIL_USER,
+                pass: GMAIL_PASS,
+            },
+        });
+        //Mail para el demanding
+        let demandingMail = userDemanding.email;
+        let offeringMail = userOffering.email;
+        console.log(userDemanding.email, userOffering.email);
+        const msgMailDemanding = `Registramos que ${userOffering.name} quiere contactarte por ${offeringPet.name}. Te deseamos suerte en tu busqueda y te facilitamos los siguientes datos para contactarte con ${userOffering.name}. Un saludo de parte del equipo de Mascotapp`;
+        const mailOptionsDemanding = {
+            from: "service.mascotapp@gmail.com",
+            to: demandingMail,
+            subject: "Alguien está interesado en una mascota tuya",
+            html: `<div>${msgMailDemanding}</div><div>${userOffering.email}</div><div>${userOffering.contact}</div>`,
+        };
+        transporter.sendMail(mailOptionsDemanding, function (error, info) {
+            if (error)
+                console.log(error);
+            else
+                console.log("Email enviado: " + info.response);
+        });
+        //Mail para el offering
+        const msgMailOffering = `Registramos que qures contactarte con ${userDemanding.name} por ${offeringPet.name}. Te deseamos suerte en tu interacción y te facilitamos los siguientes datos para contactarte con ${userDemanding.name}. Un saludo de parte del equipo de Mascotapp.`;
+        const mailOptionsOffering = {
+            from: "service.mascotapp@gmail.com",
+            to: offeringMail,
+            subject: "Mucha suerte en tu busqueda",
+            html: `<div>${msgMailOffering}</div><div>${userDemanding.email}</div><div>${userDemanding.contact}</div>`,
+        };
+        transporter.sendMail(mailOptionsOffering, function (error, info) {
+            if (error)
+                console.log(error);
+            else
+                console.log("Email enviado: " + info.response);
+        });
     });
 }
 //------  RUTAS: -----------------------------------------------
@@ -48,7 +93,6 @@ router.get("/transactionsCompleted", (req, res) => __awaiter(void 0, void 0, voi
         const transactionsCompleted = yield index_1.default.Transaction.findAll({
             where: { status: "finalizado" },
         });
-        console.log(`Devolviendo las transaciones con status "finalizado". Cantidad de transactionsCompletes = ${transactionsCompleted === null || transactionsCompleted === void 0 ? void 0 : transactionsCompleted.length}`);
         return res.status(200).send(transactionsCompleted);
     }
     catch (error) {
@@ -65,8 +109,6 @@ router.post("/getUserTransactions", (req, res) => __awaiter(void 0, void 0, void
                 [sequelize_1.Op.or]: [{ user_offering_id: id }, { user_demanding_id: id }],
             },
         });
-        console.log(`Devolviendo las UserTransactions...`);
-        console.log(`UserTransactions.length = ${userTransactions === null || userTransactions === void 0 ? void 0 : userTransactions.length}`);
         return res.status(200).send(userTransactions);
     }
     catch (error) {
@@ -92,6 +134,10 @@ router.post("/newTransaction", (req, res) => __awaiter(void 0, void 0, void 0, f
             console.log(`Error al buscar por ID alguna de las instancias de userDemanding, offeringPet o userOffering. Tirando error...`);
             throw new Error(`userDemanding || offeringPet || userOffering  no se encontró en la DB.`);
         }
+        if (userDemanding.id === userOffering.id) {
+            console.log(`ID de usuario ofertante y demandante son iguales!!!! Error!`);
+            throw new Error(`El id del userDemanding y el userOffering son iguales. No es posible crear una transacción entre el mismo usuario.`);
+        }
         const newTransaction = {
             user_offering_id: userOffering.id,
             user_offering_name: userOffering.name,
@@ -106,7 +152,12 @@ router.post("/newTransaction", (req, res) => __awaiter(void 0, void 0, void 0, f
         };
         let validatedTransactionObj = (0, TransactionValidators_1.validateNewTransaction)(newTransaction);
         let createdTransaction = yield index_1.default.Transaction.create(validatedTransactionObj);
-        console.log(`Nueva transacción creada.`);
+        console.log(`Nueva transacción creada. Seteando la mascota a wasTransacted = "true"...`);
+        offeringPet.wasTransacted = "true";
+        offeringPet.save();
+        console.log(`Mascota seteada a wasTransacted = "true".`);
+        //mailer
+        yield mailer(userDemanding, userOffering, offeringPet);
         return res
             .status(200)
             .send({ msg: "nueva transacción creada", createdTransaction });
