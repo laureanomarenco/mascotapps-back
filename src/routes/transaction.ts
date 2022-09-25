@@ -31,6 +31,7 @@ async function mailer(userOffering: any, userDemanding: any, offeringPet: any) {
             }
           })
           //Mail para el demanding
+          console.log(userDemanding.email, userOffering.email)
         const msgMailDemanding = `Registramos que queres contactarte con ${userOffering.name} por ${offeringPet.name}. Te deseamos suerte en tu busqueda y te facilitamos los siguientes datos para contactarte con ${userOffering.name}. Un saludo de parte del equipo de Mascotapp`
       
         const mailOptionsDemanding = {
@@ -155,7 +156,7 @@ router.post("/newTransaction", async (req, res) => {
     console.log(`Nueva transacción creada.`);
 
     //mailer
-    mailer(userDemanding, userOffering, offeringPet)
+    await mailer(userDemanding, userOffering, offeringPet)
 
     return res
       .status(200)
