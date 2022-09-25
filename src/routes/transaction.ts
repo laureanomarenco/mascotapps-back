@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { Op } from 'sequelize';
 import db from "../../models/index";
+import { validateNewTransaction } from "../auxiliary/TransactionValidators";
+import { ITransaction } from "../types/transactionTypes";
 
 const router = Router();
 
@@ -49,37 +51,64 @@ router.post('/getUserTransactions', async(req, res) => {
       [Op.or]: [{user_offering_id: id}, {user_demanding_id: id}]
     }})
     
-    return res.status(200).send(userTransactions)
-
+    return res.status(200).send(userTransactions);
   } catch (error: any) {
-    console.log(`Error en /Transactions/allTransactions`);
+    console.log(`Error en /Transactions/allTransactions. ${error.message}`);
     return res.status(404).send(error.message);
   }
-})
+});
 
-router.post('/newTransaction', async (req, res) => {
+router.post("/newTransaction", async (req, res) => {
   console.log(`Entré a la ruta /Transactions/newTransaction`);
   try {
     const { id } = req.body;
     const { petId } = req.query;
-    const userDemanding = db.User.findOne({ where: { id: id } })
-    const offeringPet = db.Pets.findOne({ where: { id: petId } })
-    const userOffering = db.User.findOne({ where: { id: offeringPet.UserId } })
+    if (!id || !petId) {
+      console.log(`req.body.id  o  req.query.petId  es falso/undefined.`);
+      throw new Error(`req.body.id  o  req.query.petId  es falso/undefined.`);
+    }
+    const userDemanding = await db.User.findOne({ where: { id: id } });
+    const offeringPet = await db.Animal.findOne({ where: { id: petId } });
+    const userOffering = await db.User.findOne({
+      where: { id: offeringPet.UserId },
+    });
+    if (!userDemanding || !offeringPet || !userOffering) {
+      console.log(
+        `Error al buscar por ID alguna de las instancias de userDemanding, offeringPet o userOffering. Tirando error...`
+      );
 
-    const newTransaction = await db.Transaction.create({
+      throw new Error(
+        `userDemanding || offeringPet || userOffering  no se encontró en la DB.`
+      );
+    }
+
+    const newTransaction: ITransaction = {
       user_offering_id: userOffering.id,
+      user_offering_name: userOffering.name,
       user_demanding_id: userDemanding.id,
-      status: 'active',
-      pet_id: petId,
-      user_offering_check: null,
-      user_demanding_check: null
-    })
-    return res.status(200).send({ msg: 'nueva transacción creada', newTransaction })
+      user_demanding_name: userDemanding.name,
+      status: "active",
+      pet_id: offeringPet.id,
+      pet_name: offeringPet.name,
+      pet_image: offeringPet.image,
+      user_offering_check: undefined,
+      user_demanding_check: undefined,
+    };
+    let validatedTransactionObj: ITransaction =
+      validateNewTransaction(newTransaction);
+    let createdTransaction = await db.Transaction.create(
+      validatedTransactionObj
+    );
+    console.log(`Nueva transacción creada.`);
+    return res
+      .status(200)
+      .send({ msg: "nueva transacción creada", createdTransaction });
   } catch (error: any) {
-    console.log(`Error en /Transactions/allTransactions`);
+    console.log(`Error en /Transactions/allTransactions. ${error.message}`);
     return res.status(404).send(error.message);
   }
-})
+});
+
 
 router.put('/transactionCheck', async (req, res) => {
   console.log('en la ruta /Transactions/transactionCheck');

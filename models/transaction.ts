@@ -6,9 +6,13 @@ module.exports = (sequelize: any, DataTypes: any) => {
   class Transaction extends Model<ITransaction> implements ITransaction {
     id?: undefined | string;
     user_offering_id!: string;
+    user_offering_name!: string;
     user_demanding_id!: string;
+    user_demanding_name!: string;
     status!: string;
     pet_id!: string;
+    pet_name!: string;
+    pet_image: string | undefined;
     user_offering_check!: string | undefined;
     user_demanding_check!: string | undefined;
     /**
@@ -28,7 +32,15 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      user_offering_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       user_demanding_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      user_demanding_name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -39,6 +51,14 @@ module.exports = (sequelize: any, DataTypes: any) => {
       pet_id: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      pet_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      pet_image: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       user_offering_check: {
         type: DataTypes.STRING,
