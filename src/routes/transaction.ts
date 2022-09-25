@@ -110,59 +110,40 @@ router.post("/newTransaction", async (req, res) => {
 });
 
 
-router.put('/transactionCheck', async (req, res) => {
-  console.log('en la ruta /Transactions/transactionCheck');
+router.put("/transactionCheck", async (req, res) => {
+  console.log("en la ruta /Transactions/transactionCheck");
   try {
     const { transactionId } = req.query;
     const { id } = req.body;
 
-    const transaction = await db.Transaction.findOne({ where: { id: transactionId } })
+    const transaction = await db.Transaction.findOne({
+      where: { id: transactionId },
+    });
 
-    // finalizado
-    if (id === transaction.user_offering_id && transaction.user_offering_check === null) {
-      transaction.user_offering_check = 'finalizado'
-      await transaction.save()
+    if (id === transaction.user_offering_id) {
+      transaction.user_offering_check = "finalizado";
+      await transaction.save();
       if (transaction.user_demanding_check !== null) {
-        transaction.status = 'finalizado';
-        await transaction.save()
+        transaction.status = "finalizado";
+        await transaction.save();
         console.log(`Transaction.status ahora es "finalizado".`);
       }
     }
-    if (id === transaction.user_demanding_id && transaction.user_demanding_check === null) {
-      transaction.user_demanding_check = 'finalizado'
-      await transaction.save()
+    if (id === transaction.user_demanding_id) {
+      transaction.user_demanding_check = "finalizado";
+      await transaction.save();
       if (transaction.user_offering_check !== null) {
-        transaction.status = 'finalizado';
-        await transaction.save()
+        transaction.status = "finalizado";
+        await transaction.save();
         console.log(`Transaction.status ahora es "finalizado".`);
       }
     }
 
-    //calificado
-    if (id === transaction.user_offering_id && transaction.user_offering_check === 'finalizado') {
-      transaction.user_offering_check = 'calificado'
-      await transaction.save()
-      if (transaction.user_demanding_check === 'calificado') {
-        transaction.status = 'calificado';
-        await transaction.save()
-        console.log(`Transaction.status ahora es "calificado".`);
-      }
-    }
-    if (id === transaction.user_demanding_id && transaction.user_demanding_check === 'finalizado') {
-      transaction.user_demanding_check = 'calificado'
-      await transaction.save()
-      if (transaction.user_offering_check === 'calificado') {
-        transaction.status = 'calificado';
-        await transaction.save()
-        console.log(`Transaction.status ahora es "calificado".`);
-      }
-    }
-
-    res.status(200).send({msg: 'status checked'})
+    res.status(200).send({ msg: "status checked" });
   } catch (error: any) {
     console.log(`Error en /Transactions/allTransactions`);
     return res.status(404).send(error.message);
   }
-})
+});
 
 export default router;

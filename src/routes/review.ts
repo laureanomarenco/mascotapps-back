@@ -49,21 +49,40 @@ router.post("/newReview", async (req, res) => {
     });
     if (!transaction)
       throw new Error(`La transacción con id "${transaction_id}" no existe.`);
-
     if (
       (reviewer_id === transaction.user_offering_id &&
         reviewed_id === transaction.user_demanding_id) ||
       (reviewer_id === transaction.user_demanding_id &&
         reviewed_id === transaction.user_offering_id)
     ) {
+
       let validatedReview = validateNewReview(req.body);
-      let newReview = await db.Review.create(validatedReview);
-      await newReview.setUser(reviewed_id);
 
       console.log(`Nueva Review creada: `);
-      console.log(newReview);
 
-      return res.status(200).send(newReview);
+      if (reviewer_id === transaction.user_offering_id) {
+        if (transaction.user_offering_check === 'finalizado') {
+          let newReview = await db.Review.create(validatedReview);
+          await newReview.setUser(reviewed_id);
+          console.log(newReview);
+
+          transaction.user_offering_check === 'calificado'
+          await transaction.save()
+          return res.status(200).send(newReview);
+        }
+      }
+      if (reviewer_id === transaction.user_demanding_id) {
+        if (transaction.user_demanding_check === 'finalizado') {
+          let newReview = await db.Review.create(validatedReview);
+          await newReview.setUser(reviewed_id);
+          console.log(newReview);
+
+          transaction.user_demanding_check === 'calificado'
+          await transaction.save()
+          return res.status(200).send(newReview);
+        }
+      }
+
     }
 
     return res
