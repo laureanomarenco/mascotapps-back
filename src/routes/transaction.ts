@@ -142,7 +142,7 @@ router.put('/transactionCheck', async (req, res) => {
     if (id === transaction.user_offering_id && transaction.user_offering_check === 'finalizado') {
       transaction.user_offering_check = 'calificado'
       await transaction.save()
-      if (transaction.user_demanding_check !== null) {
+      if (transaction.user_demanding_check === 'calificado') {
         transaction.status = 'calificado';
         await transaction.save()
         console.log(`Transaction.status ahora es "calificado".`);
@@ -151,7 +151,7 @@ router.put('/transactionCheck', async (req, res) => {
     if (id === transaction.user_demanding_id && transaction.user_demanding_check === 'finalizado') {
       transaction.user_demanding_check = 'calificado'
       await transaction.save()
-      if (transaction.user_offering_check !== null) {
+      if (transaction.user_offering_check === 'calificado') {
         transaction.status = 'calificado';
         await transaction.save()
         console.log(`Transaction.status ahora es "calificado".`);
