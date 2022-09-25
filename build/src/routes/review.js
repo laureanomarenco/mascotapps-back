@@ -62,11 +62,31 @@ router.post("/newReview", (req, res) => __awaiter(void 0, void 0, void 0, functi
             (reviewer_id === transaction.user_demanding_id &&
                 reviewed_id === transaction.user_offering_id)) {
             let validatedReview = (0, ReviewValidators_1.validateNewReview)(req.body);
-            let newReview = yield index_1.default.Review.create(validatedReview);
-            yield newReview.setUser(reviewed_id);
-            console.log(`Nueva Review creada: `);
-            console.log(newReview);
-            return res.status(200).send(newReview);
+            console.log(`req.body Validado. Continuando con los chequeos de los id de usuarios...`);
+            if (reviewer_id === transaction.user_offering_id) {
+                if (transaction.user_offering_check === "finalizado") {
+                    let newReview = yield index_1.default.Review.create(validatedReview);
+                    yield newReview.setUser(reviewed_id);
+                    console.log(newReview);
+                    console.log(`Review creada y asociada al user ${reviewed_id}`);
+                    transaction.user_offering_check = "calificado";
+                    yield transaction.save();
+                    return res.status(200).send(newReview);
+                }
+            }
+            if (reviewer_id === transaction.user_demanding_id) {
+                if (transaction.user_demanding_check === "finalizado") {
+                    let newReview = yield index_1.default.Review.create(validatedReview);
+                    yield newReview.setUser(reviewed_id);
+                    console.log(`Review creada y asociada al user ${reviewed_id}`);
+                    transaction.user_demanding_check = "calificado";
+                    yield transaction.save();
+                    console.log(`user_demanding_check cambiado a "calificado"`);
+                    console.log(`Retornando la nueva review...`);
+                    console.log(newReview);
+                    return res.status(200).send(newReview);
+                }
+            }
         }
         return res
             .status(404)
