@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Op } from 'sequelize';
+import { Op } from "sequelize";
 import db from "../../models/index";
 import { validateNewTransaction } from "../auxiliary/TransactionValidators";
 import { ITransaction } from "../types/transactionTypes";
@@ -30,27 +30,30 @@ router.get("/allTransactions", async (req, res) => {
   }
 });
 
-router.get('/transactionsCompleted', async(req,res) => {
+router.get("/transactionsCompleted", async (req, res) => {
   console.log(`Entré a la ruta /transactions/transactionsCompleted`);
-  try { 
-    const transactionsCompleted = await db.Transaction.findAll({ where: {status: 'finalizado'}})
-    return res.status(200).send(transactionsCompleted)
-
+  try {
+    const transactionsCompleted = await db.Transaction.findAll({
+      where: { status: "finalizado" },
+    });
+    return res.status(200).send(transactionsCompleted);
   } catch (error: any) {
     console.log(`Error en /transactions/transactionsCompleted`);
     return res.status(404).send(error.message);
   }
-})
+});
 
-router.post('/getUserTransactions', async(req, res) => {
+router.post("/getUserTransactions", async (req, res) => {
   console.log(`Entré a la ruta /Transactions/getUserTransactions`);
   try {
     const { id } = req.body;
 
-    const userTransactions = await db.Transaction.findAll({ where: {
-      [Op.or]: [{user_offering_id: id}, {user_demanding_id: id}]
-    }})
-    
+    const userTransactions = await db.Transaction.findAll({
+      where: {
+        [Op.or]: [{ user_offering_id: id }, { user_demanding_id: id }],
+      },
+    });
+
     return res.status(200).send(userTransactions);
   } catch (error: any) {
     console.log(`Error en /Transactions/allTransactions. ${error.message}`);
@@ -76,9 +79,16 @@ router.post("/newTransaction", async (req, res) => {
       console.log(
         `Error al buscar por ID alguna de las instancias de userDemanding, offeringPet o userOffering. Tirando error...`
       );
-
       throw new Error(
         `userDemanding || offeringPet || userOffering  no se encontró en la DB.`
+      );
+    }
+    if (userDemanding.id === userOffering.id) {
+      console.log(
+        `ID de usuario ofertante y demandante son iguales!!!! Error!`
+      );
+      throw new Error(
+        `El id del userDemanding y el userOffering son iguales. No es posible crear una transacción entre el mismo usuario.`
       );
     }
 
@@ -108,7 +118,6 @@ router.post("/newTransaction", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
-
 
 router.put("/transactionCheck", async (req, res) => {
   console.log("en la ruta /Transactions/transactionCheck");
