@@ -1,6 +1,6 @@
 export interface UserAttributes {
-  id: string;
-  email: string;
+  id: string | undefined;
+  email: string | undefined;
   name: string | undefined;
   city: string | undefined;
   contact: string | undefined;

@@ -1,4 +1,4 @@
-//import { UserAttributes } from "../types/userTypes";
+import { UserAttributes } from "../types/userTypes";
  import {
    checkId,
    checkImageURL,
@@ -8,13 +8,13 @@
    isUndefinedOrNull,
  } from "./AnimalValidators";
 
- interface UserAttributes {
+ /* interface UserAttributes {
    id: string | undefined;
    email: string | undefined;
    name: string | undefined;
    image: string | undefined;
    contact: string | undefined;
- }
+ } */
 
  export function validateUser(profile: any): UserAttributes {
    try {
@@ -24,6 +24,8 @@
        name: checkFullName(profile.name),
        image: checkImageURL(profile.image),
        contact: checkAditionalContactInfo(profile.contact),
+       city: profile.city,
+       isDonator: profile.isDonator
      };
      return userFromReqChecked;
    } catch (error: any) {
@@ -54,7 +56,7 @@
 
  export function checkEmail(emailFromReq: any): string | undefined {
    if (isUndefinedOrNull(emailFromReq)) {
-     return undefined;
+     throw new Error("El campo mail no debe estar vacio");
    }
    if (isEmail(emailFromReq)) {
      return emailFromReq;
