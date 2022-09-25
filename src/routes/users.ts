@@ -7,6 +7,7 @@ import {
   ISomeUserInfo,
   UserAttributes,
 } from "../types/userTypes";
+import { validateUser } from "../auxiliary/UserValidators";
 
 const router = Router();
 
@@ -238,22 +239,16 @@ router.post("/deletePet", async (req: any, res) => {
 });
 
 router.post("/newuser", async (req, res) => {
-  const { email, name, city, contact, image, id } = req.body;
   try {
+    let userValidated = validateUser(req.body)
+    const { email, name, city, contact, image, id } = req.body;
     console.log("new user..", name);
-    let [newUser, created] = await db.User.findOrCreate({
-      where: {
-        name,
-        email,
-        id,
-        city,
-        contact,
-        image,
-      },
-    });
+    let [newUser, created] = await db.User.findOrCreate({where:userValidated});
+
     if (!created) {
       res.status(409).send(`El usuario con id ${id} ya existe en la DB`);
-    } else {
+    }
+    else {
       console.log(`Nuevo usuario creado con name: ${name}`);
       res.send(newUser);
     }

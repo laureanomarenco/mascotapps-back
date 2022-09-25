@@ -1,104 +1,83 @@
-// import { UserAttributes } from "../types/userTypes";
-// import {
-//   checkId,
-//   checkName,
-//   isString,
-//   isStringBetween1And101CharsLong,
-//   isUndefinedOrNull,
-// } from "./AnimalValidators";
+//import { UserAttributes } from "../types/userTypes";
+ import {
+   checkId,
+   checkImageURL,
+   checkName,
+   isString,
+   isStringBetween1And101CharsLong,
+   isUndefinedOrNull,
+ } from "./AnimalValidators";
 
-// // interface UserAttributes {
-// //   id: string | undefined;
-// //   googleId: string | undefined;
-// //   displayName: string | undefined;
-// //   email: string | undefined;
-// //   name: string | undefined;
-// //   postalCode: string | undefined;
-// //   aditionalContactInfo: string | undefined;
-// //   thumbnail: string | undefined;
-// // }
+ interface UserAttributes {
+   id: string | undefined;
+   email: string | undefined;
+   name: string | undefined;
+   image: string | undefined;
+   contact: string | undefined;
+ }
 
-// export function validateNewUser(profile: any): UserAttributes {
-//   try {
-//     let userFromReqChecked: UserAttributes = {
-//       id: checkId(profile.id),
-//       //displayName: checkName(profile.displayName),
-//       email: checkEmail(profile._json.email),
-//       name: checkFullName(profile.name.givenName, profile.name.familyName),
-//       password: ,
-//       postalCode: profile.postalCode,
-//       aditionalContactInfo: checkAditionalContactInfo(
-//         profile.aditionalContactInfo
-//       ),
-//       thumbnail: checkThumbnail(profile._json.picture),
-//     };
-//     return userFromReqChecked;
-//   } catch (error: any) {
-//     throw new Error(error.message);
-//   }
-// }
+ export function validateUser(profile: any): UserAttributes {
+   try {
+     let userFromReqChecked: UserAttributes = {
+       id: checkId(profile.id),
+       email: checkEmail(profile.email),
+       name: checkFullName(profile.name),
+       image: checkImageURL(profile.image),
+       contact: checkAditionalContactInfo(profile.contact),
+     };
+     return userFromReqChecked;
+   } catch (error: any) {
+     throw new Error(error.message);
+   }
+ }
 
-// // Check givenName + familyName:
-// export function checkFullName(
-//   givenName: any,
-//   familyName: any
-// ): string | undefined {
-//   let namesConcatenated = `${givenName} ${familyName}`;
-//   if (isUndefinedOrNull(namesConcatenated)) {
-//     return undefined;
-//   }
-//   if (isStringBetween1And101CharsLong(namesConcatenated)) {
-//     return namesConcatenated;
-//   }
-//   throw new Error(
-//     `El nombre completo "${namesConcatenated}" no es un nombre válido. Debe tener un máximo de 100 characteres y ser una cadena de texto.`
-//   );
-// }
+  //Check givenName + familyName:
+ export function checkFullName(givenName: any): string | undefined {
+   if (givenName.length < 3) {
+     throw new Error("El nombre debe contener minimo 3 caracteres")
+   }
+   if (isStringBetween1And101CharsLong(givenName)) {
+     return givenName;
+   }
+   throw new Error(
+     `El nombre "${givenName}" no es un nombre válido. Debe tener un máximo de 100 characteres y ser una cadena de texto.`
+   );
+ }
 
-// // Validate email:
-// export function isEmail(argumento: any): boolean {
-//   let regex = new RegExp(
-//     "([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|[[\t -Z^-~]*])"
-//   );
-//   return regex.test(argumento);
-// }
+  //Validate email:
+ export function isEmail(argumento: any): boolean {
+   let regex = new RegExp(
+     "([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|[[\t -Z^-~]*])"
+   );
+   return regex.test(argumento);
+ }
 
-// export function checkEmail(emailFromReq: any): string | undefined {
-//   if (isUndefinedOrNull(emailFromReq)) {
-//     return undefined;
-//   }
-//   if (isEmail(emailFromReq)) {
-//     return emailFromReq;
-//   }
-//   throw new Error(
-//     `El email ingresado "${emailFromReq}" no es un email válido para el registro.`
-//   );
-// }
+ export function checkEmail(emailFromReq: any): string | undefined {
+   if (isUndefinedOrNull(emailFromReq)) {
+     return undefined;
+   }
+   if (isEmail(emailFromReq)) {
+     return emailFromReq;
+   }
+   throw new Error(
+     `El email ingresado "${emailFromReq}" no es un email válido para el registro.`
+   );
+ }
 
-// // Validate aditionalContactInfo
-// export function checkAditionalContactInfo(
-//   aditionalContactInfoFromReq: any
-// ): string | undefined {
-//   if (isUndefinedOrNull(aditionalContactInfoFromReq)) {
-//     return undefined;
-//   }
-//   if (isString(aditionalContactInfoFromReq)) {
-//     return aditionalContactInfoFromReq;
-//   }
-//   throw new Error(
-//     `La información de contacto adicional ingresada no es válida. Por favor, o deje el input completamente vacío o ingrese una cadena de texto.`
-//   );
-// }
+ export function isNumber(argumento:any){
+    let regex = /^(?:(?:00)?549?)?0?(?:11|[2368]\d)(?:(?=\d{0,2}15)\d{2})??\d{8}$/g
+    return regex.test(argumento)
+ }
+  //Validate aditionalContactInfo
+ export function checkAditionalContactInfo(contact: any): string | undefined {
+   if (isUndefinedOrNull(contact)) {
+     return undefined;
+   }
+   if (isNumber(contact)) {
+     return contact;
+   }
+   throw new Error(
+     `La información de contacto adicional ingresada no es válida. Por favor, o deje el input completamente vacío o ingrese una cadena de texto.`
+   );
+ }
 
-// // Validate Thumbnail:
-// export function checkThumbnail(thumbnailFromReq: any): string | undefined {
-//   if (isUndefinedOrNull(thumbnailFromReq)) {
-//     return undefined;
-//   }
-//   if (isString(thumbnailFromReq)) {
-//     return thumbnailFromReq;
-//   }
-//   throw new Error(
-//     `El thumbnail no es válido. Por favor, ingrese una cadena de texto, o deje el input completamente vacío.`
-//   );
-// }
