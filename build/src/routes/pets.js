@@ -225,18 +225,42 @@ function getAllBy(input) {
         }
     });
 }
+function idExistsInDataBase(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(`Chequeando si existe el user.id "${id}" en la DB...`);
+        try {
+            let userInDataBase = yield index_1.default.User.findByPk(id);
+            if (userInDataBase) {
+                console.log(`Usuario con id ${id} encontrado en la DB`);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        catch (error) {
+            console.log(`Error en function idExistsInDataBase. ${error.message}`);
+            return error.message;
+        }
+    });
+}
 // ----- ------ ------- RUTAS :  ------ ------- -------
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
-router.post("/postnewpet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/postNewPet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     console.log(`Entré a users/postnewpet`);
-    const id = req.body.user.id;
     try {
-        //refactorizar viendo que exista el usuario o crear middleware
+        const id = (_b = (_a = req.body) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b.id;
         if (!id) {
-            res.send({ msg: "no id" });
+            throw new Error(`El Id de usuario es inválido/falso`);
         }
-        else {
+        if (id) {
+            //chequear si existe este id de usuario registrado en la DB
+            let userIsRegistered = yield idExistsInDataBase(id);
+            if (!userIsRegistered) {
+                throw new Error(`Usuario no registrado en la DataBase.`);
+            }
             let validatedPet = (0, AnimalValidators_1.validateNewPet)(req.body.pet);
             console.log("SOY VALIDATED PET: ");
             console.log(validatedPet);
@@ -245,13 +269,17 @@ router.post("/postnewpet", (req, res) => __awaiter(void 0, void 0, void 0, funct
             let associatedPetWithUser = yield createdPet.setUser(id);
             if (createdPet) {
                 console.log(`Mascota creada con éxito y asociada al User con ${id}`);
+                return res.status(200).send(associatedPetWithUser);
             }
-            return res.status(200).send(associatedPetWithUser);
+            else {
+                console.log(`createdPet es falsa... no se debe haber podido crear la el post new pet.`);
+                return res.status(400).send({ msg: "No se pudo crear el post..." });
+            }
         }
     }
     catch (error) {
-        console.log(`Error en /postnewpet. Error message: ${error.message}`);
-        console.log(`User id: ${id}`);
+        console.log(`Error en /postnewpet. ${error.message}`);
+        console.log(`req.body.id de la request = '${req.body.id}'`);
         return res.status(404).send(error.message);
     }
 }));
@@ -407,8 +435,8 @@ router.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* 
 }));
 //GET BY ID:
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    console.log(`Entré al GET pets/:id con params.id = ${(_a = req === null || req === void 0 ? void 0 : req.params) === null || _a === void 0 ? void 0 : _a.id}`);
+    var _c;
+    console.log(`Entré al GET pets/:id con params.id = ${(_c = req === null || req === void 0 ? void 0 : req.params) === null || _c === void 0 ? void 0 : _c.id}`);
     try {
         let paramsID = req.params.id;
         let petFoundById = yield getPetById(paramsID);

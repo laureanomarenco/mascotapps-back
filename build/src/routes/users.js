@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
+const sequelize_1 = require("sequelize");
 const router = (0, express_1.Router)();
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -21,6 +22,34 @@ const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         const allUsers = yield index_1.default.User.findAll();
         // console.log(allUsers);
         return allUsers;
+    }
+    catch (error) {
+        console.log(error.message);
+        return error;
+    }
+});
+const getAllReviewsRecived = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const allReviews = yield index_1.default.Review.findAll({
+            where: {
+                UserId: userId,
+            },
+        });
+        return allReviews;
+    }
+    catch (error) {
+        console.log(error.message);
+        return error;
+    }
+});
+const getAllTransactions = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const allTransactions = yield index_1.default.Transaction.findAll({
+            where: {
+                [sequelize_1.Op.or]: [{ user_offering_id: userId }, { user_demanding_id: userId }],
+            },
+        });
+        return allTransactions;
     }
     catch (error) {
         console.log(error.message);
@@ -40,9 +69,7 @@ function getSomeUserInfo(userId) {
                     city: userInfo.city,
                     image: userInfo.image,
                     contact: userInfo.contact,
-                    //transactions
-                    //donations
-                    //reviews
+                    isDonator: userInfo.isDonator,
                 };
                 console.log(`retornando someUserInfo: ${someUserInfo}`);
                 return someUserInfo;
@@ -53,7 +80,7 @@ function getSomeUserInfo(userId) {
         }
         catch (error) {
             console.log(`Error en la función auxiliar someUserInfo: ${error.message}`);
-            return error;
+            return error.message;
         }
     });
 }
@@ -84,6 +111,24 @@ function parsePetsPostedByUser(petsPostedByUser) {
     catch (error) {
         return error;
     }
+}
+//GET POSTS OF USER:
+function getPostsOfUser(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(`Buscando los posteos de user con id: ${id}`);
+        try {
+            let postsOfUser = yield index_1.default.Animal.findAll({
+                where: {
+                    UserId: id,
+                },
+            });
+            console.log(`${postsOfUser === null || postsOfUser === void 0 ? void 0 : postsOfUser.length} posts encontrados`);
+            return postsOfUser;
+        }
+        catch (error) {
+            return error.message;
+        }
+    });
 }
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req, res, next) => {
@@ -137,6 +182,7 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
             city: ownerInDB.city,
             image: ownerInDB.image,
             contact: ownerInDB.contact,
+            isDonator: ownerInDB.isDonator,
         };
         console.log(`contactInfoOfOwner = ${contactInfoOfOwner}`);
         return res.status(200).send(contactInfoOfOwner);
@@ -178,22 +224,23 @@ router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0,
         return res.status(404).send(error.message);
     }
 }));
-router.delete("/deletepet/:petid", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b, _c, _d, _e;
-    console.log(`En la ruta users/deletepet/:petid.`);
-    console.log(`:petid = ${(_b = req.body) === null || _b === void 0 ? void 0 : _b.petid}`);
-    console.log(`req.user.id = ${(_c = req.body) === null || _c === void 0 ? void 0 : _c.id}`);
+router.post("/deletePet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b, _c;
+    console.log(`En la ruta users/deletePet.`);
+    console.log(`petId = ${(_b = req.body) === null || _b === void 0 ? void 0 : _b.petId}`);
+    console.log(req.body);
+    console.log(`req.body.id = ${(_c = req.body) === null || _c === void 0 ? void 0 : _c.id}`);
     try {
-        let petID = (_d = req.body) === null || _d === void 0 ? void 0 : _d.petid;
-        let userID = (_e = req.body) === null || _e === void 0 ? void 0 : _e.id;
+        let petId = req.body.petId;
+        let userId = req.body.id;
         //buscar instancia de mascota en DB:
-        let petToDeleteInDB = yield index_1.default.Animal.findByPk(petID);
-        if (petToDeleteInDB.UserId == userID) {
+        let petToDeleteInDB = yield index_1.default.Animal.findByPk(petId);
+        if (petToDeleteInDB.UserId == userId) {
             //borrar instancia de la DB:
             // await petToDeleteInDB.destroy();
             let deletedPet = yield petToDeleteInDB.destroy();
-            console.log(`pet with id ${petToDeleteInDB.id} and pet.UserId = ${petToDeleteInDB.UserId}...  soft-destroyed`);
-            return res.status(200).send(deletedPet);
+            console.log(`pet with id ${req.body.id} ...  soft-destroyed`);
+            return res.status(200).send({ msg: "Mascota borrada" });
         }
         else {
             //retornar que no coincide el petToDelete.UserId con el req.user.id
@@ -203,7 +250,7 @@ router.delete("/deletepet/:petid", (req, res) => __awaiter(void 0, void 0, void 
         }
     }
     catch (error) {
-        console.log(`Hubo un error en el users/deletepet/:petid = ${error.message}`);
+        console.log(`Hubo un error en el users/deletepet = ${error.message}`);
         return res.status(404).send(error.message);
     }
 }));
@@ -280,23 +327,32 @@ router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(400).send(error);
     }
 }));
-router.post("/someUserInfo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f;
-    console.log(`Entré a la ruta /users/someUserInfo`);
-    console.log(`req.body.id = ${(_f = req.body) === null || _f === void 0 ? void 0 : _f.id}`);
+router.post("/getMultipleUserInfo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré a la ruta /users/getMultipleUserInfo`);
+    console.log(`req.body.id = ${req.body.id}`);
     try {
         if (req.body.id) {
             let userId = req.body.id;
-            let someUserInfo = yield getSomeUserInfo(userId);
-            console.log(`someUserInfo: ${someUserInfo}`);
-            return res.status(200).send(someUserInfo);
+            let someUserInfo = yield getSomeUserInfo(userId); //obj con props
+            let userReviewsRecived = yield getAllReviewsRecived(userId); //arreglo de objs
+            let userTransactions = yield getAllTransactions(userId); //arreglo de objs
+            let postsOfUser = yield getPostsOfUser(userId); //arreglo de objs
+            console.log(`Devolviendo multipleUserInfo...`);
+            //! TODO ESTO PODRÏA ESTAR ADENTRO DE UN Promise.all() ?? Sería mejor?
+            const multipleUserInfo = {
+                userProps: Object.assign({}, someUserInfo),
+                reviews: [...userReviewsRecived],
+                transactions: [...userTransactions],
+                posts: [...postsOfUser],
+            };
+            return res.status(200).send(multipleUserInfo);
         }
         else {
-            throw new Error("El user Id enviado no es válido");
+            throw new Error(`El id '${req.body.id}' es falso.`);
         }
     }
     catch (error) {
-        console.log(`Error en /users/someUserInfo. Error: ${error.message}`);
+        console.log(`Error en /users/getMultipleUserInfo. ${error.message}`);
         return res.status(400).send(error.message);
     }
 }));

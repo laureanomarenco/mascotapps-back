@@ -14,7 +14,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        user_offering_name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         user_demanding_id: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        user_demanding_name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
@@ -25,6 +33,14 @@ module.exports = (sequelize, DataTypes) => {
         pet_id: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        pet_name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        pet_image: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         user_offering_check: {
             type: DataTypes.STRING,

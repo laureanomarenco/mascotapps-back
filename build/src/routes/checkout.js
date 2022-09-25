@@ -82,17 +82,18 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         //CHECK USER
         if (user) {
-            donation.setUser(user.id);
-            res.send({ msg: 'Succesfull payment from', user });
+            yield donation.setUser(user.id);
+            yield models_1.default.User.update({ isDonator: "true" }, { where: { id: user.id } });
+            return res.send({ msg: 'Succesfull payment from', user });
         }
         else {
             console.log('donation: ' + donation);
-            res.send({ msg: 'Succesfull payment' });
+            return res.send({ msg: 'Succesfull payment' });
         }
     }
     catch (err) {
         console.log('error en /checkout');
-        res.json({ msg: err.raw.message });
+        return res.json({ msg: err.raw.message });
     }
 }));
 router.get('/balance', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
