@@ -24,6 +24,7 @@ module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
     comments: string | undefined;
     withNewOwner: undefined | true;
     backWithItsOwner: undefined | true;
+    wasTransacted: undefined | string;
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -87,6 +88,10 @@ module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
         allowNull: true,
       },
       withNewOwner: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      wasTransacted: {
         type: DataTypes.STRING,
         allowNull: true,
       },
