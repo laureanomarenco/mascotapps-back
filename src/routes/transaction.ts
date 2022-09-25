@@ -31,12 +31,15 @@ async function mailer(userOffering: any, userDemanding: any, offeringPet: any) {
             }
           })
           //Mail para el demanding
+          let demandingMail = userDemanding.email
+          let offeringMail = userOffering.email
+
           console.log(userDemanding.email, userOffering.email)
         const msgMailDemanding = `Registramos que queres contactarte con ${userOffering.name} por ${offeringPet.name}. Te deseamos suerte en tu busqueda y te facilitamos los siguientes datos para contactarte con ${userOffering.name}. Un saludo de parte del equipo de Mascotapp`
       
         const mailOptionsDemanding = {
           from: 'service.mascotapp@gmail.com',
-          to: userDemanding.email,
+          to: demandingMail,
           subject: 'Mucha suerte en tu busqueda',
           html: `<div>${msgMailDemanding}</div><div>${userOffering.email}</div><div>${userOffering.contact}</div>`
         }
@@ -51,7 +54,7 @@ async function mailer(userOffering: any, userDemanding: any, offeringPet: any) {
       
           const mailOptionsOffering = {
             from: 'service.mascotapp@gmail.com',
-            to: userDemanding.email,
+            to: offeringMail,
             subject: 'Alguien está interesado en una publicación tuya',
             html: `<div>${msgMailOffering}</div><div>${userDemanding.email}</div><div>${userDemanding.contact}</div>`
           }

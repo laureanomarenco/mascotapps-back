@@ -1,6 +1,6 @@
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../../config/config.js")[env];
-const { GMAIL_PASS, GMAIL_USER } = process.env;
+const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
 
 import { Router } from "express";
 import db from "../../models";
@@ -8,11 +8,8 @@ const Stripe = require('stripe')
 const router = Router();
 
 let stripe: any;
-if(config.stripeKeyProd){
-  stripe = new Stripe(process.env[config.stripeKeyProd])
-} else {
-  stripe = new Stripe(config.stripeKey)
-}
+stripe = new Stripe(STRIPE_KEY)
+
 
 const getAllDonations = async () => {
     console.log('en function getAllDonations')
