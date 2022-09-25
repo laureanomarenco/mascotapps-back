@@ -55,34 +55,38 @@ router.post("/newReview", async (req, res) => {
       (reviewer_id === transaction.user_demanding_id &&
         reviewed_id === transaction.user_offering_id)
     ) {
-
       let validatedReview = validateNewReview(req.body);
 
-      console.log(`Nueva Review creada: `);
+      console.log(
+        `req.body Validado. Continuando con los chequeos de los id de usuarios...`
+      );
 
       if (reviewer_id === transaction.user_offering_id) {
-        if (transaction.user_offering_check === 'finalizado') {
+        if (transaction.user_offering_check === "finalizado") {
           let newReview = await db.Review.create(validatedReview);
           await newReview.setUser(reviewed_id);
           console.log(newReview);
+          console.log(`Review creada y asociada al user ${reviewed_id}`);
 
-          transaction.user_offering_check === 'calificado'
-          await transaction.save()
+          transaction.user_offering_check = "calificado";
+          await transaction.save();
           return res.status(200).send(newReview);
         }
       }
       if (reviewer_id === transaction.user_demanding_id) {
-        if (transaction.user_demanding_check === 'finalizado') {
+        if (transaction.user_demanding_check === "finalizado") {
           let newReview = await db.Review.create(validatedReview);
           await newReview.setUser(reviewed_id);
+          console.log(`Review creada y asociada al user ${reviewed_id}`);
+          transaction.user_demanding_check === "calificado";
+          await transaction.save();
+          console.log(`user_demanding_check cambiado a "calificado"`);
+          console.log(`Retornando la nueva review...`);
           console.log(newReview);
 
-          transaction.user_demanding_check === 'calificado'
-          await transaction.save()
           return res.status(200).send(newReview);
         }
       }
-
     }
 
     return res
