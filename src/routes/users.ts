@@ -23,7 +23,7 @@ const getAllUsers = async () => {
   }
 };
 
-const getAllReviews = async (userId: any) => {
+const getAllReviewsRecived = async (userId: any) => {
   try {
     const allReviews = await db.Review.findAll({
       where: {
@@ -72,7 +72,7 @@ async function getSomeUserInfo(userId: any) {
     }
   } catch (error: any) {
     console.log(`Error en la función auxiliar someUserInfo: ${error.message}`);
-    return error;
+    return error.message;
   }
 }
 
@@ -312,25 +312,25 @@ router.put("/update", async (req, res) => {
 });
 
 router.post("/getMultipleUserInfo", async (req, res) => {
-  console.log(`Entré a la ruta /users/someUserInfo`);
-  console.log(`req.body.id = ${req.body?.id}`);
+  console.log(`Entré a la ruta /users/getMultipleUserInfo`);
+  console.log(`req.body.id = ${req.body.id}`);
   try {
     if (req.body.id) {
       let userId = req.body.id;
-      let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId);
-      let someUserReviews = await getAllReviews(userId);
-      let someUserTransactions = await getAllTransactions(userId);
+      let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId); //obj con props
+      let userReviewsRecived = await getAllReviewsRecived(userId); //arreglo de objs
+      let userTransactions = await getAllTransactions(userId); //arreglo de objs
 
-      console.log(`someUserInfo: ${someUserInfo}`);
+      console.log(`Devolviendo multipleUserInfo...`);
 
-      const infoTotal = [
-        someUserInfo,
-        { reviews: someUserReviews },
-        { transactions: someUserTransactions },
-      ];
-      return res.status(200).send(infoTotal);
+      const multipleUserInfo = {
+        userProps: { ...someUserInfo },
+        reviews: [...userReviewsRecived],
+        transactions: [...userTransactions],
+      };
+      return res.status(200).send(multipleUserInfo);
     } else {
-      throw new Error(`El req.body.id '${req.body.id}'  no es un id válido.`);
+      throw new Error(`El id '${req.body.id}' es falso.`);
     }
   } catch (error: any) {
     console.log(`Error en /users/getMultipleUserInfo. ${error.message}`);
