@@ -2,7 +2,6 @@
 // function login(email, password, callback) {
 //     //this example uses the "pg" library
 //     //more info here: https://github.com/brianc/node-postgres
-const { default: db } = require("../../models");
 //     const bcrypt = require('bcrypt');
 //     const postgres = require('pg');
 //     const conString = 'postgresql://postgres:DPEIk7R0jPRqEnKbDKYq@containers-us-west-43.railway.app:7152/railway';
