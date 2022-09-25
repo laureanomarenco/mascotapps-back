@@ -9,7 +9,7 @@ import { users } from "./seeders/users-seed";
 // sync({ alter: true })
 // sync({ force: true })
 
-db.sequelize.sync({ force: true }).then(() => {
+db.sequelize.sync().then(() => {
   app.listen(config.server.port, () => {
     console.log(
       "**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** "
@@ -25,28 +25,9 @@ db.sequelize.sync({ force: true }).then(() => {
       "**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** "
     );
 
-    animalSeeds.forEach(async (pet) => {
-      let validatedPet = validateNewPet(pet);
-      await db.Animal.create(validatedPet);
-    });
-    // users.forEach(async (user) => {
-    //   agregar validate
-    //   await db.User.create(user)
-    // })
+    // animalSeeds.forEach(async (pet) => {
+    //   let validatedPet = validateNewPet(pet);
+    //   await db.Animal.create(validatedPet);
+    // });
   });
 });
-
-// función que podría venir bien en algún momento, por eso la dejo comentada.
-// const createAnimals = () => {
-//   try {
-//     animalsSeed.map(async (pet) => {
-//       let validatedPet: Pet = validateNewPet(pet);
-//       console.log("Soy validatedPet");
-//       // console.log(validatedPet);
-//       let createdPet = await db.Animal.create(validatedPet);
-//       console.log(createdPet);
-//     });
-//   } catch (error: any) {
-//     console.log(error.message);
-//   }
-// };
