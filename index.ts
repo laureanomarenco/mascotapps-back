@@ -9,7 +9,7 @@ import { users } from "./seeders/users-seed";
 // sync({ alter: true })
 // sync({ force: true })
 
-db.sequelize.sync().then(() => {
+db.sequelize.sync({ alter: true }).then(() => {
   app.listen(config.server.port, () => {
     console.log(
       "**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** "
