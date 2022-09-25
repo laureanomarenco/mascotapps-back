@@ -221,18 +221,39 @@ async function getAllBy(input: any): Promise<Pet[]> {
   }
 }
 
+async function idExistsInDataBase(id: any): Promise<boolean> {
+  console.log(`Chequeando si existe el user.id "${id}" en la DB...`);
+  try {
+    let userInDataBase = await db.User.findByPk(id);
+    if (userInDataBase) {
+      console.log(`Usuario con id ${id} encontrado en la DB`);
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error: any) {
+    console.log(`Error en function idExistsInDataBase. ${error.message}`);
+    return error.message;
+  }
+}
+
 // ----- ------ ------- RUTAS :  ------ ------- -------
 
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
-router.post("/postnewpet", async (req: any, res) => {
+router.post("/postNewPet", async (req: any, res) => {
   console.log(`Entré a users/postnewpet`);
-  const id = req.body.user.id;
   try {
-    //refactorizar viendo que exista el usuario o crear middleware
+    const id = req.body?.user?.id;
     if (!id) {
-      res.send({ msg: "no id" });
-    } else {
+      throw new Error(`El Id de usuario es inválido/falso`);
+    }
+    if (id) {
+      //chequear si existe este id de usuario registrado en la DB
+      let userIsRegistered = await idExistsInDataBase(id);
+      if (!userIsRegistered) {
+        throw new Error(`Usuario no registrado en la DataBase.`);
+      }
       let validatedPet: Pet = validateNewPet(req.body.pet);
       console.log("SOY VALIDATED PET: ");
       console.log(validatedPet);
@@ -241,12 +262,17 @@ router.post("/postnewpet", async (req: any, res) => {
       let associatedPetWithUser = await createdPet.setUser(id);
       if (createdPet) {
         console.log(`Mascota creada con éxito y asociada al User con ${id}`);
+        return res.status(200).send(associatedPetWithUser);
+      } else {
+        console.log(
+          `createdPet es falsa... no se debe haber podido crear la el post new pet.`
+        );
+        return res.status(400).send({ msg: "No se pudo crear el post..." });
       }
-      return res.status(200).send(associatedPetWithUser);
     }
   } catch (error: any) {
-    console.log(`Error en /postnewpet. Error message: ${error.message}`);
-    console.log(`User id: ${id}`);
+    console.log(`Error en /postnewpet. ${error.message}`);
+    console.log(`req.body.id de la request = '${req.body.id}'`);
     return res.status(404).send(error.message);
   }
 });
