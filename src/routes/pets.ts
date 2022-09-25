@@ -31,6 +31,19 @@ const getAllPets = async () => {
   }
 };
 
+async function getAllPetsNotTransacted(): Promise<Pet[]> {
+  try {
+    let petsInOffer = await db.Animal.findAll({
+      where: {
+        wasTransacted: null,
+      },
+    });
+    return petsInOffer;
+  } catch (error: any) {
+    return error.message;
+  }
+}
+
 async function getNumberOfPetsInDB(): Promise<number> {
   console.log("En la fn getNumberOfPetsInDB");
   try {
@@ -350,9 +363,9 @@ router.get("/especies", async (_req, res) => {
 router.get("/", async (_req, res) => {
   console.log("entré al GET pets/ ");
   try {
-    let allThePets = await getAllPets();
+    let allThePetsNotTransacted = await getAllPetsNotTransacted();
     // console.log(allThePets);
-    return res.status(200).send(allThePets);
+    return res.status(200).send(allThePetsNotTransacted);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
