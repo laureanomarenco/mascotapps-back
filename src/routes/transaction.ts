@@ -109,7 +109,11 @@ router.post("/newTransaction", async (req, res) => {
     let createdTransaction = await db.Transaction.create(
       validatedTransactionObj
     );
-    console.log(`Nueva transacción creada.`);
+    console.log(
+      `Nueva transacción creada. Seteando en la mascota wasTransacted a "true"...`
+    );
+    offeringPet.wasTransacted = "true";
+    offeringPet.save();
     return res
       .status(200)
       .send({ msg: "nueva transacción creada", createdTransaction });
