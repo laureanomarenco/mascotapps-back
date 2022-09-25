@@ -106,6 +106,22 @@ function parsePetsPostedByUser(petsPostedByUser: Pet[]): IPetOfUser[] {
   }
 }
 
+//GET POSTS OF USER:
+async function getPostsOfUser(id: any) {
+  console.log(`Buscando los posteos de user con id: ${id}`);
+  try {
+    let postsOfUser = await db.Animal.findAll({
+      where: {
+        UserId: id,
+      },
+    });
+    console.log(`${postsOfUser?.length} posts encontrados`);
+    return postsOfUser;
+  } catch (error: any) {
+    return error.message;
+  }
+}
+
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req: any, res: any, next: any) => {
   const { id } = req.body;
@@ -320,13 +336,14 @@ router.post("/getMultipleUserInfo", async (req, res) => {
       let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId); //obj con props
       let userReviewsRecived = await getAllReviewsRecived(userId); //arreglo de objs
       let userTransactions = await getAllTransactions(userId); //arreglo de objs
-
+      let postsOfUser = await getPostsOfUser(userId); //arreglo de objs
       console.log(`Devolviendo multipleUserInfo...`);
-
+      //! TODO ESTO PODRÏA ESTAR ADENTRO DE UN Promise.all() ?? Sería mejor?
       const multipleUserInfo = {
         userProps: { ...someUserInfo },
         reviews: [...userReviewsRecived],
         transactions: [...userTransactions],
+        posts: [...postsOfUser],
       };
       return res.status(200).send(multipleUserInfo);
     } else {
