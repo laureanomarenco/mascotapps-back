@@ -122,7 +122,7 @@ router.put('/transactionCheck', async (req, res) => {
     if (id === transaction.user_offering_id && transaction.user_offering_check === null) {
       transaction.user_offering_check = 'finalizado'
       await transaction.save()
-      if (transaction.user_demanding_check === 'finalizado') {
+      if (transaction.user_demanding_check !== null) {
         transaction.status = 'finalizado';
         await transaction.save()
         console.log(`Transaction.status ahora es "finalizado".`);
@@ -131,7 +131,7 @@ router.put('/transactionCheck', async (req, res) => {
     if (id === transaction.user_demanding_id && transaction.user_demanding_check === null) {
       transaction.user_demanding_check = 'finalizado'
       await transaction.save()
-      if (transaction.user_offering_check === 'finalizado') {
+      if (transaction.user_offering_check !== null) {
         transaction.status = 'finalizado';
         await transaction.save()
         console.log(`Transaction.status ahora es "finalizado".`);
@@ -142,7 +142,7 @@ router.put('/transactionCheck', async (req, res) => {
     if (id === transaction.user_offering_id && transaction.user_offering_check === 'finalizado') {
       transaction.user_offering_check = 'calificado'
       await transaction.save()
-      if (transaction.user_demanding_check === 'calificado') {
+      if (transaction.user_demanding_check !== null) {
         transaction.status = 'calificado';
         await transaction.save()
         console.log(`Transaction.status ahora es "calificado".`);
@@ -151,7 +151,7 @@ router.put('/transactionCheck', async (req, res) => {
     if (id === transaction.user_demanding_id && transaction.user_demanding_check === 'finalizado') {
       transaction.user_demanding_check = 'calificado'
       await transaction.save()
-      if (transaction.user_offering_check === 'calificado') {
+      if (transaction.user_offering_check !== null) {
         transaction.status = 'calificado';
         await transaction.save()
         console.log(`Transaction.status ahora es "calificado".`);
