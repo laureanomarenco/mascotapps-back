@@ -35,7 +35,7 @@ async function getAllPetsNotTransacted(): Promise<Pet[]> {
   try {
     let petsInOffer = await db.Animal.findAll({
       where: {
-        wasTransacted: null,
+        wasTransacted: "false",
       },
     });
     return petsInOffer;
