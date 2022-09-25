@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isUndefinedOrNull = exports.isStringBetween1And101CharsLong = exports.isString = exports.checkId = exports.isValidId = exports.checkName = exports.checkComments = exports.checkImageURL = exports.isValidURL = exports.checkVaccinationSchemeStatus = exports.checkRace = exports.checkAge = exports.checkGender = exports.checkStatus = exports.checkSpecies = exports.validateNewPet = void 0;
 const petTypes_1 = require("../types/petTypes");
+const ReviewValidators_1 = require("./ReviewValidators");
 //! VALIDAR TODO EL PET ENTERO:
 // SI HAY UN ERROR, DEVOLVER UN ERROR.
 // SI ESTÁ TODO OK, DEVOLVER EL OBJETO VALIDADO (pet nueva a crear)
@@ -139,7 +140,7 @@ function checkComments(commentsFromReq) {
 exports.checkComments = checkComments;
 //-----funciones de chequeo de name:
 function checkName(nameFromReq) {
-    if (isUndefinedOrNull(nameFromReq)) {
+    if (isUndefinedOrNull(nameFromReq) || (0, ReviewValidators_1.isEmptyString)(nameFromReq)) {
         return undefined;
     }
     if (isStringBetween1And101CharsLong(nameFromReq)) {

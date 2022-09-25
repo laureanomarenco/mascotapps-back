@@ -52,20 +52,28 @@ router.post("/newReview", (req, res) => __awaiter(void 0, void 0, void 0, functi
         // stars!: number | string
         console.log(`req.body = ${req.body}`);
         let { reviewed_id, reviewer_id, transaction_id } = req.body;
-        const transaction = yield index_1.default.Transaction.findByPk(transaction_id);
-        if ((reviewer_id === transaction.user_offering_id && reviewed_id === transaction.user_demanding_id)
-            || (reviewer_id === transaction.user_demanding_id && reviewed_id === transaction.user_offering_id)) {
+        const transaction = yield index_1.default.Transaction.findOne({
+            where: { id: transaction_id },
+        });
+        if (!transaction)
+            throw new Error(`La transacción con id "${transaction_id}" no existe.`);
+        if ((reviewer_id === transaction.user_offering_id &&
+            reviewed_id === transaction.user_demanding_id) ||
+            (reviewer_id === transaction.user_demanding_id &&
+                reviewed_id === transaction.user_offering_id)) {
             let validatedReview = (0, ReviewValidators_1.validateNewReview)(req.body);
             let newReview = yield index_1.default.Review.create(validatedReview);
             yield newReview.setUser(reviewed_id);
-            console.log(`Nueva Review creada:`);
+            console.log(`Nueva Review creada: `);
             console.log(newReview);
             return res.status(200).send(newReview);
         }
-        return res.status(404).send({ msg: 'transacción no valida para estos usuarios.' });
+        return res
+            .status(404)
+            .send({ msg: "Transacción no válida para estos usuarios." });
     }
     catch (error) {
-        console.log(`Error en ruta /newReview. Error message: ${error.message}`);
+        console.log(`Error en ruta /newReview.  ${error.message}`);
         return res.status(404).send(error.message);
     }
 }));
@@ -78,11 +86,12 @@ router.post("/getReviewsToUser", (req, res) => __awaiter(void 0, void 0, void 0,
             throw new Error(`el req.body.id "${req.body.id}" enviado por body es falso.`);
         }
         let userId = req.body.id;
-        let reviewsToUser = yield index_1.default.Review.getAll({
+        let reviewsToUser = yield index_1.default.Review.findAll({
             where: {
-                reviewed_id: userId,
+                UserId: userId,
             },
         });
+        console.log(`Devolviendo reviews hechas al user con id ${req.body.id}...`);
         return res.status(200).send(reviewsToUser);
     }
     catch (error) {

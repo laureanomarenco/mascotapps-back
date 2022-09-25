@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         name: {
             type: DataTypes.STRING,
             allowNull: true,
+            defaultValue: "Sin nombre",
         },
         city: {
             type: DataTypes.STRING,

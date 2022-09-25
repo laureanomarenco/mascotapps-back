@@ -7,6 +7,7 @@ import {
   Status,
   VaccinationStatus,
 } from "../types/petTypes";
+import { isEmptyString } from "./ReviewValidators";
 
 //! VALIDAR TODO EL PET ENTERO:
 // SI HAY UN ERROR, DEVOLVER UN ERROR.
@@ -162,7 +163,7 @@ export function checkComments(commentsFromReq: any): string | undefined {
 //-----funciones de chequeo de name:
 
 export function checkName(nameFromReq: any): string | undefined {
-  if (isUndefinedOrNull(nameFromReq)) {
+  if (isUndefinedOrNull(nameFromReq) || isEmptyString(nameFromReq)) {
     return undefined;
   }
   if (isStringBetween1And101CharsLong(nameFromReq)) {
