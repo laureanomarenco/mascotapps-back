@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 import db from "../../models/index";
 import { validateNewTransaction } from "../auxiliary/TransactionValidators";
 import { ITransaction } from "../types/transactionTypes";
+const { GMAIL_PASS, GMAIL_USER } = process.env;
 
 const router = Router();
 
@@ -17,6 +18,52 @@ async function getAllTransactions() {
     );
     throw new Error(error.message);
   }
+}
+
+async function mailer(userOffering: any, userDemanding: any, offeringPet: any) {
+  const nodemailer = require('nodemailer')
+        console.log(GMAIL_PASS, GMAIL_USER)
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+            auth: {
+              user: GMAIL_USER,
+              pass: GMAIL_PASS
+            }
+          })
+          //Mail para el demanding
+          let demandingMail = userDemanding.email
+          let offeringMail = userOffering.email
+
+          console.log(userDemanding.email, userOffering.email)
+        const msgMailDemanding = `Registramos que ${userOffering.name} quiere contactarte por ${offeringPet.name}. Te deseamos suerte en tu busqueda y te facilitamos los siguientes datos para contactarte con ${userOffering.name}. Un saludo de parte del equipo de Mascotapp`
+      
+        const mailOptionsDemanding = {
+          from: 'service.mascotapp@gmail.com',
+          to: demandingMail,
+          subject: 'Alguien está interesado en una mascota tuya',
+          html: `<div>${msgMailDemanding}</div><div>${userOffering.email}</div><div>${userOffering.contact}</div>`
+        }
+
+        transporter.sendMail(mailOptionsDemanding, function(error: any, info: any) {
+          if(error) console.log(error)
+          else console.log('Email enviado: ' + info.response)
+        })
+          //Mail para el offering
+
+          const msgMailOffering = `Registramos que qures contactarte con ${userDemanding.name} por ${offeringPet.name}. Te deseamos suerte en tu interacción y te facilitamos los siguientes datos para contactarte con ${userDemanding.name}. Un saludo de parte del equipo de Mascotapp.`
+      
+          const mailOptionsOffering = {
+            from: 'service.mascotapp@gmail.com',
+            to: offeringMail,
+            subject: 'Mucha suerte en tu busqueda',
+            html: `<div>${msgMailOffering}</div><div>${userDemanding.email}</div><div>${userDemanding.contact}</div>`
+          }
+  
+          transporter.sendMail(mailOptionsOffering, function(error: any, info: any) {
+            if(error) console.log(error)
+            else console.log('Email enviado: ' + info.response)
+          })  
+
 }
 //------  RUTAS: -----------------------------------------------
 router.get("/allTransactions", async (req, res) => {
@@ -109,11 +156,19 @@ router.post("/newTransaction", async (req, res) => {
     let createdTransaction = await db.Transaction.create(
       validatedTransactionObj
     );
+
     console.log(
       `Nueva transacción creada. Seteando en la mascota wasTransacted a "true"...`
     );
     offeringPet.wasTransacted = "true";
     offeringPet.save();
+
+    console.log(`Nueva transacción creada.`);
+
+    //mailer
+    await mailer(userDemanding, userOffering, offeringPet)
+
+
     return res
       .status(200)
       .send({ msg: "nueva transacción creada", createdTransaction });
