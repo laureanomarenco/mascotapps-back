@@ -137,6 +137,12 @@ router.post("/newTransaction", async (req, res) => {
         `El id del userDemanding y el userOffering son iguales. No es posible crear una transacción entre el mismo usuario.`
       );
     }
+    if (offeringPet.wasTransacted !== "false") {
+      console.log(`offeringPet.wasTransacted === "true" ! Error!`);
+      throw new Error(
+        `Esta mascota no está disponible ya que ya es parte de una transacción. Lo sentimos mucho :( )`
+      );
+    }
 
     const newTransaction: ITransaction = {
       user_offering_id: userOffering.id,
