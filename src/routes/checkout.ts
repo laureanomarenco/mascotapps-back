@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
     try {
         const { id, amount, email } = req.body
 
-        const user = db.Users.findOne({ where: { email: email }})
+        const user = db.User.findOne({ where: { email: email }})
 
         //DONACIÓN
         const payment = await stripe.paymentIntents.create({
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
         // MAILER
         const nodemailer = require('nodemailer')
         console.log(GMAIL_PASS, GMAIL_USER)
-        const transporter = nodemailer.createTransport({
+        const transporter = await nodemailer.createTransport({
           service: 'gmail',
             auth: {
               user: GMAIL_USER,
