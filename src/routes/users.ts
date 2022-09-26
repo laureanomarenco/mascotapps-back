@@ -130,7 +130,7 @@ async function getParsedReviewsToOwner(id: string) {
         UserId: id,
       },
     });
-    let parsedReviewsWithMoreData = parseReviewsToOwner(reviewsToUser);
+    let parsedReviewsWithMoreData = await parseReviewsToOwner(reviewsToUser);
     return parsedReviewsWithMoreData;
   } catch (error: any) {
     console.log(`Error en function getReviewsToOwner`);
