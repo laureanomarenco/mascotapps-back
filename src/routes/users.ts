@@ -155,14 +155,21 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
 
   try {
     let parsedReviews = await Promise.all(
-      arrayOfReviews.map(async (review: IReview) => {
+      arrayOfReviews.map(async (review: any) => {
         console.log("review:");
         console.log(review);
         let reviewer = await db.User.findByPk(review.reviewer_id);
         console.log(reviewer.name);
         console.log(reviewer.image);
         return {
-          ...review,
+          id: review.dataValues.id,
+          transaction_id: review.dataValues.transaction_id,
+          reviewer_id: review.dataValues.reviewer_id,
+          comments: review.dataValues.comments,
+          starts: review.dataValues.stars,
+          createdAt: review.dataValues.createdAt,
+          updatedAt: review.dataValues.updatedAt,
+          UserId: review.dataValues.UserId,
           reviewer_name: reviewer.name,
           reviewer_image: reviewer.image,
         };
