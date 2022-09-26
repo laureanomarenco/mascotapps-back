@@ -150,10 +150,16 @@ async function getParsedReviewsToOwner(id: string) {
 // reviewer_image: "http://image.comasd/.jpg"
 // },
 async function parseReviewsToOwner(arrayOfReviews: any) {
-  console.log(`Parseando las reviews...`);
+  console.log(`Parseando las reviews... Array arrayOfReviews:`);
+  console.log(arrayOfReviews);
+
   try {
     let parsedReviews = await arrayOfReviews.map(async (review: IReview) => {
+      console.log("review:");
+      console.log(review);
       let reviewer = await db.User.findByPk(review.reviewer_id);
+      console.log(reviewer.name);
+      console.log(reviewer.image);
       return {
         ...review,
         reviewer_name: reviewer.name,
