@@ -89,6 +89,35 @@ router.get("/transactionsCompleted", async (req, res) => {
   }
 });
 
+router.post("/finishTransaction", async(req, res) => {
+  console.log(`Entré a la ruta /transactions/finishTransaction`);
+  try {
+    const { id } = req.body;
+    const { petId } = req.query;
+
+    const pet = await db.Animal.findOne({ where: { id: petId }});
+    if(pet.UserId === id){
+      if(pet.status === 'en adopción'){
+        pet.withNewOwner = 'true';
+        pet.wasTransacted = 'true';
+        pet.save();
+        console.log('se acutalizo el esta withNewOner y wasTransacted de la mascota')
+      } else {
+        pet.backWithItsOwner = 'true';
+        pet.wasTransacted = 'true';
+        pet.save();
+        console.log('se acutalizo el esta backWithItsOwner y wasTransacted de la mascota')
+      }
+      res.send({msg: 'estados actualizados'})
+    }
+
+    req.body({ msg: 'no podés modificar el estado de este animal porque no sos quien lo publicó'})
+  } catch (error: any) {
+    console.log(`Error en /transactions/transactionsCompleted`);
+    return res.status(404).send(error.message);
+  }
+})
+
 router.post("/getUserTransactions", async (req, res) => {
   console.log(`Entré a la ruta /Transactions/getUserTransactions`);
   try {
@@ -115,6 +144,12 @@ router.post("/newTransaction", async (req, res) => {
     if (!id || !petId) {
       console.log(`req.body.id  o  req.query.petId  es falso/undefined.`);
       throw new Error(`req.body.id  o  req.query.petId  es falso/undefined.`);
+    }
+    const prevTransaction = await db.Transaction.findOne({ where: {[Op.and]: [{ pet_id: petId }, { user_demanding_id: id }]}})
+
+    if(prevTransaction) {
+      console.log(`esta transacción ya existe por lo que no se creará`);
+     res.send({msg: 'transacción ya existente'})
     }
     const userDemanding = await db.User.findOne({ where: { id: id } });
     const offeringPet = await db.Animal.findOne({ where: { id: petId } });
@@ -158,9 +193,6 @@ router.post("/newTransaction", async (req, res) => {
     console.log(
       `Nueva transacción creada. Seteando la mascota a wasTransacted = "true"...`
     );
-    offeringPet.wasTransacted = "true";
-    offeringPet.save();
-    console.log(`Mascota seteada a wasTransacted = "true".`);
 
     //mailer
     await mailer(userDemanding, userOffering, offeringPet);
