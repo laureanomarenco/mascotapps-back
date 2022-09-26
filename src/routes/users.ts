@@ -122,6 +122,20 @@ async function getPostsOfUser(id: any) {
   }
 }
 
+async function getReviewsToOwner(id: string) {
+  try {
+    let reviewsToUser = await db.Review.findAll({
+      where: {
+        UserId: id,
+      },
+    });
+    return reviewsToUser;
+  } catch (error: any) {
+    console.log(`Error en function getReviewsToOwner`);
+    return error.message;
+  }
+}
+
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req: any, res: any, next: any) => {
   const { id } = req.body;
@@ -171,6 +185,12 @@ router.get("/contactinfo/:petid", async (req, res) => {
     let petInDB = await db.Animal.findByPk(petID);
     let ownerID = petInDB?.UserId;
     let ownerInDB: UserAttributes = await db.User.findByPk(ownerID);
+    if (!ownerInDB) {
+      throw new Error(
+        `Usuario dueño de la mascota no fue encontrado en la Data Base.`
+      );
+    }
+    let reviewsToOwner = await getReviewsToOwner(ownerID);
     let contactInfoOfOwner: IContactInfoOfOwner = {
       //displayName: ownerInDB.displayName,
       name: ownerInDB.name,
@@ -179,6 +199,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
       image: ownerInDB.image,
       contact: ownerInDB.contact,
       isDonator: ownerInDB.isDonator,
+      reviews: [...reviewsToOwner],
     };
     console.log(`contactInfoOfOwner = ${contactInfoOfOwner}`);
     return res.status(200).send(contactInfoOfOwner);
