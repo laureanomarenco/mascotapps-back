@@ -154,7 +154,7 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
   console.log(arrayOfReviews);
 
   try {
-    let parsedReviews = arrayOfReviews.map(async (review: IReview) => {
+    let parsedReviews = await arrayOfReviews.map(async (review: IReview) => {
       console.log("review:");
       console.log(review);
       let reviewer = await db.User.findByPk(review.reviewer_id);
@@ -168,7 +168,8 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
     });
     console.log(`parsedReviews:`);
     console.log(parsedReviews);
-    return parsedReviews;
+    let waitedPromises = await parsedReviews;
+    return waitedPromises;
   } catch (error: any) {
     console.log(`Error en el parseReviewsToOwner`);
     return error.message;
