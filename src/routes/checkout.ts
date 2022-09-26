@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
         // MAILER
         const nodemailer = require('nodemailer')
         console.log(GMAIL_PASS, GMAIL_USER)
-        const transporter = await nodemailer.createTransport({
+        const transporter = nodemailer.createTransport({
           service: 'gmail',
             auth: {
               user: GMAIL_USER,
