@@ -44,6 +44,16 @@ async function getAllPetsNotTransacted(): Promise<Pet[]> {
   }
 }
 
+function excludePetsTransacted(array: Pet[]): Pet[] {
+  console.log(`Excluyendo mascotas que han sido transacted...`);
+  try {
+    let filteredArray = array.filter((pet) => pet.wasTransacted === "false");
+    return filteredArray;
+  } catch (error: any) {
+    return error.message;
+  }
+}
+
 async function getNumberOfPetsInDB(): Promise<number> {
   console.log("En la fn getNumberOfPetsInDB");
   try {
@@ -377,7 +387,8 @@ router.get("/perros", async (req, res) => {
   try {
     let dogsFromDB = await getAllDogs();
     console.log(`dogsFromDB.length = ${dogsFromDB.length}`);
-    return res.status(200).send(dogsFromDB);
+    let notTransactedDogs = excludePetsTransacted(dogsFromDB);
+    return res.status(200).send(notTransactedDogs);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
@@ -389,7 +400,8 @@ router.get("/gatos", async (req, res) => {
   try {
     let catsFromDB = await getAllCats();
     console.log(`catsFromDB.length = ${catsFromDB.length}`);
-    return res.status(200).send(catsFromDB);
+    let notTransactedCats = excludePetsTransacted(catsFromDB);
+    return res.status(200).send(notTransactedCats);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
@@ -401,7 +413,8 @@ router.get("/otra", async (req, res) => {
   try {
     let otherSpeciesFromDB = await getAllOtherSpecie();
     console.log(`otherSpeciesFromDB.length = ${otherSpeciesFromDB.length}`);
-    return res.status(200).send(otherSpeciesFromDB);
+    let notTransactedOtherSpec = excludePetsTransacted(otherSpeciesFromDB);
+    return res.status(200).send(notTransactedOtherSpec);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
@@ -413,7 +426,8 @@ router.get("/perdido", async (req, res) => {
   try {
     let allLostFromDB = await getAllLost();
     console.log(`allLostFromDB.length = ${allLostFromDB.length}`);
-    return res.status(200).send(allLostFromDB);
+    let notTransactedLostPets = excludePetsTransacted(allLostFromDB);
+    return res.status(200).send(notTransactedLostPets);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
@@ -425,7 +439,8 @@ router.get("/encontrado", async (req, res) => {
   try {
     let allFoundFromDB = await getAllFound();
     console.log(`allFoundFromDB.length = ${allFoundFromDB.length}`);
-    return res.status(200).send(allFoundFromDB);
+    let notTransactedFoundPets = excludePetsTransacted(allFoundFromDB);
+    return res.status(200).send(notTransactedFoundPets);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
@@ -437,7 +452,8 @@ router.get("/adopcion", async (req, res) => {
   try {
     let allInAdoptionDB = await getAllInAdoption();
     console.log(`allInAdoptionDB.length = ${allInAdoptionDB.length}`);
-    return res.status(200).send(allInAdoptionDB);
+    let notTransactedInAdoptionPets = excludePetsTransacted(allInAdoptionDB);
+    return res.status(200).send(notTransactedInAdoptionPets);
   } catch (error: any) {
     return res.status(404).send(error.message);
   }
@@ -449,7 +465,8 @@ router.get("/search", async (req, res) => {
     const { input } = req.query;
     console.log(`input = ${input}`);
     let result = await getAllBy(input);
-    return res.status(200).send(result);
+    let notTransactedResultPets = excludePetsTransacted(result);
+    return res.status(200).send(notTransactedResultPets);
   } catch (error: any) {
     console.log(
       `Hubo un error ruta GET pets/search. Error message: ${error.message}`
