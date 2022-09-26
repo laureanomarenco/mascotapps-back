@@ -154,7 +154,7 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
   console.log(arrayOfReviews);
 
   try {
-    let parsedReviews = await arrayOfReviews.map(async (review: IReview) => {
+    let parsedReviews = arrayOfReviews.map(async (review: IReview) => {
       console.log("review:");
       console.log(review);
       let reviewer = await db.User.findByPk(review.reviewer_id);
