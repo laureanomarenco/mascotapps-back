@@ -56,6 +56,16 @@ function getAllPetsNotTransacted() {
         }
     });
 }
+function excludePetsTransacted(array) {
+    console.log(`Excluyendo mascotas que han sido transacted...`);
+    try {
+        let filteredArray = array.filter((pet) => pet.wasTransacted === "false");
+        return filteredArray;
+    }
+    catch (error) {
+        return error.message;
+    }
+}
 function getNumberOfPetsInDB() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("En la fn getNumberOfPetsInDB");
@@ -369,7 +379,8 @@ router.get("/perros", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         let dogsFromDB = yield getAllDogs();
         console.log(`dogsFromDB.length = ${dogsFromDB.length}`);
-        return res.status(200).send(dogsFromDB);
+        let notTransactedDogs = excludePetsTransacted(dogsFromDB);
+        return res.status(200).send(notTransactedDogs);
     }
     catch (error) {
         return res.status(404).send(error.message);
@@ -381,7 +392,8 @@ router.get("/gatos", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         let catsFromDB = yield getAllCats();
         console.log(`catsFromDB.length = ${catsFromDB.length}`);
-        return res.status(200).send(catsFromDB);
+        let notTransactedCats = excludePetsTransacted(catsFromDB);
+        return res.status(200).send(notTransactedCats);
     }
     catch (error) {
         return res.status(404).send(error.message);
@@ -393,7 +405,8 @@ router.get("/otra", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         let otherSpeciesFromDB = yield getAllOtherSpecie();
         console.log(`otherSpeciesFromDB.length = ${otherSpeciesFromDB.length}`);
-        return res.status(200).send(otherSpeciesFromDB);
+        let notTransactedOtherSpec = excludePetsTransacted(otherSpeciesFromDB);
+        return res.status(200).send(notTransactedOtherSpec);
     }
     catch (error) {
         return res.status(404).send(error.message);
@@ -405,7 +418,8 @@ router.get("/perdido", (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         let allLostFromDB = yield getAllLost();
         console.log(`allLostFromDB.length = ${allLostFromDB.length}`);
-        return res.status(200).send(allLostFromDB);
+        let notTransactedLostPets = excludePetsTransacted(allLostFromDB);
+        return res.status(200).send(notTransactedLostPets);
     }
     catch (error) {
         return res.status(404).send(error.message);
@@ -417,7 +431,8 @@ router.get("/encontrado", (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         let allFoundFromDB = yield getAllFound();
         console.log(`allFoundFromDB.length = ${allFoundFromDB.length}`);
-        return res.status(200).send(allFoundFromDB);
+        let notTransactedFoundPets = excludePetsTransacted(allFoundFromDB);
+        return res.status(200).send(notTransactedFoundPets);
     }
     catch (error) {
         return res.status(404).send(error.message);
@@ -429,7 +444,8 @@ router.get("/adopcion", (req, res) => __awaiter(void 0, void 0, void 0, function
     try {
         let allInAdoptionDB = yield getAllInAdoption();
         console.log(`allInAdoptionDB.length = ${allInAdoptionDB.length}`);
-        return res.status(200).send(allInAdoptionDB);
+        let notTransactedInAdoptionPets = excludePetsTransacted(allInAdoptionDB);
+        return res.status(200).send(notTransactedInAdoptionPets);
     }
     catch (error) {
         return res.status(404).send(error.message);
@@ -441,7 +457,8 @@ router.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const { input } = req.query;
         console.log(`input = ${input}`);
         let result = yield getAllBy(input);
-        return res.status(200).send(result);
+        let notTransactedResultPets = excludePetsTransacted(result);
+        return res.status(200).send(notTransactedResultPets);
     }
     catch (error) {
         console.log(`Hubo un error ruta GET pets/search. Error message: ${error.message}`);
