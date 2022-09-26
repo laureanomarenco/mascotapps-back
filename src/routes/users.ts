@@ -7,6 +7,7 @@ import {
   ISomeUserInfo,
   UserAttributes,
 } from "../types/userTypes";
+import { IReview } from "../types/reviewTypes";
 
 const router = Router();
 
@@ -122,16 +123,46 @@ async function getPostsOfUser(id: any) {
   }
 }
 
-async function getReviewsToOwner(id: string) {
+async function getParsedReviewsToOwner(id: string) {
   try {
     let reviewsToUser = await db.Review.findAll({
       where: {
         UserId: id,
       },
     });
-    return reviewsToUser;
+    let parsedReviewsWithMoreData = parseReviewsToOwner(reviewsToUser);
+    return parsedReviewsWithMoreData;
   } catch (error: any) {
     console.log(`Error en function getReviewsToOwner`);
+    return error.message;
+  }
+}
+//{
+//     "id": "735be91f-1a36-4656-9ee5-4c26799108f8",
+//     "transaction_id": "30a966a9-9258-4361-9c97-5ac7518f6922",
+//     "reviewer_id": "google-oauth2|117088984145359825186",
+//     "comments": "frdgtfhyugkhiljoñkpl",
+//     "stars": 5,
+//     "createdAt": "2022-09-25T21:59:40.040Z",
+//     "updatedAt": "2022-09-25T21:59:40.047Z",
+//     "UserId": "google-oauth2|112841257571449057358",
+// reviewer_name: "nombre del que hizo la review",
+// reviewer_image: "http://image.comasd/.jpg"
+// },
+async function parseReviewsToOwner(arrayOfReviews: any) {
+  console.log(`Parseando las reviews...`);
+  try {
+    let parsedReviews = arrayOfReviews.map(async (review: IReview) => {
+      let reviewer = await db.User.findByPk(review.reviewer_id);
+      return {
+        ...review,
+        reviewer_name: reviewer.name,
+        reviewer_image: reviewer.image,
+      };
+    });
+    return parsedReviews;
+  } catch (error: any) {
+    console.log(`Error en el parseReviewsToOwner`);
     return error.message;
   }
 }
@@ -190,7 +221,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
         `Usuario dueño de la mascota no fue encontrado en la Data Base.`
       );
     }
-    let reviewsToOwner = await getReviewsToOwner(ownerID);
+    let reviewsToOwner = await getParsedReviewsToOwner(ownerID);
     let contactInfoOfOwner: IContactInfoOfOwner = {
       //displayName: ownerInDB.displayName,
       name: ownerInDB.name,
