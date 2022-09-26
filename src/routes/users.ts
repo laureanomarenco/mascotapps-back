@@ -137,30 +137,18 @@ async function getParsedReviewsToOwner(id: string) {
     return error.message;
   }
 }
-//{
-//     "id": "735be91f-1a36-4656-9ee5-4c26799108f8",
-//     "transaction_id": "30a966a9-9258-4361-9c97-5ac7518f6922",
-//     "reviewer_id": "google-oauth2|117088984145359825186",
-//     "comments": "frdgtfhyugkhiljoñkpl",
-//     "stars": 5,
-//     "createdAt": "2022-09-25T21:59:40.040Z",
-//     "updatedAt": "2022-09-25T21:59:40.047Z",
-//     "UserId": "google-oauth2|112841257571449057358",
-// reviewer_name: "nombre del que hizo la review",
-// reviewer_image: "http://image.comasd/.jpg"
-// },
-async function parseReviewsToOwner(arrayOfReviews: any) {
-  console.log(`Parseando las reviews... Array arrayOfReviews:`);
-  console.log(arrayOfReviews);
 
+async function parseReviewsToOwner(arrayOfReviews: any) {
+  console.log(`Parseando las reviews...`);
+  // console.log(arrayOfReviews);
   try {
     let parsedReviews = await Promise.all(
       arrayOfReviews.map(async (review: any) => {
-        console.log("review:");
-        console.log(review);
+        // console.log("review:");
+        // console.log(review);
         let reviewer = await db.User.findByPk(review.reviewer_id);
-        console.log(reviewer.name);
-        console.log(reviewer.image);
+        // console.log(reviewer.name);
+        // console.log(reviewer.image);
         return {
           id: review.dataValues.id,
           transaction_id: review.dataValues.transaction_id,
@@ -175,9 +163,8 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
         };
       })
     );
-    console.log(`parsedReviews:`);
-    console.log(parsedReviews);
-
+    console.log(`Devolviendo las parsedReviews:`);
+    // console.log(parsedReviews);
     return parsedReviews;
   } catch (error: any) {
     console.log(`Error en el parseReviewsToOwner`);
