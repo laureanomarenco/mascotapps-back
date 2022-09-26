@@ -89,8 +89,8 @@ router.get("/transactionsCompleted", async (req, res) => {
   }
 });
 
-router.post("/finishTransaction", async(req, res) => {
-  console.log(`Entré a la ruta /transactions/finishTransaction`);
+router.post("/transactionSuccess", async(req, res) => {
+  console.log(`Entré a la ruta /transactions/transactionSuccess`);
   try {
     const { id } = req.body;
     const { petId } = req.query;
@@ -114,6 +114,25 @@ router.post("/finishTransaction", async(req, res) => {
     req.body({ msg: 'no podés modificar el estado de este animal porque no sos quien lo publicó'})
   } catch (error: any) {
     console.log(`Error en /transactions/transactionsCompleted`);
+    return res.status(404).send(error.message);
+  }
+})
+
+router.post("/cancelTransaction", async (req, res) => {
+  console.log(`Entré a la ruta /transactions/cancelTransaction`);
+  try {
+    const { id } = req.body;
+    const { petId } = req.query;
+
+    const pet = await db.Animal.findOne({ where: { id: petId }});
+    if(pet.UserId === id){
+      pet.wasTransacted = 'true';
+      pet.save();9
+      console.log('se acutalizowasTransacted a true')
+    }
+    req.body({ msg: 'no podés modificar el estado de este animal porque no sos quien lo publicó'})
+  } catch (error: any) {
+    console.log(`Error en /Transactions/cancelTransaction. ${error.message}`);
     return res.status(404).send(error.message);
   }
 })
