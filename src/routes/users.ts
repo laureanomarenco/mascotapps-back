@@ -169,6 +169,9 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
     console.log(`parsedReviews:`);
     console.log(parsedReviews);
     let waitedPromises = await parsedReviews;
+    console.log("waitedPromises:");
+    console.log(waitedPromises);
+
     return waitedPromises;
   } catch (error: any) {
     console.log(`Error en el parseReviewsToOwner`);
