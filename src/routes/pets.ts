@@ -490,8 +490,17 @@ router.get("/:id", async (req, res) => {
 
 let pushSubscription;
 router.post("/subscribe", async(req,res)=>{
+  const {title , text ,image} = req.body
   pushSubscription = req.body
+  const payload = JSON.stringify({
+    title:title,
+    text: text,
+    image:image
+  })
+
   res.status(200).json()
+
+  webPush.sendNotification(pushSubscription, payload)
 })
 
 export default router;
