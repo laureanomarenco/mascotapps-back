@@ -86,6 +86,7 @@ export interface IPetOfUser {
   comments: string | undefined;
   withNewOwner: undefined | true;
   backWithItsOwner: undefined | true;
+  postStatus: undefined | postStatus;
 }
 
 //--------- Interfaces y types para "Otros": -----------

@@ -3,6 +3,7 @@ import {
   Ages,
   Genders,
   Pet,
+  postStatus,
   Species,
   Status,
   VaccinationStatus,
@@ -30,8 +31,8 @@ export function validateNewPet(reqBody: any): Pet {
       image: reqBody.image,
       backWithItsOwner: undefined,
       withNewOwner: undefined,
-      comments: reqBody.comments,
-      postStatus: undefined,
+      comments: checkComments(reqBody.comments),
+      postStatus: postStatus.Active,
     };
     return petFromReqChecked;
   } catch (error: any) {
@@ -40,6 +41,18 @@ export function validateNewPet(reqBody: any): Pet {
 }
 
 //! FUNCIONES VALIDADORAS DE PROPIEDADES que usa la función validateNewPet:
+
+function isPostStatus(arg: any): boolean {
+  return Object.values(postStatus).includes(arg);
+}
+
+function checkPostStatus(argumento: any): postStatus {
+  if (!isPostStatus(argumento)) {
+    throw new Error(`El postStatus ingrensado "${argumento}" no es válido.`);
+  } else {
+    return argumento;
+  }
+}
 
 //------- function de prueba para //! SPECIE:
 function isSpecies(argumento: any): boolean {
@@ -149,9 +162,12 @@ export function checkComments(commentsFromReq: any): string | undefined {
   if (isUndefinedOrNull(commentsFromReq)) {
     return undefined;
   }
+  if (isEmptyString(commentsFromReq)) {
+    return undefined;
+  }
   if (
     isString(commentsFromReq) &&
-    commentsFromReq.length > 1 &&
+    commentsFromReq.length >= 1 &&
     commentsFromReq.length < 3001
   ) {
     return commentsFromReq;
