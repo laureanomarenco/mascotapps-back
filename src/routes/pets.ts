@@ -491,6 +491,7 @@ router.get("/:id", async (req, res) => {
 
 let pushSubscription:any;
 router.post("/subscribe", async(req,res)=>{
+  console.log("entre a subscribe")
   pushSubscription = req.body
   res.status(200).json()
  
