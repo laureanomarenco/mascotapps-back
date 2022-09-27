@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { Op } from "sequelize";
+import { measureMemory } from "vm";
 const webPush = require("../../config/web_Push_setup")
 import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
@@ -488,18 +489,23 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-let pushSubscription;
+let pushSubscription:any;
 router.post("/subscribe", async(req,res)=>{
-  const {title , text ,image} = req.body
   pushSubscription = req.body
+  res.status(200).json()
+ 
+})
+
+router.post("/notify" ,async(req,res)=>{
+  const {message} = req.body
+
   const payload = JSON.stringify({
-    title:title,
-    text: text,
-    image:image
+    title:"perdido por tu zona",
+    text: message,
   })
 
   res.status(200).json()
-
+  
   webPush.sendNotification(pushSubscription, payload)
 })
 
