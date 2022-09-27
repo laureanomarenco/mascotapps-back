@@ -130,6 +130,57 @@ function getPostsOfUser(id) {
         }
     });
 }
+function getParsedReviewsToOwner(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            let reviewsToUser = yield index_1.default.Review.findAll({
+                where: {
+                    UserId: id,
+                },
+            });
+            let parsedReviewsWithMoreData = yield parseReviewsToOwner(reviewsToUser);
+            return parsedReviewsWithMoreData;
+        }
+        catch (error) {
+            console.log(`Error en function getReviewsToOwner`);
+            return error.message;
+        }
+    });
+}
+function parseReviewsToOwner(arrayOfReviews) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(`Parseando las reviews...`);
+        // console.log(arrayOfReviews);
+        try {
+            let parsedReviews = yield Promise.all(arrayOfReviews.map((review) => __awaiter(this, void 0, void 0, function* () {
+                // console.log("review:");
+                // console.log(review);
+                let reviewer = yield index_1.default.User.findByPk(review.reviewer_id);
+                // console.log(reviewer.name);
+                // console.log(reviewer.image);
+                return {
+                    id: review.dataValues.id,
+                    transaction_id: review.dataValues.transaction_id,
+                    reviewer_id: review.dataValues.reviewer_id,
+                    comments: review.dataValues.comments,
+                    starts: review.dataValues.stars,
+                    createdAt: review.dataValues.createdAt,
+                    updatedAt: review.dataValues.updatedAt,
+                    UserId: review.dataValues.UserId,
+                    reviewer_name: reviewer.name,
+                    reviewer_image: reviewer.image,
+                };
+            })));
+            console.log(`Devolviendo las parsedReviews:`);
+            // console.log(parsedReviews);
+            return parsedReviews;
+        }
+        catch (error) {
+            console.log(`Error en el parseReviewsToOwner`);
+            return error.message;
+        }
+    });
+}
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req, res, next) => {
     const { id } = req.body;
@@ -175,6 +226,10 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
         let petInDB = yield index_1.default.Animal.findByPk(petID);
         let ownerID = petInDB === null || petInDB === void 0 ? void 0 : petInDB.UserId;
         let ownerInDB = yield index_1.default.User.findByPk(ownerID);
+        if (!ownerInDB) {
+            throw new Error(`Usuario dueño de la mascota no fue encontrado en la Data Base.`);
+        }
+        let reviewsToOwner = yield getParsedReviewsToOwner(ownerID);
         let contactInfoOfOwner = {
             //displayName: ownerInDB.displayName,
             name: ownerInDB.name,
@@ -183,6 +238,7 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
             image: ownerInDB.image,
             contact: ownerInDB.contact,
             isDonator: ownerInDB.isDonator,
+            reviews: [...reviewsToOwner],
         };
         console.log(`contactInfoOfOwner = ${contactInfoOfOwner}`);
         return res.status(200).send(contactInfoOfOwner);
