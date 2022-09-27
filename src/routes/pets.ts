@@ -498,11 +498,11 @@ router.post("/subscribe", async(req,res)=>{
 })
 
 router.post("/notify" ,async(req,res)=>{
-  const {message} = req.body
+  const {text} = req.body
   console.log("entre a notify", req.body)
   const payload = JSON.stringify({
     title:"perdido por tu zona",
-    text: message.text,
+    text: text,
   })
   console.log(payload)
   

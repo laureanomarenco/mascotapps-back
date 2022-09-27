@@ -487,11 +487,11 @@ router.post("/subscribe", (req, res) => __awaiter(void 0, void 0, void 0, functi
     res.status(200).json();
 }));
 router.post("/notify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { message } = req.body;
+    const { text } = req.body;
     console.log("entre a notify", req.body);
     const payload = JSON.stringify({
         title: "perdido por tu zona",
-        text: message.text,
+        text: text,
     });
     console.log(payload);
     webPush.sendNotification(pushSubscription, payload);
