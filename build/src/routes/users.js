@@ -103,6 +103,7 @@ function parsePetsPostedByUser(petsPostedByUser) {
                 comments: pet.comments,
                 withNewOwner: pet.withNewOwner,
                 backWithItsOwner: pet.backWithItsOwner,
+                postStatus: pet.postStatus,
             };
         });
         console.log(`Retornando parsedPets. parsedPets.length = ${parsedPets.length}`);

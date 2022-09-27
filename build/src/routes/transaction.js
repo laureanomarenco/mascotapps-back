@@ -113,13 +113,13 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
             if (pet.status === 'en adopción') {
                 pet.withNewOwner = 'true';
                 pet.postStatus = petTypes_1.postStatus.Success;
-                pet.save();
+                yield pet.save();
                 console.log('se acutalizo withNewOner y postStatus de la mascota');
             }
             else {
                 pet.backWithItsOwner = 'true';
                 pet.postStatus = petTypes_1.postStatus.Success;
-                pet.save();
+                yield pet.save();
                 console.log('se acutalizo backWithItsOwner y postStatus de la mascota');
             }
             const transaction = yield index_1.default.Transaction.findOne({ where: { [sequelize_1.Op.and]: [{ user_offering_id: id }, { user_demanding_id: id_demanding }, { pet_id: petId }] } });
@@ -132,12 +132,11 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
             }
             yield transaction.save();
             console.log('transactionStatus seteada a concretado');
-            const transactionToCancel = yield index_1.default.Transaction.findAll({ where: { [sequelize_1.Op.and]: [{ pet_id: petId }, { user_demanding_id: { [sequelize_1.Op.not]: id_demanding } }] } });
+            const transactionsToCancel = yield index_1.default.Transaction.findAll({ where: { [sequelize_1.Op.and]: [{ pet_id: petId }, { user_demanding_id: { [sequelize_1.Op.not]: id_demanding } }] } });
             console.log('transacciones a cancelar');
-            console.log(transactionToCancel);
-            for (const transaction of transactionToCancel) {
+            console.log(transactionsToCancel);
+            for (const transaction of transactionsToCancel) {
                 transaction.status = transactionTypes_1.transactionStatus.Cancel;
-                console.log('transaction saved');
                 if (transaction.user_demanding_check !== 'calificado') {
                     transaction.user_demanding_check = 'finalizado';
                 }
@@ -145,6 +144,7 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
                     transaction.user_offering_check = 'finalizado';
                 }
                 yield transaction.save();
+                console.log('transaction saved');
             }
             console.log('transacciones a cancelar, canceladas');
             return res.send({ msg: 'estados actualizados y transacciones canceladas' });
@@ -152,7 +152,7 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
         throw new Error('No puedes modificar el estado de esta mascota porque no eres quién la publicó.');
     }
     catch (error) {
-        console.log(`Error en /transactions/transactionsCompleted`);
+        console.log(`Error en /transactions/postSuccess`);
         return res.status(404).send(error.message);
     }
 }));
@@ -165,7 +165,7 @@ router.post("/cancelPost", (req, res) => __awaiter(void 0, void 0, void 0, funct
         const transactionsWithPetId = yield index_1.default.Transaction.findAll({ where: { pet_id: petId } });
         if (pet.UserId === id) {
             pet.postStatus = petTypes_1.postStatus.Cancel;
-            pet.save();
+            yield pet.save();
             for (const transaction of transactionsWithPetId) {
                 transaction.status = transactionTypes_1.transactionStatus.Cancel;
                 if (transaction.user_demanding_check !== 'calificado') {
