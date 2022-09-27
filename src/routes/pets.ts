@@ -505,10 +505,10 @@ router.post("/notify" ,async(req,res)=>{
     text: message.text,
   })
   console.log(payload)
-
-  res.status(200).json()
-
+  
   webPush.sendNotification(pushSubscription, payload)
+  res.status(200).json(payload)
+
 })
 
 export default router;
