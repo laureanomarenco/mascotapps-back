@@ -489,7 +489,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-let pushSubscription:any;
+let pushSubscription:any = undefined;
 router.post("/subscribe", async(req,res)=>{
   console.log("entre a subscribe")
   pushSubscription = req.body
@@ -503,7 +503,6 @@ router.post("/notify" ,async(req,res)=>{
   const payload = JSON.stringify({
     title:"perdido por tu zona",
     text: message.text,
-    icon: message.image
   })
 
   res.status(200).json()
