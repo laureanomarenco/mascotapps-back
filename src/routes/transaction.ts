@@ -104,12 +104,12 @@ router.post("/postSuccess", async (req, res) => {
       if (pet.status === 'en adopción') {
         pet.withNewOwner = 'true';
         pet.postStatus = postStatus.Success;
-        pet.save();
+        await pet.save();
         console.log('se acutalizo withNewOner y postStatus de la mascota')
       } else {
         pet.backWithItsOwner = 'true';
         pet.postStatus = postStatus.Success;
-        pet.save();
+        await pet.save();
         console.log('se acutalizo backWithItsOwner y postStatus de la mascota')
       }
       
@@ -124,13 +124,12 @@ router.post("/postSuccess", async (req, res) => {
       await transaction.save();
       console.log('transactionStatus seteada a concretado')
 
-      const transactionToCancel = await db.Transaction.findAll({ where: {[Op.and]: [{pet_id: petId},{ user_demanding_id: {[Op.not]: id_demanding }}]}})
+      const transactionsToCancel = await db.Transaction.findAll({ where: {[Op.and]: [{pet_id: petId},{ user_demanding_id: {[Op.not]: id_demanding }}]}})
       console.log('transacciones a cancelar')
-      console.log(transactionToCancel)
+      console.log(transactionsToCancel)
 
-      for(const transaction of transactionToCancel){
+      for(const transaction of transactionsToCancel){
         transaction.status = transactionStatus.Cancel
-        console.log('transaction saved')
         if(transaction.user_demanding_check !== 'calificado'){
           transaction.user_demanding_check = 'finalizado'
         }
@@ -138,6 +137,7 @@ router.post("/postSuccess", async (req, res) => {
           transaction.user_offering_check = 'finalizado'
         }
         await transaction.save();
+        console.log('transaction saved')
       }
 
       console.log('transacciones a cancelar, canceladas')
@@ -146,7 +146,7 @@ router.post("/postSuccess", async (req, res) => {
 
     throw new Error('No puedes modificar el estado de esta mascota porque no eres quién la publicó.')
   } catch (error: any) {
-    console.log(`Error en /transactions/transactionsCompleted`);
+    console.log(`Error en /transactions/postSuccess`);
     return res.status(404).send(error.message);
   }
 })
@@ -161,7 +161,7 @@ router.post("/cancelPost", async (req, res) => {
     const transactionsWithPetId = await db.Transaction.findAll({ where: { pet_id: petId }})
     if (pet.UserId === id) {
       pet.postStatus = postStatus.Cancel;
-      pet.save();
+      await pet.save();
 
       for(const transaction of transactionsWithPetId){
         transaction.status = transactionStatus.Cancel;

@@ -31,7 +31,7 @@ const getAllPets = async () => {
   }
 };
 
-async function getAllPetsNotTransacted(): Promise<Pet[]> {
+async function getAllActivePets(): Promise<Pet[]> {
   try {
     let petsInOffer = await db.Animal.findAll({
       where: {
@@ -373,7 +373,7 @@ router.get("/especies", async (_req, res) => {
 router.get("/", async (_req, res) => {
   console.log("entré al GET pets/ ");
   try {
-    let allThePetsNotTransacted = await getAllPetsNotTransacted();
+    let allThePetsNotTransacted = await getAllActivePets();
     // console.log(allThePets);
     return res.status(200).send(allThePetsNotTransacted);
   } catch (error: any) {
@@ -492,7 +492,7 @@ router.get("/success", async(req, res) => {
   console.log(`Entré al GET pets/success`);
   try {
     const pets = await db.Animal.findAll({ where : { postStatus: postStatus.Success }});
-    res.send(pets)
+    return res.send(pets)
   } catch (error: any) {
     console.log(`retornando error en GET pets/success ${error.message}`);
     return res.status(404).send(error.message);
