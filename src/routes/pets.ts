@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { Op } from "sequelize";
-
+import { measureMemory } from "vm";
+const webPush = require("../../config/web_Push_setup")
 import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet, Species } from "../types/petTypes";
@@ -487,5 +488,26 @@ router.get("/:id", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
+
+let pushSubscription:any;
+router.post("/subscribe", async(req,res)=>{
+  pushSubscription = req.body
+  res.status(200).json()
+ 
+})
+
+router.post("/notify" ,async(req,res)=>{
+  const {message} = req.body
+
+  const payload = JSON.stringify({
+    title:"perdido por tu zona",
+    text: message.text,
+    icon: message.image
+  })
+
+  res.status(200).json()
+
+  webPush.sendNotification(pushSubscription, payload)
+})
 
 export default router;
