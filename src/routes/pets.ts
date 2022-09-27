@@ -488,4 +488,25 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/success", async(req, res) => {
+  console.log(`Entré al GET pets/success`);
+
+  const pets = await db.Animal.findAll({ where : { wasTransacted: 'true' }});
+  res.send(pets)
+})
+
+router.get("/successAdoptions", async(req, res) => {
+  console.log(`Entré al GET pets/successAdoptions`);
+
+  const pets = await db.Animal.findAll({ where : { withNewOwner: 'true' }});
+  res.send(pets)
+})
+
+router.get("/successFound", async(req, res) => {
+  console.log(`Entré al GET pets/successFound`);
+
+  const pets = await db.Animal.findAll({ where : { backWithItsOwner: 'true' }});
+  res.send(pets)
+})
+
 export default router;
