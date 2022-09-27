@@ -1,7 +1,7 @@
 "use strict";
 //---------   MASCOTA: -----------------------------------
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VaccinationStatus = exports.Size = exports.Status = exports.Species = exports.Genders = exports.Ages = void 0;
+exports.VaccinationStatus = exports.Size = exports.postStatus = exports.Status = exports.Species = exports.Genders = exports.Ages = void 0;
 var Ages;
 (function (Ages) {
     Ages["Cachorro"] = "muy joven";
@@ -30,6 +30,12 @@ var Status;
     Status["Encontrado"] = "encontrado";
     Status["enAdopcion"] = "en adopci\u00F3n";
 })(Status = exports.Status || (exports.Status = {}));
+var postStatus;
+(function (postStatus) {
+    postStatus["Active"] = "activo";
+    postStatus["Cancel"] = "cancelado";
+    postStatus["Success"] = "concretado";
+})(postStatus = exports.postStatus || (exports.postStatus = {}));
 // El tamaño depende de la raza. Aunque si es raza "otro" o "mestizo", no podríamos definir el tamaño.
 // Cómo hacemos para poder filtrar por tamaño en perros? Para gatos no importa.
 //Crear una interface para perros y otra para gatos y otra para "otros"?

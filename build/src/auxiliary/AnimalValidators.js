@@ -22,7 +22,7 @@ function validateNewPet(reqBody) {
             backWithItsOwner: undefined,
             withNewOwner: undefined,
             comments: reqBody.comments,
-            wasTransacted: undefined,
+            postStatus: undefined,
         };
         return petFromReqChecked;
     }

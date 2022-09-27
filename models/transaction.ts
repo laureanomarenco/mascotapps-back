@@ -1,7 +1,7 @@
 "use strict";
 
 import { UUIDV4, Model } from "sequelize";
-import { ITransaction } from "../src/types/transactionTypes";
+import { ITransaction, transactionStatus } from "../src/types/transactionTypes";
 module.exports = (sequelize: any, DataTypes: any) => {
   class Transaction extends Model<ITransaction> implements ITransaction {
     id?: undefined | string;
@@ -9,7 +9,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     user_offering_name!: string;
     user_demanding_id!: string;
     user_demanding_name!: string;
-    status!: string;
+    status!: transactionStatus;
     pet_id!: string;
     pet_name!: string;
     pet_image: string | undefined;
@@ -46,6 +46,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       status: {
         type: DataTypes.STRING,
+        defaultValue: transactionStatus.Active,
         allowNull: false,
       },
       pet_id: {
