@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { Op } from "sequelize";
-
+const webPush = require("../../config/web_Push_setup")
 import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet, Species } from "../types/petTypes";
@@ -488,8 +488,10 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+let pushSubscription;
 router.post("/subscribe", async(req,res)=>{
-  
+  pushSubscription = req.body
+  res.status(200).json()
 })
 
 export default router;
