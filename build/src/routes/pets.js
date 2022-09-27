@@ -46,7 +46,7 @@ function getAllPetsNotTransacted() {
         try {
             let petsInOffer = yield index_1.default.Animal.findAll({
                 where: {
-                    wasTransacted: "false",
+                    postStatus: "activo",
                 },
             });
             return petsInOffer;
@@ -59,7 +59,7 @@ function getAllPetsNotTransacted() {
 function excludePetsTransacted(array) {
     console.log(`Excluyendo mascotas que han sido transacted...`);
     try {
-        let filteredArray = array.filter((pet) => pet.wasTransacted === "false");
+        let filteredArray = array.filter((pet) => pet.postStatus === "activo");
         return filteredArray;
     }
     catch (error) {
@@ -476,6 +476,39 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
     catch (error) {
         console.log(`retornando error en GET pets/:id: ${error.message}`);
+        return res.status(404).send(error.message);
+    }
+}));
+router.get("/success", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré al GET pets/success`);
+    try {
+        const pets = yield index_1.default.Animal.findAll({ where: { postStatus: petTypes_1.postStatus.Success } });
+        res.send(pets);
+    }
+    catch (error) {
+        console.log(`retornando error en GET pets/success ${error.message}`);
+        return res.status(404).send(error.message);
+    }
+}));
+router.get("/successAdoptions", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré al GET pets/successAdoptions`);
+    try {
+        const pets = yield index_1.default.Animal.findAll({ where: { withNewOwner: 'true' } });
+        res.send(pets);
+    }
+    catch (error) {
+        console.log(`retornando error en GET pets/successAdoptions ${error.message}`);
+        return res.status(404).send(error.message);
+    }
+}));
+router.get("/successFound", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré al GET pets/successFound`);
+    try {
+        const pets = yield index_1.default.Animal.findAll({ where: { backWithItsOwner: 'true' } });
+        res.send(pets);
+    }
+    catch (error) {
+        console.log(`retornando error en GET pets/successFound ${error.message}`);
         return res.status(404).send(error.message);
     }
 }));

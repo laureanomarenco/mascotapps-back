@@ -3,7 +3,7 @@ import { Op } from "sequelize";
 
 import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
-import { Pet, Species } from "../types/petTypes";
+import { Pet, postStatus, Species } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 
 const router = Router();
@@ -35,7 +35,7 @@ async function getAllPetsNotTransacted(): Promise<Pet[]> {
   try {
     let petsInOffer = await db.Animal.findAll({
       where: {
-        wasTransacted: "false",
+        postStatus: "activo",
       },
     });
     return petsInOffer;
@@ -47,7 +47,7 @@ async function getAllPetsNotTransacted(): Promise<Pet[]> {
 function excludePetsTransacted(array: Pet[]): Pet[] {
   console.log(`Excluyendo mascotas que han sido transacted...`);
   try {
-    let filteredArray = array.filter((pet) => pet.wasTransacted === "false");
+    let filteredArray = array.filter((pet) => pet.postStatus === "activo");
     return filteredArray;
   } catch (error: any) {
     return error.message;
@@ -491,7 +491,7 @@ router.get("/:id", async (req, res) => {
 router.get("/success", async(req, res) => {
   console.log(`Entré al GET pets/success`);
   try {
-    const pets = await db.Animal.findAll({ where : { wasTransacted: 'true' }});
+    const pets = await db.Animal.findAll({ where : { postStatus: postStatus.Success }});
     res.send(pets)
   } catch (error: any) {
     console.log(`retornando error en GET pets/success ${error.message}`);

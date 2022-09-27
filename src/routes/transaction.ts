@@ -2,7 +2,9 @@ import { Router } from "express";
 import { Op } from "sequelize";
 import db from "../../models/index";
 import { validateNewTransaction } from "../auxiliary/TransactionValidators";
-import { ITransaction } from "../types/transactionTypes";
+import { ITransaction, transactionStatus } from "../types/transactionTypes";
+import { postStatus } from "../types/petTypes";
+
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 
 const router = Router();
@@ -89,50 +91,98 @@ router.get("/transactionsCompleted", async (req, res) => {
   }
 });
 
-router.post("/transactionSuccess", async(req, res) => {
-  console.log(`Entré a la ruta /transactions/transactionSuccess`);
+router.post("/postSuccess", async (req, res) => {
+  console.log(`Entré a la ruta /transactions/postsuccess`);
   try {
     const { id } = req.body;
     const { petId } = req.query;
+    const { id_demanding } = req.body // el usuario selecciona al usuario con el que realizó existosamente la transacción
 
-    const pet = await db.Animal.findOne({ where: { id: petId }});
-    if(pet.UserId === id){
-      if(pet.status === 'en adopción'){
+    const pet = await db.Animal.findOne({ where: { id: petId } });
+
+    if (pet.UserId === id) {
+      if (pet.status === 'en adopción') {
         pet.withNewOwner = 'true';
-        pet.wasTransacted = 'true';
+        pet.postStatus = postStatus.Success;
         pet.save();
-        console.log('se acutalizo el esta withNewOner y wasTransacted de la mascota')
+        console.log('se acutalizo withNewOner y postStatus de la mascota')
       } else {
         pet.backWithItsOwner = 'true';
-        pet.wasTransacted = 'true';
+        pet.postStatus = postStatus.Success;
         pet.save();
-        console.log('se acutalizo el esta backWithItsOwner y wasTransacted de la mascota')
+        console.log('se acutalizo backWithItsOwner y postStatus de la mascota')
       }
-      res.send({msg: 'estados actualizados'})
+      
+      const transaction = await db.Transaction.findOne({ where: { [Op.and]: [{ user_offering_id: id }, { user_demanding_id: id_demanding }, { pet_id: petId }] } })
+      transaction.status = transactionStatus.Success
+      if(transaction.user_demanding_check !== 'calificado'){
+        transaction.user_demanding_check = 'finalizado'
+      }
+      if(transaction.user_offering_check !== 'calificado'){
+        transaction.user_offering_check = 'finalizado'
+      }
+      await transaction.save();
+      console.log('transactionStatus seteada a concretado')
+
+      const transactionToCancel = await db.Transaction.findAll({ where: {[Op.and]: [{pet_id: petId},{ user_demanding_id: {[Op.not]: id_demanding }}]}})
+      console.log('transacciones a cancelar')
+      console.log(transactionToCancel)
+
+      for(const transaction of transactionToCancel){
+        transaction.status = transactionStatus.Cancel
+        console.log('transaction saved')
+        if(transaction.user_demanding_check !== 'calificado'){
+          transaction.user_demanding_check = 'finalizado'
+        }
+        if(transaction.user_offering_check !== 'calificado'){
+          transaction.user_offering_check = 'finalizado'
+        }
+        await transaction.save();
+      }
+
+      console.log('transacciones a cancelar, canceladas')
+      return res.send({ msg: 'estados actualizados y transacciones canceladas' })
     }
 
-    throw new Error ('No puedes modificar el estado de esta mascota porque no eres quién la publicó.')
+    throw new Error('No puedes modificar el estado de esta mascota porque no eres quién la publicó.')
   } catch (error: any) {
     console.log(`Error en /transactions/transactionsCompleted`);
     return res.status(404).send(error.message);
   }
 })
 
-router.post("/cancelTransaction", async (req, res) => {
-  console.log(`Entré a la ruta /transactions/cancelTransaction`);
+router.post("/cancelPost", async (req, res) => {
+  console.log(`Entré a la ruta /transactions/cancelPost`);
   try {
     const { id } = req.body;
     const { petId } = req.query;
 
-    const pet = await db.Animal.findOne({ where: { id: petId }});
-    if(pet.UserId === id){
-      pet.wasTransacted = 'canceled';
+    const pet = await db.Animal.findOne({ where: { id: petId } });
+    const transactionsWithPetId = await db.Transaction.findAll({ where: { pet_id: petId }})
+    if (pet.UserId === id) {
+      pet.postStatus = postStatus.Cancel;
       pet.save();
-      console.log('se acutalizowasTransacted a canceled')
+
+      for(const transaction of transactionsWithPetId){
+        transaction.status = transactionStatus.Cancel;
+        if(transaction.user_demanding_check !== 'calificado'){
+          transaction.user_demanding_check = 'finalizado'
+        }
+        if(transaction.user_offering_check !== 'calificado'){
+          transaction.user_offering_check = 'finalizado'
+        }
+        await transaction.save();
+        console.log(`${transaction.id} status cancelada`)
+        console.log('transaction status cancelado')
+      }
+
+      console.log('se acutalizo postStatus a canceled y se cancelaron todas las transacciones de este pet')
+
+      return res.status(200).send({msg: 'Se cancelo la transacción correctamente.'})
     }
-    throw new Error ('No puedes modificar el estado de esta mascota porque no eres quién la publicó.')
+    throw new Error('No puedes modificar el estado de esta mascota porque no eres quién la publicó.')
   } catch (error: any) {
-    console.log(`Error en /Transactions/cancelTransaction. ${error.message}`);
+    console.log(`Error en /Transactions/cancelPost. ${error.message}`);
     return res.status(404).send(error.message);
   }
 })
@@ -164,11 +214,11 @@ router.post("/newTransaction", async (req, res) => {
       console.log(`req.body.id  o  req.query.petId  es falso/undefined.`);
       throw new Error(`req.body.id  o  req.query.petId  es falso/undefined.`);
     }
-    const prevTransaction = await db.Transaction.findOne({ where: {[Op.and]: [{ pet_id: petId }, { user_demanding_id: id }]}})
+    const prevTransaction = await db.Transaction.findOne({ where: { [Op.and]: [{ pet_id: petId }, { user_demanding_id: id }] } })
 
-    if(prevTransaction) {
+    if (prevTransaction) {
       console.log(`esta transacción ya existe por lo que no se creará`);
-     res.send({msg: 'transacción ya existente'})
+      res.send({ msg: 'transacción ya existente' })
     }
     const userDemanding = await db.User.findOne({ where: { id: id } });
     const offeringPet = await db.Animal.findOne({ where: { id: petId } });
@@ -191,19 +241,13 @@ router.post("/newTransaction", async (req, res) => {
         `El id del userDemanding y el userOffering son iguales. No es posible crear una transacción entre el mismo usuario.`
       );
     }
-    if (offeringPet.wasTransacted !== "false") {
-      console.log(`offeringPet.wasTransacted === "true" ! Error!`);
-      throw new Error(
-        `Esta mascota no está disponible ya que ya es parte de una transacción. Lo sentimos mucho :( )`
-      );
-    }
 
     const newTransaction: ITransaction = {
       user_offering_id: userOffering.id,
       user_offering_name: userOffering.name,
       user_demanding_id: userDemanding.id,
       user_demanding_name: userDemanding.name,
-      status: "active",
+      status: transactionStatus.Active,
       pet_id: offeringPet.id,
       pet_name: offeringPet.name,
       pet_image: offeringPet.image,
@@ -244,20 +288,10 @@ router.put("/transactionCheck", async (req, res) => {
     if (id === transaction.user_offering_id) {
       transaction.user_offering_check = "finalizado";
       await transaction.save();
-      if (transaction.user_demanding_check !== null) {
-        transaction.status = "finalizado";
-        await transaction.save();
-        console.log(`Transaction.status ahora es "finalizado".`);
-      }
     }
     if (id === transaction.user_demanding_id) {
       transaction.user_demanding_check = "finalizado";
       await transaction.save();
-      if (transaction.user_offering_check !== null) {
-        transaction.status = "finalizado";
-        await transaction.save();
-        console.log(`Transaction.status ahora es "finalizado".`);
-      }
     }
 
     res.status(200).send({ msg: "status checked" });

@@ -68,9 +68,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        wasTransacted: {
+        postStatus: {
             type: DataTypes.STRING,
-            defaultValue: "false",
+            defaultValue: "activo",
             allowNull: true,
         },
     }, {
