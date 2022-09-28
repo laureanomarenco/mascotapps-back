@@ -96,6 +96,7 @@ function parsePetsPostedByUser(petsPostedByUser: Pet[]): IPetOfUser[] {
         comments: pet.comments,
         withNewOwner: pet.withNewOwner,
         backWithItsOwner: pet.backWithItsOwner,
+        postStatus: pet.postStatus,
       };
     });
     console.log(

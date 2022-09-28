@@ -41,7 +41,7 @@ const getAllPets = () => __awaiter(void 0, void 0, void 0, function* () {
         return error;
     }
 });
-function getAllPetsNotTransacted() {
+function getAllActivePets() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let petsInOffer = yield index_1.default.Animal.findAll({
@@ -365,7 +365,7 @@ router.get("/especies", (_req, res) => __awaiter(void 0, void 0, void 0, functio
 router.get("/", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("entré al GET pets/ ");
     try {
-        let allThePetsNotTransacted = yield getAllPetsNotTransacted();
+        let allThePetsNotTransacted = yield getAllActivePets();
         // console.log(allThePets);
         return res.status(200).send(allThePetsNotTransacted);
     }
@@ -483,7 +483,7 @@ router.get("/success", (req, res) => __awaiter(void 0, void 0, void 0, function*
     console.log(`Entré al GET pets/success`);
     try {
         const pets = yield index_1.default.Animal.findAll({ where: { postStatus: petTypes_1.postStatus.Success } });
-        res.send(pets);
+        return res.send(pets);
     }
     catch (error) {
         console.log(`retornando error en GET pets/success ${error.message}`);
