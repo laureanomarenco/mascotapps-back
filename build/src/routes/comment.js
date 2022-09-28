@@ -19,7 +19,6 @@ const router = (0, express_1.Router)();
 //----- FUNCIONES AUXILIARES PARA LAS RUTAS: ------
 // ---- RUTAS: ---------
 router.post("/newComment", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     console.log(`Entré a la ruta /comments/newComment`);
     try {
         let petId = req.body.petId;
@@ -27,7 +26,12 @@ router.post("/newComment", (req, res) => __awaiter(void 0, void 0, void 0, funct
         if (!petId) {
             throw new Error(`El petId es falso/undefined`);
         }
-        let { fotos } = (_a = req.body) === null || _a === void 0 ? void 0 : _a.fotos;
+        let fotos;
+        if (req.body.fotos) {
+            fotos = req.body.fotos;
+        }
+        console.log(`fotos:`);
+        console.log(fotos);
         let commentFromReq = (0, CommentValidators_1.validateNewComment)(req.body);
         let newComment = yield index_1.default.Comment.create(commentFromReq);
         yield newComment.setAnimal(petId);

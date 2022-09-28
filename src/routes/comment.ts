@@ -18,7 +18,14 @@ router.post("/newComment", async (req, res) => {
     if (!petId) {
       throw new Error(`El petId es falso/undefined`);
     }
-    let { fotos } = req.body?.fotos;
+
+    let fotos;
+    if (req.body.fotos) {
+      fotos = req.body.fotos;
+    }
+    console.log(`fotos:`);
+    console.log(fotos);
+
     let commentFromReq = validateNewComment(req.body);
     let newComment = await db.Comment.create(commentFromReq);
     await newComment.setAnimal(petId);
