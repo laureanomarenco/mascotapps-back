@@ -173,6 +173,26 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
   }
 }
 
+// EMAIL EXISTS IN DATABASE:
+async function emailExistsInDB(emailFromReq: any): Promise<boolean> {
+  console.log(`Chequeando si el email "${emailFromReq} existe en la DB`);
+  try {
+    let userWithEmail = await db.User.findOne({
+      where: {
+        email: emailFromReq,
+      },
+    });
+    if (userWithEmail) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error: any) {
+    console.log(`Error en function emailExistsInDB`);
+    return error.message;
+  }
+}
+
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req: any, res: any, next: any) => {
   const { id } = req.body;
@@ -313,8 +333,15 @@ router.post("/deletePet", async (req: any, res) => {
 });
 
 router.post("/newuser", async (req, res) => {
+  console.log(`Entré en /user/newUser`);
   const { email, name, city, contact, image, id } = req.body;
   try {
+    let emailExisteEnLaDB = await emailExistsInDB(email);
+    if (emailExisteEnLaDB) {
+      throw new Error(
+        `El email ${email} ya está registrado. Por favor, use otro email para el registro.`
+      );
+    }
     console.log("new user..", name);
     let [newUser, created] = await db.User.findOrCreate({
       where: {
@@ -330,11 +357,11 @@ router.post("/newuser", async (req, res) => {
       res.status(409).send(`El usuario con id ${id} ya existe en la DB`);
     } else {
       console.log(`Nuevo usuario creado con name: ${name}`);
-      res.send(newUser);
+      res.status(200).send(newUser);
     }
-  } catch (error) {
-    console.log(error);
-    res.status(404).send(error);
+  } catch (error: any) {
+    console.log(error.message);
+    res.status(404).send(error.message);
   }
 });
 
