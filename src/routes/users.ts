@@ -10,7 +10,7 @@ import {
 import { IReview } from "../types/reviewTypes";
 
 const router = Router();
-
+const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 
 const getAllUsers = async () => {

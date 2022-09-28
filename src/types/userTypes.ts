@@ -6,6 +6,7 @@ export interface UserAttributes {
   contact: string | undefined;
   image: string | undefined;
   isDonator: string | undefined;
+  points: number | undefined;
 }
 
 export interface ISomeUserInfo {

@@ -28,6 +28,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     contact: string | undefined;
     image: string | undefined;
     isDonator: string | undefined;
+    points: number | undefined;
     static associate(models: any) {
       // define association here
       User.hasMany(models.Animal);
@@ -68,6 +69,11 @@ module.exports = (sequelize: any, DataTypes: any) => {
       isDonator: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      points: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
       },
     },
     {
