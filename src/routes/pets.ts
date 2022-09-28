@@ -493,7 +493,7 @@ let pushSubscription:any = undefined;
 router.post("/subscribe", async(req,res)=>{
   console.log("entre a subscribe")
   console.log(req.body)
-  pushSubscription = req.body.subscription
+  pushSubscription = req.body
   console.log(pushSubscription)
   res.status(200).json()
  
