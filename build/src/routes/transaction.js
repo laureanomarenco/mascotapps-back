@@ -106,7 +106,7 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
     console.log(`Entré a la ruta /transactions/postsuccess`);
     try {
         const { id } = req.body;
-        const { petId } = req.query;
+        const { petId } = req.body;
         const { id_demanding } = req.body; // el usuario selecciona al usuario con el que realizó existosamente la transacción
         const pet = yield index_1.default.Animal.findOne({ where: { id: petId } });
         if (pet.UserId === id) {
@@ -160,7 +160,7 @@ router.post("/cancelPost", (req, res) => __awaiter(void 0, void 0, void 0, funct
     console.log(`Entré a la ruta /transactions/cancelPost`);
     try {
         const { id } = req.body;
-        const { petId } = req.query;
+        const { petId } = req.body;
         const pet = yield index_1.default.Animal.findOne({ where: { id: petId } });
         const transactionsWithPetId = yield index_1.default.Transaction.findAll({ where: { pet_id: petId } });
         if (pet.UserId === id) {

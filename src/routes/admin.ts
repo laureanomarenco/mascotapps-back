@@ -9,10 +9,11 @@ const router = Router();
 router.post("/mutateActiveToActivo", async (req, res) => {
   console.log(`Entré a /admin/mutateActiveToActivo`);
   let password = req.body.password;
-  if (password != process.env.ADMIN_PASSWORD) {
-    throw new Error(`La password de administrador no es válida`);
-  }
+
   try {
+    if (password != process.env.ADMIN_PASSWORD) {
+      throw new Error(`La password de administrador no es válida`);
+    }
     let allActiveTransactions = await db.Transaction.findAll({
       where: {
         status: "active",

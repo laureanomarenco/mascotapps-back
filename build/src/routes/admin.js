@@ -21,10 +21,10 @@ const router = (0, express_1.Router)();
 router.post("/mutateActiveToActivo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a /admin/mutateActiveToActivo`);
     let password = req.body.password;
-    if (password != process.env.ADMIN_PASSWORD) {
-        throw new Error(`La password de administrador no es válida`);
-    }
     try {
+        if (password != process.env.ADMIN_PASSWORD) {
+            throw new Error(`La password de administrador no es válida`);
+        }
         let allActiveTransactions = yield index_1.default.Transaction.findAll({
             where: {
                 status: "active",
