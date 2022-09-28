@@ -502,10 +502,10 @@ router.post("/subscribe", async(req,res)=>{
 router.post("/notify" ,async(req,res)=>{
   const {text} = req.body
   console.log("entre a notify", req.body)
-  const payload = JSON.stringify({
+  const payload = {
     title:"perdido por tu zona",
     text: text,
-  })
+  }
   webPush.sendNotification(pushSubscription, payload)
   res.status(200).json(payload)
 
