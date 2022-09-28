@@ -475,19 +475,6 @@ router.get("/search", async (req, res) => {
   }
 });
 
-//GET BY ID:
-router.get("/:id", async (req, res) => {
-  console.log(`Entré al GET pets/:id con params.id = ${req?.params?.id}`);
-  try {
-    let paramsID = req.params.id;
-    let petFoundById = await getPetById(paramsID);
-    return res.status(200).send(petFoundById);
-  } catch (error: any) {
-    console.log(`retornando error en GET pets/:id: ${error.message}`);
-    return res.status(404).send(error.message);
-  }
-});
-
 router.get("/success", async(req, res) => {
   console.log(`Entré al GET pets/success`);
   try {
@@ -520,5 +507,18 @@ router.get("/successFound", async(req, res) => {
     return res.status(404).send(error.message);
   }
 })
+
+//GET BY ID:
+router.get("/:id", async (req, res) => {
+  console.log(`Entré al GET pets/:id con params.id = ${req?.params?.id}`);
+  try {
+    let paramsID = req.params.id;
+    let petFoundById = await getPetById(paramsID);
+    return res.status(200).send(petFoundById);
+  } catch (error: any) {
+    console.log(`retornando error en GET pets/:id: ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+});
 
 export default router;
