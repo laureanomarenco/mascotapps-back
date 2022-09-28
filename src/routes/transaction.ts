@@ -95,7 +95,7 @@ router.post("/postSuccess", async (req, res) => {
   console.log(`Entré a la ruta /transactions/postsuccess`);
   try {
     const { id } = req.body;
-    const { petId } = req.query;
+    const { petId } = req.body;
     const { id_demanding } = req.body // el usuario selecciona al usuario con el que realizó existosamente la transacción
 
     const pet = await db.Animal.findOne({ where: { id: petId } });
@@ -155,7 +155,7 @@ router.post("/cancelPost", async (req, res) => {
   console.log(`Entré a la ruta /transactions/cancelPost`);
   try {
     const { id } = req.body;
-    const { petId } = req.query;
+    const { petId } = req.body;
 
     const pet = await db.Animal.findOne({ where: { id: petId } });
     const transactionsWithPetId = await db.Transaction.findAll({ where: { pet_id: petId }})
