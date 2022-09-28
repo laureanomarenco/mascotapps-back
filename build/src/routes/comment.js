@@ -70,3 +70,4 @@ router.post("/getComments", (req, res) => __awaiter(void 0, void 0, void 0, func
         return res.status(404).send(error.message);
     }
 }));
+exports.default = router;
