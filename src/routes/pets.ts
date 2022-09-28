@@ -492,7 +492,9 @@ router.get("/:id", async (req, res) => {
 let pushSubscription:any = undefined;
 router.post("/subscribe", async(req,res)=>{
   console.log("entre a subscribe")
+  console.log(req.body)
   pushSubscription = req.body.subscription
+  console.log(pushSubscription)
   res.status(200).json()
  
 })
@@ -504,8 +506,6 @@ router.post("/notify" ,async(req,res)=>{
     title:"perdido por tu zona",
     text: text,
   })
-  console.log(payload)
-  console.log("pushsubscription",pushSubscription.endpoint)
   webPush.sendNotification(pushSubscription, payload)
   res.status(200).json(payload)
 
