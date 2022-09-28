@@ -3,6 +3,7 @@ import db from "../../models/index";
 import { transactionStatus } from "../types/transactionTypes";
 import dotenv from "dotenv";
 import { Op } from "sequelize";
+
 dotenv.config();
 
 const router = Router();
