@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { title } from "process";
 import { Op } from "sequelize";
 import { measureMemory } from "vm";
 const webPush = require("../../config/web_Push_setup")
@@ -536,8 +537,8 @@ router.post("/notify" ,async(req,res)=>{
   const {text} = req.body
   console.log("entre a notify", req.body)
   const payload = {
-    title:"perdido por tu zona",
-    text: text,
+    title: text,
+    text: "Esta perdido por tu zona,¿lo has visto?",
   }
   const string = JSON.stringify(payload)
   webPush.sendNotification(pushSubscription, string)
