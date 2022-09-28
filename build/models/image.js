@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     Image.init({
         id: {
             type: DataTypes.STRING,
+            primaryKey: true,
             allowNull: true,
             defaultValue: sequelize_1.UUIDV4,
         },
