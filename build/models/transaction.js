@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
+const transactionTypes_1 = require("../src/types/transactionTypes");
 module.exports = (sequelize, DataTypes) => {
     class Transaction extends sequelize_1.Model {
     }
@@ -28,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         status: {
             type: DataTypes.STRING,
+            defaultValue: transactionTypes_1.transactionStatus.Active,
             allowNull: false,
         },
         pet_id: {

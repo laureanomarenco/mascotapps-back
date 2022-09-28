@@ -4,7 +4,7 @@ import { measureMemory } from "vm";
 const webPush = require("../../config/web_Push_setup")
 import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
-import { Pet, Species } from "../types/petTypes";
+import { Pet, postStatus, Species } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 
 const router = Router();
@@ -32,11 +32,11 @@ const getAllPets = async () => {
   }
 };
 
-async function getAllPetsNotTransacted(): Promise<Pet[]> {
+async function getAllActivePets(): Promise<Pet[]> {
   try {
     let petsInOffer = await db.Animal.findAll({
       where: {
-        wasTransacted: "false",
+        postStatus: "activo",
       },
     });
     return petsInOffer;
@@ -48,7 +48,7 @@ async function getAllPetsNotTransacted(): Promise<Pet[]> {
 function excludePetsTransacted(array: Pet[]): Pet[] {
   console.log(`Excluyendo mascotas que han sido transacted...`);
   try {
-    let filteredArray = array.filter((pet) => pet.wasTransacted === "false");
+    let filteredArray = array.filter((pet) => pet.postStatus === "activo");
     return filteredArray;
   } catch (error: any) {
     return error.message;
@@ -374,7 +374,7 @@ router.get("/especies", async (_req, res) => {
 router.get("/", async (_req, res) => {
   console.log("entré al GET pets/ ");
   try {
-    let allThePetsNotTransacted = await getAllPetsNotTransacted();
+    let allThePetsNotTransacted = await getAllActivePets();
     // console.log(allThePets);
     return res.status(200).send(allThePetsNotTransacted);
   } catch (error: any) {
@@ -475,6 +475,39 @@ router.get("/search", async (req, res) => {
     return error.message;
   }
 });
+
+router.get("/success", async(req, res) => {
+  console.log(`Entré al GET pets/success`);
+  try {
+    const pets = await db.Animal.findAll({ where : { postStatus: postStatus.Success }});
+    return res.send(pets)
+  } catch (error: any) {
+    console.log(`retornando error en GET pets/success ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+})
+
+router.get("/successAdoptions", async(req, res) => {
+  console.log(`Entré al GET pets/successAdoptions`);
+  try {
+    const pets = await db.Animal.findAll({ where : { withNewOwner: 'true' }});
+    res.send(pets)
+  } catch (error: any) {
+    console.log(`retornando error en GET pets/successAdoptions ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+})
+
+router.get("/successFound", async(req, res) => {
+  console.log(`Entré al GET pets/successFound`);
+  try {
+    const pets = await db.Animal.findAll({ where : { backWithItsOwner: 'true' }});
+    res.send(pets)
+  } catch (error: any) {
+    console.log(`retornando error en GET pets/successFound ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+})
 
 //GET BY ID:
 router.get("/:id", async (req, res) => {

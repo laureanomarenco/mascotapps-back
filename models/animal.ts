@@ -4,6 +4,7 @@ import {
   Ages,
   Genders,
   Pet,
+  postStatus,
   Species,
   Status,
   VaccinationStatus,
@@ -24,7 +25,7 @@ module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
     comments: string | undefined;
     withNewOwner: undefined | true;
     backWithItsOwner: undefined | true;
-    wasTransacted: undefined | string;
+    postStatus: undefined | postStatus;
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -91,9 +92,9 @@ module.exports = (sequelize: any, DataTypes: { STRING: any }) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      wasTransacted: {
+      postStatus: {
         type: DataTypes.STRING,
-        defaultValue: "false",
+        defaultValue: "activo",
         allowNull: true,
       },
     },

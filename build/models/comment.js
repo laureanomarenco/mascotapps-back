@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const { Model } = require("sequelize");
 const sequelize_1 = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-    class Animal extends sequelize_1.Model {
+    class Comment extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -10,72 +11,53 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            Animal.belongsTo(models.User);
+            Comment.belongsTo(models.Animal);
+            Comment.hasMany(models.Image);
         }
     }
-    Animal.init({
+    Comment.init({
         id: {
             type: DataTypes.STRING,
-            defaultValue: sequelize_1.UUIDV4,
             primaryKey: true,
-        },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            defaultValue: "Sin nombre",
-        },
-        city: {
-            type: DataTypes.STRING,
+            defaultValue: sequelize_1.UUIDV4,
             allowNull: true,
         },
-        specie: {
+        nombre: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: "Usuario Anónimo",
+        },
+        provincia: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        race: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        age: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        gender: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        status: {
+        localidad: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        vaccinationSchemeStatus: {
+        lugar: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        fecha: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        condicion: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        image: {
-            type: DataTypes.STRING(3000),
-            allowNull: true,
-        },
-        comments: {
-            type: DataTypes.STRING(3000),
-            allowNull: true,
-        },
-        backWithItsOwner: {
+        comentarios: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        withNewOwner: {
+        hora: {
             type: DataTypes.STRING,
-            allowNull: true,
-        },
-        postStatus: {
-            type: DataTypes.STRING,
-            defaultValue: "activo",
             allowNull: true,
         },
     }, {
         sequelize,
-        modelName: "Animal",
+        modelName: "Comment",
     });
-    return Animal;
+    return Comment;
 };

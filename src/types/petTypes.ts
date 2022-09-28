@@ -28,6 +28,12 @@ export enum Status {
   enAdopcion = "en adopción",
 }
 
+export enum postStatus {
+  Active = "activo",
+  Cancel = "cancelado",
+  Success = "concretado",
+}
+
 // El tamaño depende de la raza. Aunque si es raza "otro" o "mestizo", no podríamos definir el tamaño.
 // Cómo hacemos para poder filtrar por tamaño en perros? Para gatos no importa.
 
@@ -63,7 +69,7 @@ export interface Pet {
   comments: string | undefined;
   withNewOwner: undefined | true;
   backWithItsOwner: undefined | true;
-  wasTransacted: undefined | string;
+  postStatus: undefined | postStatus;
 }
 
 export interface IPetOfUser {
@@ -80,6 +86,7 @@ export interface IPetOfUser {
   comments: string | undefined;
   withNewOwner: undefined | true;
   backWithItsOwner: undefined | true;
+  postStatus: undefined | postStatus;
 }
 
 //--------- Interfaces y types para "Otros": -----------
