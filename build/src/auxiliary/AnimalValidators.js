@@ -21,8 +21,8 @@ function validateNewPet(reqBody) {
             image: reqBody.image,
             backWithItsOwner: undefined,
             withNewOwner: undefined,
-            comments: reqBody.comments,
-            postStatus: undefined,
+            comments: checkComments(reqBody.comments),
+            postStatus: petTypes_1.postStatus.Active,
         };
         return petFromReqChecked;
     }
@@ -32,6 +32,17 @@ function validateNewPet(reqBody) {
 }
 exports.validateNewPet = validateNewPet;
 //! FUNCIONES VALIDADORAS DE PROPIEDADES que usa la función validateNewPet:
+function isPostStatus(arg) {
+    return Object.values(petTypes_1.postStatus).includes(arg);
+}
+function checkPostStatus(argumento) {
+    if (!isPostStatus(argumento)) {
+        throw new Error(`El postStatus ingrensado "${argumento}" no es válido.`);
+    }
+    else {
+        return argumento;
+    }
+}
 //------- function de prueba para //! SPECIE:
 function isSpecies(argumento) {
     return Object.values(petTypes_1.Species).includes(argumento);
@@ -131,8 +142,11 @@ function checkComments(commentsFromReq) {
     if (isUndefinedOrNull(commentsFromReq)) {
         return undefined;
     }
+    if ((0, ReviewValidators_1.isEmptyString)(commentsFromReq)) {
+        return undefined;
+    }
     if (isString(commentsFromReq) &&
-        commentsFromReq.length > 1 &&
+        commentsFromReq.length >= 1 &&
         commentsFromReq.length < 3001) {
         return commentsFromReq;
     }
