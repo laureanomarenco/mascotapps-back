@@ -15,6 +15,5 @@ export interface ITransaction {
 export enum transactionStatus {
   Active = "activo",
   Cancel = "cancelado",
-  
   Success = "concretado",
 }
