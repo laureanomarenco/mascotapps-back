@@ -506,7 +506,8 @@ router.post("/notify" ,async(req,res)=>{
     title:"perdido por tu zona",
     text: text,
   }
-  webPush.sendNotification(pushSubscription, payload)
+  const string = JSON.stringify(payload)
+  webPush.sendNotification(pushSubscription, string)
   res.status(200).json(payload)
 
 })
