@@ -12,12 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.multiplierPoints = void 0;
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
 const transactionTypes_1 = require("../types/transactionTypes");
 const dotenv_1 = __importDefault(require("dotenv"));
 const sequelize_1 = require("sequelize");
 dotenv_1.default.config();
+exports.multiplierPoints = 1;
 const router = (0, express_1.Router)();
 router.post("/mutateActiveToActivo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a /admin/mutateActiveToActivo`);

@@ -16,6 +16,7 @@ const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
 const sequelize_1 = require("sequelize");
 const router = (0, express_1.Router)();
+const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     try {

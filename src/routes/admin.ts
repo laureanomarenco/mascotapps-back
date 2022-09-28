@@ -6,6 +6,8 @@ import { Op } from "sequelize";
 
 dotenv.config();
 
+export const multiplierPoints = 1;
+
 const router = Router();
 
 router.post("/mutateActiveToActivo", async (req, res) => {

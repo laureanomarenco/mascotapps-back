@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
+const { GMAIL_PASS, GMAIL_USER } = process.env;
 const route = (0, express_1.Router)();
 route.get("/addVisitor", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a /visitor`);
@@ -40,5 +41,29 @@ route.get("/numbervisitors", (req, res) => __awaiter(void 0, void 0, void 0, fun
     catch (error) {
         res.status(404).send(error);
     }
+}));
+route.post('/mailAdmin', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, comment } = req.body;
+    const nodemailer = require('nodemailer');
+    console.log(GMAIL_PASS, GMAIL_USER);
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: GMAIL_USER,
+            pass: GMAIL_PASS
+        }
+    });
+    const mailOptions = {
+        from: email,
+        to: 'service.mascotapp@gmail.com',
+        subject: 'Consulta sobre la página',
+        html: comment
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error)
+            console.log(error);
+        else
+            console.log('Email enviado: ' + info.response);
+    });
 }));
 exports.default = route;

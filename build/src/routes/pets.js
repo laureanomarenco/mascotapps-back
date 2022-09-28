@@ -465,20 +465,6 @@ router.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         return error.message;
     }
 }));
-//GET BY ID:
-router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
-    console.log(`Entré al GET pets/:id con params.id = ${(_c = req === null || req === void 0 ? void 0 : req.params) === null || _c === void 0 ? void 0 : _c.id}`);
-    try {
-        let paramsID = req.params.id;
-        let petFoundById = yield getPetById(paramsID);
-        return res.status(200).send(petFoundById);
-    }
-    catch (error) {
-        console.log(`retornando error en GET pets/:id: ${error.message}`);
-        return res.status(404).send(error.message);
-    }
-}));
 router.get("/success", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré al GET pets/success`);
     try {
@@ -509,6 +495,20 @@ router.get("/successFound", (req, res) => __awaiter(void 0, void 0, void 0, func
     }
     catch (error) {
         console.log(`retornando error en GET pets/successFound ${error.message}`);
+        return res.status(404).send(error.message);
+    }
+}));
+//GET BY ID:
+router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
+    console.log(`Entré al GET pets/:id con params.id = ${(_c = req === null || req === void 0 ? void 0 : req.params) === null || _c === void 0 ? void 0 : _c.id}`);
+    try {
+        let paramsID = req.params.id;
+        let petFoundById = yield getPetById(paramsID);
+        return res.status(200).send(petFoundById);
+    }
+    catch (error) {
+        console.log(`retornando error en GET pets/:id: ${error.message}`);
         return res.status(404).send(error.message);
     }
 }));
