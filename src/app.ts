@@ -9,6 +9,7 @@ import visitor from "./routes/visitor";
 import transactionsRouter from "./routes/transaction";
 import reviewsRouter from "./routes/review";
 import commentRouter from "./routes/comment";
+import adminRouter from "./routes/admin";
 
 import dotenv from "dotenv";
 import cors from "cors";
@@ -39,6 +40,7 @@ app.use("/visitor", visitor);
 app.use("/reviews", reviewsRouter);
 app.use("/transactions", transactionsRouter);
 app.use("/comments", commentRouter);
+app.use("/admin", adminRouter);
 //! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page. Voy a comentarla ahora para probar passport. Pero habría que mover esta ruta a otra ruta más específica y que desde el front le tiren GETs cada vez que se monta el landing por ejemplo.
 
 module.exports = app;
