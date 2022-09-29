@@ -2,7 +2,6 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
 
-import { multiplierPoints } from "./admin";
 import { Router } from "express";
 import db from "../../models";
 const Stripe = require('stripe')
@@ -10,8 +9,6 @@ const router = Router();
 
 let stripe: any;
 stripe = new Stripe(STRIPE_KEY)
-
-
 
 const getAllDonations = async () => {
     console.log('en function getAllDonations')
@@ -31,7 +28,9 @@ router.post('/', async (req, res) => {
         const { id, amount, email } = req.body
 
         const user = await db.User.findOne({ where: { email: email }})
-        user.points = user.points + (100 * multiplierPoints);
+
+        const multiplierPoints = await db.Multiplier.findAll()
+        user.points = user.points + (100 * multiplierPoints.number);
         await user.save();
         //DONACIÓN
         const payment = await stripe.paymentIntents.create({

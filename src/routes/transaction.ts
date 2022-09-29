@@ -4,7 +4,6 @@ import db from "../../models/index";
 import { validateNewTransaction } from "../auxiliary/TransactionValidators";
 import { ITransaction, transactionStatus } from "../types/transactionTypes";
 import { postStatus } from "../types/petTypes";
-import { multiplierPoints } from "./admin";
 
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 
@@ -109,12 +108,14 @@ router.post("/postSuccess", async (req, res) => {
         pet.postStatus = postStatus.Success;
         await pet.save();
 
+        var multiplierPoints = await db.Multiplier.findAll()
+
         userDemanding.isAdopter = userDemanding.isAdopter + 1;
-        userDemanding.points = userDemanding.points + (100 * multiplierPoints)
+        userDemanding.points = userDemanding.points + (100 * multiplierPoints.number)
         await userDemanding.save();
 
         userOffering.gaveUpForAdoption = userOffering.gaveUpForAdoption + 1;
-        userOffering.points = userOffering.points + (100 * multiplierPoints)
+        userOffering.points = userOffering.points + (100 * multiplierPoints.number)
         await userOffering.save();
 
         console.log('se acutalizo withNewOner y postStatus de la mascota')
@@ -125,21 +126,21 @@ router.post("/postSuccess", async (req, res) => {
 
         if(pet.status === 'encontrado'){
           userDemanding.gotAPetBack = userDemanding.gotAPetBack + 1;
-          userDemanding.points = userDemanding.points + (25 * multiplierPoints)
+          userDemanding.points = userDemanding.points + (25 * multiplierPoints.number)
           
           await userDemanding.save();
 
           userOffering.foundAPet = userOffering.foundAPet + 1;
-          userOffering.points = userOffering.points + (100 * multiplierPoints)
+          userOffering.points = userOffering.points + (100 * multiplierPoints.number)
           await userOffering.save();
 
         } else {
           userDemanding.foundAPet = userDemanding.foundAPet + 1;
-          userDemanding.points = userDemanding.points + (100 * multiplierPoints)
+          userDemanding.points = userDemanding.points + (100 * multiplierPoints.number)
           await userDemanding.save();
 
           userOffering.gotAPetBack = userOffering.gotAPetBack + 1;
-          userOffering.points = userOffering.points + (25 * multiplierPoints)
+          userOffering.points = userOffering.points + (25 * multiplierPoints.number)
           await userOffering.save();
         }
 

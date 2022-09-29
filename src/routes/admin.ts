@@ -6,8 +6,6 @@ import { Op } from "sequelize";
 
 dotenv.config();
 
-export const multiplierPoints = 1;
-
 const router = Router();
 
 router.post("/mutateActiveToActivo", async (req, res) => {
@@ -71,6 +69,35 @@ router.post("/deleteUser", async (req, res) => {
     }
   } catch (error: any) {
     console.log(`Error en /admin/deleteUser. ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+});
+
+router.post("/createMultiplier", async(req, res) => {
+  try {
+    const multiplier = await db.Multiplier.findAll()
+    if(multiplier === undefined){
+      await db.Multiplier.create()
+      res.send('multiplicador creado')
+    }
+    res.send('el multiplicador ya existe')
+  } catch (error: any) {
+    console.log(`Error en /admin/changeMultiplier. ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+})
+
+router.post("/changeMultiplier", async (req, res) => {
+  console.log(`Entré a /admin/changeMultiplier`);
+  try {
+    const { newMultiplier } = req.body;
+    const multiplier = await db.Multiplier.findAll();
+
+    multiplier.number = newMultiplier;
+
+    res.send('multiplicador cambiado')
+  } catch (error: any) {
+    console.log(`Error en /admin/changeMultiplier. ${error.message}`);
     return res.status(404).send(error.message);
   }
 });
