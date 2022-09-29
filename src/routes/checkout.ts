@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
     try {
         const { id, amount, email } = req.body
 
-        const user = await db.User.findOne({ where: { email: email }})
+        const user = await db.Users.findOne({ where: { email: email }})
 
         //DONACIÓN
         const payment = await stripe.paymentIntents.create({
