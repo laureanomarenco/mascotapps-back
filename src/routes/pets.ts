@@ -534,10 +534,9 @@ router.post("/subscribe", async(req,res)=>{
 })
 
 router.post("/notify" ,async(req,res)=>{
-  const {text} = req.body
   console.log("entre a notify", req.body)
   const payload = {
-    title: text,
+    title: req.body,
     text: "Esta perdido por tu zona,¿lo has visto?",
   }
   const string = JSON.stringify(payload)
