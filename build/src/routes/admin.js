@@ -93,6 +93,10 @@ router.post("/deleteUser", (req, res) => __awaiter(void 0, void 0, void 0, funct
 router.post("/cleanPostsOfUserId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a la ruta /admin/clean`);
     try {
+        let passwordFromReq = req.body.password;
+        if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+            return res.status(403).send(`La password de administrador no es válida`);
+        }
         if (!req.body.userId) {
             throw new Error(`Debe ingresar un userId. Usted envió "${req.body.userId}"`);
         }
@@ -122,6 +126,10 @@ router.post("/cleanPostsOfUserId", (req, res) => __awaiter(void 0, void 0, void 
 router.post("/cleanReviewsToUser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`En ruta /admin/cleanReviewsToUser`);
     try {
+        let passwordFromReq = req.body.password;
+        if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+            return res.status(403).send(`La password de administrador no es válida`);
+        }
         let userId = req.body.userId;
         console.log(`userId recibido = ${userId}`);
         let allReviewsToUser = yield getAllReviewsToUser(userId);
@@ -148,6 +156,38 @@ router.post("/cleanReviewsToUser", (req, res) => __awaiter(void 0, void 0, void 
         return res.status(404).send(error.message);
     }
 }));
+// DELETE PETS WITH NO UserId
+router.post("/deletePetsWithNoUserId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //como no puedo hacer una búsqueda pasando un parámetro nulo, voy a buscar todas las pets y filtrar las que tienen UserId == false.
+    console.log(`En ruta /admin/deletePetsWithNoUserId`);
+    try {
+        let passwordFromReq = req.body.password;
+        if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+            return res.status(403).send(`La password de administrador no es válida`);
+        }
+        let allThePetsWithNoUser = yield index_1.default.Animal.findAll({
+            where: {
+                UserId: {
+                    [sequelize_1.Op.eq]: null,
+                },
+            },
+        });
+        console.log(`Cantidad de pets encontradas: ${allThePetsWithNoUser === null || allThePetsWithNoUser === void 0 ? void 0 : allThePetsWithNoUser.length}`);
+        console.log(`Empezando a borrar mascotas con UserId === null`);
+        let petsDestroyed = 0;
+        for (const pet of allThePetsWithNoUser) {
+            yield pet.destroy();
+            console.log(`Animal soft destroyed...`);
+            petsDestroyed++;
+        }
+        return res
+            .status(200)
+            .send(`Cantidad de Mascotas/Posts eliminados: ${petsDestroyed}.`);
+    }
+    catch (error) {
+        console.log(`Error en /admin/deletePetsWithNoUserId. ${error.message}`);
+    }
+}));
 // ----   RUTAS MULTIPLICADORAS:  -----------
 router.get("/createMultiplier", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -166,6 +206,10 @@ router.get("/createMultiplier", (req, res) => __awaiter(void 0, void 0, void 0, 
 router.post("/changeMultiplier", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a /admin/changeMultiplier`);
     try {
+        let passwordFromReq = req.body.password;
+        if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+            return res.status(403).send(`La password de administrador no es válida`);
+        }
         const { newMultiplier } = req.body;
         const multiplier = yield index_1.default.Multiplier.findByPk(1);
         let newMultiplierToNumber = Number(newMultiplier);

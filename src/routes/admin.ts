@@ -87,6 +87,10 @@ router.post("/deleteUser", async (req, res) => {
 router.post("/cleanPostsOfUserId", async (req, res) => {
   console.log(`Entré a la ruta /admin/clean`);
   try {
+    let passwordFromReq = req.body.password;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).send(`La password de administrador no es válida`);
+    }
     if (!req.body.userId) {
       throw new Error(
         `Debe ingresar un userId. Usted envió "${req.body.userId}"`
@@ -119,6 +123,10 @@ router.post("/cleanPostsOfUserId", async (req, res) => {
 router.post("/cleanReviewsToUser", async (req, res) => {
   console.log(`En ruta /admin/cleanReviewsToUser`);
   try {
+    let passwordFromReq = req.body.password;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).send(`La password de administrador no es válida`);
+    }
     let userId = req.body.userId;
     console.log(`userId recibido = ${userId}`);
     let allReviewsToUser = await getAllReviewsToUser(userId);
@@ -148,6 +156,40 @@ router.post("/cleanReviewsToUser", async (req, res) => {
   }
 });
 
+// DELETE PETS WITH NO UserId
+router.post("/deletePetsWithNoUserId", async (req, res) => {
+  //como no puedo hacer una búsqueda pasando un parámetro nulo, voy a buscar todas las pets y filtrar las que tienen UserId == false.
+  console.log(`En ruta /admin/deletePetsWithNoUserId`);
+  try {
+    let passwordFromReq = req.body.password;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).send(`La password de administrador no es válida`);
+    }
+    let allThePetsWithNoUser = await db.Animal.findAll({
+      where: {
+        UserId: {
+          [Op.eq]: null,
+        },
+      },
+    });
+    console.log(
+      `Cantidad de pets encontradas: ${allThePetsWithNoUser?.length}`
+    );
+    console.log(`Empezando a borrar mascotas con UserId === null`);
+    let petsDestroyed = 0;
+    for (const pet of allThePetsWithNoUser) {
+      await pet.destroy();
+      console.log(`Animal soft destroyed...`);
+      petsDestroyed++;
+    }
+    return res
+      .status(200)
+      .send(`Cantidad de Mascotas/Posts eliminados: ${petsDestroyed}.`);
+  } catch (error: any) {
+    console.log(`Error en /admin/deletePetsWithNoUserId. ${error.message}`);
+  }
+});
+
 // ----   RUTAS MULTIPLICADORAS:  -----------
 router.get("/createMultiplier", async (req, res) => {
   try {
@@ -166,6 +208,10 @@ router.get("/createMultiplier", async (req, res) => {
 router.post("/changeMultiplier", async (req, res) => {
   console.log(`Entré a /admin/changeMultiplier`);
   try {
+    let passwordFromReq = req.body.password;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).send(`La password de administrador no es válida`);
+    }
     const { newMultiplier } = req.body;
     const multiplier = await db.Multiplier.findByPk(1);
     let newMultiplierToNumber: number = Number(newMultiplier);
