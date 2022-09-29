@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const sequelize_1 = require("sequelize");
-const webPush = require("../../config/web_Push_setup");
 const index_1 = __importDefault(require("../../models/index"));
 const AnimalValidators_1 = require("../auxiliary/AnimalValidators");
 const petTypes_1 = require("../types/petTypes");
@@ -480,24 +479,6 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(404).send(error.message);
     }
 }));
-<<<<<<< HEAD
-let pushSubscription = undefined;
-router.post("/subscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("entre a subscribe");
-    pushSubscription = req.body;
-    res.status(200).json();
-}));
-router.post("/notify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { text } = req.body;
-    console.log("entre a notify", req.body);
-    const payload = JSON.stringify({
-        title: "perdido por tu zona",
-        text: text,
-    });
-    console.log(payload);
-    webPush.sendNotification(pushSubscription, payload);
-    res.status(200).json(payload);
-=======
 router.get("/success", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré al GET pets/success`);
     try {
@@ -530,6 +511,5 @@ router.get("/successFound", (req, res) => __awaiter(void 0, void 0, void 0, func
         console.log(`retornando error en GET pets/successFound ${error.message}`);
         return res.status(404).send(error.message);
     }
->>>>>>> f62df0d3e8208c6694ec8aaad36882d5b8efc29a
 }));
 exports.default = router;

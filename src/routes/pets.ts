@@ -1,8 +1,6 @@
 import { Router } from "express";
-import { title } from "process";
 import { Op } from "sequelize";
-import { measureMemory } from "vm";
-const webPush = require("../../config/web_Push_setup")
+
 import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet, postStatus, Species } from "../types/petTypes";
@@ -522,28 +520,5 @@ router.get("/:id", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
-
-let pushSubscription:any = undefined;
-router.post("/subscribe", async(req,res)=>{
-  console.log("entre a subscribe")
-  console.log(req.body)
-  pushSubscription = req.body.subscription
-  console.log(pushSubscription)
-  res.status(200).json()
- 
-})
-
-router.post("/notify" ,async(req,res)=>{
-  const {name} = req.body
-  console.log("entre a notify", req.body)
-  const payload = {
-    title: name,
-    text: "Está perdido por tu zona,¿lo has visto?",
-  }
-  const string = JSON.stringify(payload)
-  webPush.sendNotification(pushSubscription, string)
-  res.status(200).json(payload)
-
-})
 
 export default router;
