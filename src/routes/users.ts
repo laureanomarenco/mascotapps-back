@@ -139,6 +139,33 @@ async function getParsedReviewsToOwner(id: string) {
   }
 }
 
+function parseReviewerName(reviewerName: any) {
+  console.log(`Parseando reviewer name`);
+  try {
+    if (!reviewerName) {
+      return "Anónimo";
+    } else {
+      return reviewerName;
+    }
+  } catch (error: any) {
+    console.log(`Error en el parseReviewerName. ${error.message}`);
+    return error.message;
+  }
+}
+
+function parseReviewerImage(reviewerImage: any) {
+  try {
+    if (!reviewerImage) {
+      return "https://www.utas.edu.au/__data/assets/image/0013/210811/varieties/profile_image.png";
+    } else {
+      return reviewerImage;
+    }
+  } catch (error: any) {
+    console.log(`Error en la function parseReviewerImage. ${error.message}`);
+    return error.message;
+  }
+}
+
 async function parseReviewsToOwner(arrayOfReviews: any) {
   console.log(`Parseando las reviews...`);
   // console.log(arrayOfReviews);
@@ -159,8 +186,8 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
           createdAt: review.dataValues.createdAt,
           updatedAt: review.dataValues.updatedAt,
           UserId: review.dataValues.UserId,
-          reviewer_name: reviewer.name,
-          reviewer_image: reviewer.image,
+          reviewer_name: parseReviewerName(reviewer?.name),
+          reviewer_image: parseReviewerImage(reviewer?.image),
         };
       })
     );
@@ -168,7 +195,7 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
     // console.log(parsedReviews);
     return parsedReviews;
   } catch (error: any) {
-    console.log(`Error en el parseReviewsToOwner`);
+    console.log(`Error en el parseReviewsToOwner. ${error.message}`);
     return error.message;
   }
 }
