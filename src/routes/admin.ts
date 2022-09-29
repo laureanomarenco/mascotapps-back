@@ -73,7 +73,7 @@ router.post("/deleteUser", async (req, res) => {
   }
 });
 
-router.post("/createMultiplier", async(req, res) => {
+router.get("/createMultiplier", async(req, res) => {
   try {
     const multiplier = await db.Multiplier.findAll()
     if(!multiplier){
