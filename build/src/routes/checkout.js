@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
-const admin_1 = require("./admin");
 const express_1 = require("express");
 const models_1 = __importDefault(require("../../models"));
 const Stripe = require('stripe');
@@ -39,7 +38,8 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id, amount, email } = req.body;
         const user = yield models_1.default.User.findOne({ where: { email: email } });
-        user.points = user.points + (100 * admin_1.multiplierPoints);
+        const multiplierPoints = yield models_1.default.Multiplier.findAll();
+        user.points = user.points + (10 * amount * multiplierPoints.number);
         yield user.save();
         //DONACIÓN
         const payment = yield stripe.paymentIntents.create({

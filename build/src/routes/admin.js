@@ -12,14 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.multiplierPoints = void 0;
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
 const transactionTypes_1 = require("../types/transactionTypes");
 const dotenv_1 = __importDefault(require("dotenv"));
 const sequelize_1 = require("sequelize");
 dotenv_1.default.config();
-exports.multiplierPoints = 1;
 const router = (0, express_1.Router)();
 router.post("/mutateActiveToActivo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a /admin/mutateActiveToActivo`);
@@ -75,6 +73,34 @@ router.post("/deleteUser", (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
     catch (error) {
         console.log(`Error en /admin/deleteUser. ${error.message}`);
+        return res.status(404).send(error.message);
+    }
+}));
+router.post("/createMultiplier", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const multiplier = yield index_1.default.Multiplier.findAll();
+        if (!multiplier) {
+            yield index_1.default.Multiplier.create();
+            res.send('multiplicador creado');
+        }
+        res.send('el multiplicador ya existe');
+    }
+    catch (error) {
+        console.log(`Error en /admin/changeMultiplier. ${error.message}`);
+        return res.status(404).send(error.message);
+    }
+}));
+router.post("/changeMultiplier", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré a /admin/changeMultiplier`);
+    try {
+        const { newMultiplier } = req.body;
+        const multiplier = yield index_1.default.Multiplier.findAll();
+        multiplier.number = newMultiplier;
+        yield multiplier.save();
+        res.send('multiplicador cambiado');
+    }
+    catch (error) {
+        console.log(`Error en /admin/changeMultiplier. ${error.message}`);
         return res.status(404).send(error.message);
     }
 }));

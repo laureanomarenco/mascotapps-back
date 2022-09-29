@@ -18,7 +18,6 @@ const index_1 = __importDefault(require("../../models/index"));
 const TransactionValidators_1 = require("../auxiliary/TransactionValidators");
 const transactionTypes_1 = require("../types/transactionTypes");
 const petTypes_1 = require("../types/petTypes");
-const admin_1 = require("./admin");
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 const router = (0, express_1.Router)();
 //-----  FUNCIONES AUXILIARES: -------------------------------
@@ -117,11 +116,12 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
                 pet.withNewOwner = 'true';
                 pet.postStatus = petTypes_1.postStatus.Success;
                 yield pet.save();
+                var multiplierPoints = yield index_1.default.Multiplier.findAll();
                 userDemanding.isAdopter = userDemanding.isAdopter + 1;
-                userDemanding.points = userDemanding.points + (100 * admin_1.multiplierPoints);
+                userDemanding.points = userDemanding.points + (100 * multiplierPoints.number);
                 yield userDemanding.save();
                 userOffering.gaveUpForAdoption = userOffering.gaveUpForAdoption + 1;
-                userOffering.points = userOffering.points + (100 * admin_1.multiplierPoints);
+                userOffering.points = userOffering.points + (100 * multiplierPoints.number);
                 yield userOffering.save();
                 console.log('se acutalizo withNewOner y postStatus de la mascota');
             }
@@ -131,18 +131,18 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
                 yield pet.save();
                 if (pet.status === 'encontrado') {
                     userDemanding.gotAPetBack = userDemanding.gotAPetBack + 1;
-                    userDemanding.points = userDemanding.points + (25 * admin_1.multiplierPoints);
+                    userDemanding.points = userDemanding.points + (25 * multiplierPoints.number);
                     yield userDemanding.save();
                     userOffering.foundAPet = userOffering.foundAPet + 1;
-                    userOffering.points = userOffering.points + (100 * admin_1.multiplierPoints);
+                    userOffering.points = userOffering.points + (100 * multiplierPoints.number);
                     yield userOffering.save();
                 }
                 else {
                     userDemanding.foundAPet = userDemanding.foundAPet + 1;
-                    userDemanding.points = userDemanding.points + (100 * admin_1.multiplierPoints);
+                    userDemanding.points = userDemanding.points + (100 * multiplierPoints.number);
                     yield userDemanding.save();
                     userOffering.gotAPetBack = userOffering.gotAPetBack + 1;
-                    userOffering.points = userOffering.points + (25 * admin_1.multiplierPoints);
+                    userOffering.points = userOffering.points + (25 * multiplierPoints.number);
                     yield userOffering.save();
                 }
                 console.log('se acutalizo backWithItsOwner y postStatus de la mascota');
