@@ -76,7 +76,7 @@ router.post("/deleteUser", async (req, res) => {
 router.get("/createMultiplier", async(req, res) => {
   try {
     const multiplier = await db.Multiplier.findAll()
-    if(!multiplier){
+    if(multiplier.lenght === 0){
       await db.Multiplier.create()
       res.send('multiplicador creado')
     }
