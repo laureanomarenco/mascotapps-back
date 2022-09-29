@@ -8,34 +8,45 @@ dotenv.config();
 
 const router = Router();
 
-router.post("/mutateActiveToActivo", async (req, res) => {
-  console.log(`Entré a /admin/mutateActiveToActivo`);
-  let password = req.body.password;
+// ----- FUNCIONES AUXILIARES: ------
 
+// GET ALL REVIEWS TO USER by id
+async function getAllReviewsToUser(id: any) {
   try {
-    if (password != process.env.ADMIN_PASSWORD) {
-      return res.status(403).send(`La password de administrador no es válida`);
-    }
-    let allActiveTransactions = await db.Transaction.findAll({
+    let allReviewsToUser = await db.Review.findAll({
       where: {
-        status: "active",
+        UserId: id,
       },
     });
-    let numberModified = 0;
-    for (const trans of allActiveTransactions) {
-      trans.status = transactionStatus.Active;
-      await trans.save();
-      numberModified++;
-      console.log(
-        `Transacciones modificadas de "active" a ${transactionStatus.Active}: ${numberModified}`
-      );
-    }
-    return res.status(200).send({ transactionsModified: `${numberModified}` });
-  } catch (error: any) {
-    console.log(`Error en el /admin/mutateActiveToActivo`);
-    return res.status(404).send(error.message);
+    console.log(`reviews al User encontradas: ${allReviewsToUser.length}`);
+    return allReviewsToUser;
+  } catch (error) {
+    console.log(`Error en function getAllReviewsToUser en /admin/`);
+    throw new Error(`Error al buscar las reviews que el usuario recibió.`);
   }
-});
+}
+
+// GET POSTS OF USER by id
+async function getPostsOfUser(id: any) {
+  console.log(`En getPostsOfUser...`);
+  try {
+    console.log(`id ingresado como argumento: ${id}`);
+    let postsOfUser = await db.Animal.findAll({
+      where: {
+        UserId: id,
+      },
+    });
+    console.log(
+      `Encontrados ${postsOfUser?.length} posts con el id ingresado.`
+    );
+    return postsOfUser;
+  } catch (error: any) {
+    console.log(`Error en getPostsOfUser: ${error.message}`);
+    throw new Error(`${error.message}`);
+  }
+}
+
+//---------------------- RUTAS: -----------------------------
 
 router.post("/deleteUser", async (req, res) => {
   console.log(`Entré a /admin/deleteUser`);
@@ -73,29 +84,8 @@ router.post("/deleteUser", async (req, res) => {
   }
 });
 
-async function getPostsOfUser(id: any) {
-  console.log(`En getPostsOfUser...`);
-  try {
-    console.log(`id ingresado como argumento: ${id}`);
-    let postsOfUser = await db.Animal.findAll({
-      where: {
-        UserId: id,
-      },
-    });
-    console.log(
-      `Encontrados ${postsOfUser?.length} posts con el id ingresado.`
-    );
-    return postsOfUser;
-  } catch (error: any) {
-    console.log(`Error en getPostsOfUser: ${error.message}`);
-    throw new Error(`${error.message}`);
-  }
-}
-
 router.post("/cleanPostsOfUserId", async (req, res) => {
   console.log(`Entré a la ruta /admin/clean`);
-  // Buscar las publicaciones/Animals con UserId = userId
-  // Buscar reviews con UserId = userId
   try {
     if (!req.body.userId) {
       throw new Error(
@@ -125,21 +115,6 @@ router.post("/cleanPostsOfUserId", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
-
-async function getAllReviewsToUser(id: any) {
-  try {
-    let allReviewsToUser = await db.Review.findAll({
-      where: {
-        UserId: id,
-      },
-    });
-    console.log(`reviews al User encontradas: ${allReviewsToUser.length}`);
-    return allReviewsToUser;
-  } catch (error) {
-    console.log(`Error en function getAllReviewsToUser en /admin/`);
-    throw new Error(`Error al buscar las reviews que el usuario recibió.`);
-  }
-}
 
 router.post("/cleanReviewsToUser", async (req, res) => {
   console.log(`En ruta /admin/cleanReviewsToUser`);
@@ -173,7 +148,7 @@ router.post("/cleanReviewsToUser", async (req, res) => {
   }
 });
 
-//!-----------
+// ----   RUTAS MULTIPLICADORAS:  -----------
 router.get("/createMultiplier", async (req, res) => {
   try {
     const multiplier = await db.Multiplier.findAll();
@@ -200,6 +175,37 @@ router.post("/changeMultiplier", async (req, res) => {
     res.send(`multiplicador cambiado. Valor actual = ${multiplier.number}`);
   } catch (error: any) {
     console.log(`Error en /admin/changeMultiplier. ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+});
+
+// --- RUTAS DEPRECADAS O YA SIN SENTIDO :
+
+router.post("/mutateActiveToActivo", async (req, res) => {
+  console.log(`Entré a /admin/mutateActiveToActivo`);
+  let password = req.body.password;
+
+  try {
+    if (password != process.env.ADMIN_PASSWORD) {
+      return res.status(403).send(`La password de administrador no es válida`);
+    }
+    let allActiveTransactions = await db.Transaction.findAll({
+      where: {
+        status: "active",
+      },
+    });
+    let numberModified = 0;
+    for (const trans of allActiveTransactions) {
+      trans.status = transactionStatus.Active;
+      await trans.save();
+      numberModified++;
+      console.log(
+        `Transacciones modificadas de "active" a ${transactionStatus.Active}: ${numberModified}`
+      );
+    }
+    return res.status(200).send({ transactionsModified: `${numberModified}` });
+  } catch (error: any) {
+    console.log(`Error en el /admin/mutateActiveToActivo`);
     return res.status(404).send(error.message);
   }
 });

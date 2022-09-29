@@ -212,7 +212,7 @@ function parseReviewsToOwner(arrayOfReviews) {
             return parsedReviews;
         }
         catch (error) {
-            console.log(`Error en el parseReviewsToOwner`);
+            console.log(`Error en el parseReviewsToOwner. ${error.message}`);
             return error.message;
         }
     });
