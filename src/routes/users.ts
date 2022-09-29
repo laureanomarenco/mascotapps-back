@@ -494,7 +494,7 @@ router.post("/points", async (req, res) => {
   console.log(`Estoy en /users/points.`);
   try {
     const { id } = req.body;
-    const user = db.User.findOne({ where: { id: id }});
+    const user = await db.User.findOne({ where: { id: id }});
     if(user) {
       res.send(user.points)
     }

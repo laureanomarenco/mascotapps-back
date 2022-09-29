@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
         const user = await db.User.findOne({ where: { email: email }})
 
         const multiplierPoints = await db.Multiplier.findAll()
-        user.points = user.points + (100 * multiplierPoints.number);
+        user.points = user.points + (10 * amount * multiplierPoints.number);
         await user.save();
         //DONACIÓN
         const payment = await stripe.paymentIntents.create({

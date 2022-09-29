@@ -76,7 +76,7 @@ router.post("/deleteUser", async (req, res) => {
 router.post("/createMultiplier", async(req, res) => {
   try {
     const multiplier = await db.Multiplier.findAll()
-    if(multiplier === undefined){
+    if(!multiplier){
       await db.Multiplier.create()
       res.send('multiplicador creado')
     }
@@ -94,6 +94,7 @@ router.post("/changeMultiplier", async (req, res) => {
     const multiplier = await db.Multiplier.findAll();
 
     multiplier.number = newMultiplier;
+    await multiplier.save();
 
     res.send('multiplicador cambiado')
   } catch (error: any) {
