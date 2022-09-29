@@ -73,4 +73,34 @@ router.post("/deleteUser", async (req, res) => {
   }
 });
 
+router.post("/createMultiplier", async(req, res) => {
+  try {
+    const multiplier = await db.Multiplier.findAll()
+    if(!multiplier){
+      await db.Multiplier.create()
+      res.send('multiplicador creado')
+    }
+    res.send('el multiplicador ya existe')
+  } catch (error: any) {
+    console.log(`Error en /admin/changeMultiplier. ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+})
+
+router.post("/changeMultiplier", async (req, res) => {
+  console.log(`Entré a /admin/changeMultiplier`);
+  try {
+    const { newMultiplier } = req.body;
+    const multiplier = await db.Multiplier.findAll();
+
+    multiplier.number = newMultiplier;
+    await multiplier.save();
+
+    res.send('multiplicador cambiado')
+  } catch (error: any) {
+    console.log(`Error en /admin/changeMultiplier. ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+});
+
 export default router;

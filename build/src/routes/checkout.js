@@ -38,6 +38,9 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id, amount, email } = req.body;
         const user = yield models_1.default.User.findOne({ where: { email: email } });
+        const multiplierPoints = yield models_1.default.Multiplier.findAll();
+        user.points = user.points + (10 * amount * multiplierPoints.number);
+        yield user.save();
         //DONACIÓN
         const payment = yield stripe.paymentIntents.create({
             amount,

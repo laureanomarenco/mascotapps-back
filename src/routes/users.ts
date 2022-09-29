@@ -10,7 +10,7 @@ import {
 import { IReview } from "../types/reviewTypes";
 
 const router = Router();
-
+const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 
 const getAllUsers = async () => {
@@ -65,6 +65,11 @@ async function getSomeUserInfo(userId: any) {
         image: userInfo.image,
         contact: userInfo.contact,
         isDonator: userInfo.isDonator,
+        isAdopter: userInfo.isAdopter,
+        gaveUpForAdoption: userInfo.gaveUpForAdoption,
+        foundAPet: userInfo.foundAPet,
+        gotAPetBack: userInfo.gotAPetBack,
+        points: userInfo.points
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
@@ -467,5 +472,55 @@ router.post("/getMultipleUserInfo", async (req, res) => {
     return res.status(400).send(error.message);
   }
 });
+
+router.get("/ranking", async(req, res) => {
+  console.log(`Estoy en /users/ranking.`);
+  try {
+  let allTheUsers = await getAllUsers();
+    
+  const ranking = allTheUsers.sort(function(a: any, b:any) { return b.points - a.points })
+  
+  const topTen = ranking.slice(0, 9);
+  
+  res.status(200).send(topTen)
+
+  } catch (error: any) {
+    console.log(`Error en /users/ranking. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+})
+
+router.post("/points", async (req, res) => {
+  console.log(`Estoy en /users/points.`);
+  try {
+    const { id } = req.body;
+    const user = await db.User.findOne({ where: { id: id }});
+    if(user) {
+      res.send(user.points)
+    }
+    res.send('no existe el usuario')
+  } catch (error: any) {
+    console.log(`Error en /users/points ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+});
+
+router.get("/rankingGaveAdoption", async(req, res) => {
+  console.log(`Estoy en /users/rankingGaveAdoption.`);
+  try {
+  let allTheUsers = await getAllUsers();
+    
+  const ranking = allTheUsers.sort(function(a: any, b:any) { return b.gaveUpForAdoption - a.gaveUpForAdoption })
+  
+  const topTen = ranking.slice(0, 9);
+  
+  res.status(200).send(topTen)
+
+  } catch (error: any) {
+    console.log(`Error en /users/rankingGaveAdoption. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+})
+
 
 export default router;

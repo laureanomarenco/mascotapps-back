@@ -109,17 +109,42 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
         const { petId } = req.body;
         const { id_demanding } = req.body; // el usuario selecciona al usuario con el que realizó existosamente la transacción
         const pet = yield index_1.default.Animal.findOne({ where: { id: petId } });
+        const userOffering = yield index_1.default.User.findOne({ where: { id: id } });
+        const userDemanding = yield index_1.default.User.findOne({ where: { id: id_demanding } });
         if (pet.UserId === id) {
             if (pet.status === 'en adopción') {
                 pet.withNewOwner = 'true';
                 pet.postStatus = petTypes_1.postStatus.Success;
                 yield pet.save();
+                var multiplierPoints = yield index_1.default.Multiplier.findAll();
+                userDemanding.isAdopter = userDemanding.isAdopter + 1;
+                userDemanding.points = userDemanding.points + (100 * multiplierPoints.number);
+                yield userDemanding.save();
+                userOffering.gaveUpForAdoption = userOffering.gaveUpForAdoption + 1;
+                userOffering.points = userOffering.points + (100 * multiplierPoints.number);
+                yield userOffering.save();
                 console.log('se acutalizo withNewOner y postStatus de la mascota');
             }
             else {
                 pet.backWithItsOwner = 'true';
                 pet.postStatus = petTypes_1.postStatus.Success;
                 yield pet.save();
+                if (pet.status === 'encontrado') {
+                    userDemanding.gotAPetBack = userDemanding.gotAPetBack + 1;
+                    userDemanding.points = userDemanding.points + (25 * multiplierPoints.number);
+                    yield userDemanding.save();
+                    userOffering.foundAPet = userOffering.foundAPet + 1;
+                    userOffering.points = userOffering.points + (100 * multiplierPoints.number);
+                    yield userOffering.save();
+                }
+                else {
+                    userDemanding.foundAPet = userDemanding.foundAPet + 1;
+                    userDemanding.points = userDemanding.points + (100 * multiplierPoints.number);
+                    yield userDemanding.save();
+                    userOffering.gotAPetBack = userOffering.gotAPetBack + 1;
+                    userOffering.points = userOffering.points + (25 * multiplierPoints.number);
+                    yield userOffering.save();
+                }
                 console.log('se acutalizo backWithItsOwner y postStatus de la mascota');
             }
             const transaction = yield index_1.default.Transaction.findOne({ where: { [sequelize_1.Op.and]: [{ user_offering_id: id }, { user_demanding_id: id_demanding }, { pet_id: petId }] } });
