@@ -103,6 +103,7 @@ function parsePetsPostedByUser(petsPostedByUser) {
                 comments: pet.comments,
                 withNewOwner: pet.withNewOwner,
                 backWithItsOwner: pet.backWithItsOwner,
+                postStatus: pet.postStatus,
             };
         });
         console.log(`Retornando parsedPets. parsedPets.length = ${parsedPets.length}`);
@@ -177,6 +178,29 @@ function parseReviewsToOwner(arrayOfReviews) {
         }
         catch (error) {
             console.log(`Error en el parseReviewsToOwner`);
+            return error.message;
+        }
+    });
+}
+// EMAIL EXISTS IN DATABASE:
+function emailExistsInDB(emailFromReq) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(`Chequeando si el email "${emailFromReq} existe en la DB`);
+        try {
+            let userWithEmail = yield index_1.default.User.findOne({
+                where: {
+                    email: emailFromReq,
+                },
+            });
+            if (userWithEmail) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        catch (error) {
+            console.log(`Error en function emailExistsInDB`);
             return error.message;
         }
     });
@@ -311,8 +335,13 @@ router.post("/deletePet", (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 }));
 router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré en /user/newUser`);
     const { email, name, city, contact, image, id } = req.body;
     try {
+        let emailExisteEnLaDB = yield emailExistsInDB(email);
+        if (emailExisteEnLaDB) {
+            throw new Error(`El email ${email} ya está registrado. Por favor, use otro email para el registro.`);
+        }
         console.log("new user..", name);
         let [newUser, created] = yield index_1.default.User.findOrCreate({
             where: {
@@ -329,12 +358,12 @@ router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function
         }
         else {
             console.log(`Nuevo usuario creado con name: ${name}`);
-            res.send(newUser);
+            res.status(200).send(newUser);
         }
     }
     catch (error) {
-        console.log(error);
-        res.status(404).send(error);
+        console.log(error.message);
+        res.status(404).send(error.message);
     }
 }));
 router.post("/exists", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

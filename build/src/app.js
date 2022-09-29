@@ -12,13 +12,19 @@ const checkout_1 = __importDefault(require("./routes/checkout"));
 const visitor_1 = __importDefault(require("./routes/visitor"));
 const transaction_1 = __importDefault(require("./routes/transaction"));
 const review_1 = __importDefault(require("./routes/review"));
+const comment_1 = __importDefault(require("./routes/comment"));
+const admin_1 = __importDefault(require("./routes/admin"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 var corsOptions = {
-    origin: ["https://mascotapps.vercel.app", "http://localhost:3000", "https://checkout.stripe.com"],
+    origin: [
+        "https://mascotapps.vercel.app",
+        "http://localhost:3000",
+        "https://checkout.stripe.com",
+    ],
     headers: "*",
     methods: "*",
     credentials: true,
@@ -31,6 +37,8 @@ app.use("/checkout", checkout_1.default);
 app.use("/visitor", visitor_1.default);
 app.use("/reviews", review_1.default);
 app.use("/transactions", transaction_1.default);
+app.use("/comments", comment_1.default);
+app.use("/admin", admin_1.default);
 //! falta que del front hagan un get a esta ruta cada vez que alguien pasa por su lading page. Voy a comentarla ahora para probar passport. Pero habría que mover esta ruta a otra ruta más específica y que desde el front le tiren GETs cada vez que se monta el landing por ejemplo.
 module.exports = app;
 //! este archivo está siendo importado en index.ts de la raíz
