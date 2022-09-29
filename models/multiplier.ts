@@ -20,7 +20,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
         primaryKey: true,
       },
       number: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         defaultValue: 1,
       },
     },
