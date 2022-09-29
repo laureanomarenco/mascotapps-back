@@ -309,11 +309,13 @@ router.post("/postNewPet", (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 }));
 router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c, _d;
     console.log(`Entré a pets/update`);
     console.log(`req.body = ${req.body}`);
     try {
         const { userId } = req.body.user;
         const { id, name, specie, race, city, age, gender, status, vaccinationSchemeStatus, image, comments, } = req.body.pet;
+        console.log(`req.body.pet.image = ${(_d = (_c = req.body) === null || _c === void 0 ? void 0 : _c.pet) === null || _d === void 0 ? void 0 : _d.image}`);
         const newProfile = yield index_1.default.Animal.update({
             name,
             specie,
@@ -331,6 +333,9 @@ router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 UserId: userId,
             },
         });
+        console.log(`Animal UPDATED. Datos de la mascota actualizada.`);
+        console.log("new profile = ");
+        console.log(newProfile);
         res.status(200).send(newProfile);
     }
     catch (error) {
@@ -468,7 +473,9 @@ router.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* 
 router.get("/success", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré al GET pets/success`);
     try {
-        const pets = yield index_1.default.Animal.findAll({ where: { postStatus: petTypes_1.postStatus.Success } });
+        const pets = yield index_1.default.Animal.findAll({
+            where: { postStatus: petTypes_1.postStatus.Success },
+        });
         return res.send(pets);
     }
     catch (error) {
@@ -479,7 +486,7 @@ router.get("/success", (req, res) => __awaiter(void 0, void 0, void 0, function*
 router.get("/successAdoptions", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré al GET pets/successAdoptions`);
     try {
-        const pets = yield index_1.default.Animal.findAll({ where: { withNewOwner: 'true' } });
+        const pets = yield index_1.default.Animal.findAll({ where: { withNewOwner: "true" } });
         res.send(pets);
     }
     catch (error) {
@@ -490,7 +497,9 @@ router.get("/successAdoptions", (req, res) => __awaiter(void 0, void 0, void 0, 
 router.get("/successFound", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré al GET pets/successFound`);
     try {
-        const pets = yield index_1.default.Animal.findAll({ where: { backWithItsOwner: 'true' } });
+        const pets = yield index_1.default.Animal.findAll({
+            where: { backWithItsOwner: "true" },
+        });
         res.send(pets);
     }
     catch (error) {
@@ -500,8 +509,8 @@ router.get("/successFound", (req, res) => __awaiter(void 0, void 0, void 0, func
 }));
 //GET BY ID:
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
-    console.log(`Entré al GET pets/:id con params.id = ${(_c = req === null || req === void 0 ? void 0 : req.params) === null || _c === void 0 ? void 0 : _c.id}`);
+    var _e;
+    console.log(`Entré al GET pets/:id con params.id = ${(_e = req === null || req === void 0 ? void 0 : req.params) === null || _e === void 0 ? void 0 : _e.id}`);
     try {
         let paramsID = req.params.id;
         let petFoundById = yield getPetById(paramsID);
