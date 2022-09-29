@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { title } from "process";
 import { Op } from "sequelize";
 import { measureMemory } from "vm";
 const webPush = require("../../config/web_Push_setup")
@@ -522,25 +523,27 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-let pushSubscription:any;
+let pushSubscription:any = undefined;
 router.post("/subscribe", async(req,res)=>{
-  pushSubscription = req.body
+  console.log("entre a subscribe")
+  console.log(req.body)
+  pushSubscription = req.body.subscription
+  console.log(pushSubscription)
   res.status(200).json()
  
 })
 
 router.post("/notify" ,async(req,res)=>{
-  const {message} = req.body
+  const {name} = req.body
+  console.log("entre a notify", req.body)
+  const payload = {
+    title: name,
+    text: "Está perdido por tu zona,¿lo has visto?",
+  }
+  const string = JSON.stringify(payload)
+  webPush.sendNotification(pushSubscription, string)
+  res.status(200).json(payload)
 
-  const payload = JSON.stringify({
-    title:"perdido por tu zona",
-    text: message.text,
-    icon: message.image
-  })
-
-  res.status(200).json()
-
-  webPush.sendNotification(pushSubscription, payload)
 })
 
 export default router;
