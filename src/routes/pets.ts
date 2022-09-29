@@ -527,7 +527,7 @@ let pushSubscription:any = undefined;
 router.post("/subscribe", async(req,res)=>{
   console.log("entre a subscribe")
   console.log(req.body)
-  pushSubscription = req.body
+  pushSubscription = req.body.subscription
   console.log(pushSubscription)
   res.status(200).json()
  
@@ -538,7 +538,7 @@ router.post("/notify" ,async(req,res)=>{
   console.log("entre a notify", req.body)
   const payload = {
     title: name,
-    text: "Esta perdido por tu zona,¿lo has visto?",
+    text: "Está perdido por tu zona,¿lo has visto?",
   }
   const string = JSON.stringify(payload)
   webPush.sendNotification(pushSubscription, string)
