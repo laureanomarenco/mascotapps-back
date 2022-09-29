@@ -73,30 +73,30 @@ router.post("/deleteUser", async (req, res) => {
   }
 });
 
-router.get("/createMultiplier", async(req, res) => {
+router.get("/createMultiplier", async (req, res) => {
   try {
-    const multiplier = await db.Multiplier.findAll()
-    if(multiplier.lenght === 0){
-      await db.Multiplier.create()
-      res.send('multiplicador creado')
+    const multiplier = await db.Multiplier.findAll();
+    if (multiplier.length === 0) {
+      await db.Multiplier.create({ number: 1 });
+      res.send("multiplicador creado");
     }
-    res.send('el multiplicador ya existe')
+    res.send("el multiplicador ya existe");
   } catch (error: any) {
     console.log(`Error en /admin/changeMultiplier. ${error.message}`);
     return res.status(404).send(error.message);
   }
-})
+});
 
 router.post("/changeMultiplier", async (req, res) => {
   console.log(`Entré a /admin/changeMultiplier`);
   try {
     const { newMultiplier } = req.body;
-    const multiplier = await db.Multiplier.findAll();
-
-    multiplier.number = newMultiplier;
+    const multiplier = await db.Multiplier.findByPk(1);
+    let newMultiplierToNumber: number = Number(newMultiplier);
+    multiplier.number = newMultiplierToNumber;
     await multiplier.save();
 
-    res.send('multiplicador cambiado')
+    res.send(`multiplicador cambiado. Valor actual = ${multiplier.number}`);
   } catch (error: any) {
     console.log(`Error en /admin/changeMultiplier. ${error.message}`);
     return res.status(404).send(error.message);
