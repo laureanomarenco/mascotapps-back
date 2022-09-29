@@ -3,7 +3,7 @@ import { Op } from "sequelize";
 import db from "../../models/index";
 import { validateNewTransaction } from "../auxiliary/TransactionValidators";
 import { ITransaction, transactionStatus } from "../types/transactionTypes";
-import { postStatus } from "../types/petTypes";
+import { postStatus, Status } from "../types/petTypes";
 
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 
@@ -103,23 +103,35 @@ router.post("/postSuccess", async (req, res) => {
     const userDemanding = await db.User.findOne({
       where: { id: id_demanding },
     });
+    console.log(`pet name = ${pet?.name}`);
+    console.log(`userOffering.name = ${userOffering?.name}`);
+    console.log(`userDemanding.name = ${userDemanding?.name}`);
+
+    if (!pet || !userOffering || !userDemanding) {
+      console.log(
+        +`Error en el chequeo de si alguna de las instancias buscadas en la DB es falsa. Alguna lo es`
+      );
+      throw new Error(`el pet, usserOffering o userDemanding es falso.`);
+    }
 
     if (pet.UserId === id) {
-      if (pet.status === "en adopción") {
+      if (pet.status === Status.enAdopcion) {
         pet.withNewOwner = "true";
         pet.postStatus = postStatus.Success;
         await pet.save();
 
-        var multiplierPoints = await db.Multiplier.findAll();
+        var multiplierPoints = await db.Multiplier.findByPk(1);
 
         userDemanding.isAdopter = userDemanding.isAdopter + 1;
-        userDemanding.points =
-          userDemanding.points + 100 * multiplierPoints.number;
+        userDemanding.points = Math.ceil(
+          userDemanding.points + 100 * multiplierPoints.number
+        );
         await userDemanding.save();
 
         userOffering.gaveUpForAdoption = userOffering.gaveUpForAdoption + 1;
-        userOffering.points =
-          userOffering.points + 100 * multiplierPoints.number;
+        userOffering.points = Math.ceil(
+          userOffering.points + 100 * multiplierPoints.number
+        );
         await userOffering.save();
 
         console.log("se acutalizo withNewOner y postStatus de la mascota");
@@ -130,24 +142,28 @@ router.post("/postSuccess", async (req, res) => {
 
         if (pet.status === "encontrado") {
           userDemanding.gotAPetBack = userDemanding.gotAPetBack + 1;
-          userDemanding.points =
-            userDemanding.points + 25 * multiplierPoints.number;
+          userDemanding.points = Math.ceil(
+            userDemanding.points + 25 * multiplierPoints.number
+          );
 
           await userDemanding.save();
 
           userOffering.foundAPet = userOffering.foundAPet + 1;
-          userOffering.points =
-            userOffering.points + 100 * multiplierPoints.number;
+          userOffering.points = Math.ceil(
+            userOffering.points + 100 * multiplierPoints.number
+          );
           await userOffering.save();
         } else {
           userDemanding.foundAPet = userDemanding.foundAPet + 1;
-          userDemanding.points =
-            userDemanding.points + 100 * multiplierPoints.number;
+          userDemanding.points = Math.ceil(
+            userDemanding.points + 100 * multiplierPoints.number
+          );
           await userDemanding.save();
 
           userOffering.gotAPetBack = userOffering.gotAPetBack + 1;
-          userOffering.points =
-            userOffering.points + 25 * multiplierPoints.number;
+          userOffering.points = Math.ceil(
+            userOffering.points + 25 * multiplierPoints.number
+          );
           await userOffering.save();
         }
 
