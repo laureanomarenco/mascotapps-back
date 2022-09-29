@@ -10,7 +10,6 @@ const router = Router();
 let stripe: any;
 stripe = new Stripe(STRIPE_KEY)
 
-
 const getAllDonations = async () => {
     console.log('en function getAllDonations')
     try {
@@ -30,6 +29,9 @@ router.post('/', async (req, res) => {
 
         const user = await db.Users.findOne({ where: { email: email }})
 
+        const multiplierPoints = await db.Multiplier.findAll()
+        user.points = user.points + (10 * amount * multiplierPoints.number);
+        await user.save();
         //DONACIÓN
         const payment = await stripe.paymentIntents.create({
             amount,

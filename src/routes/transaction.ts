@@ -99,17 +99,51 @@ router.post("/postSuccess", async (req, res) => {
     const { id_demanding } = req.body // el usuario selecciona al usuario con el que realizó existosamente la transacción
 
     const pet = await db.Animal.findOne({ where: { id: petId } });
+    const userOffering = await db.User.findOne({ where: { id: id } })
+    const userDemanding = await db.User.findOne({ where: { id: id_demanding } })
 
     if (pet.UserId === id) {
       if (pet.status === 'en adopción') {
         pet.withNewOwner = 'true';
         pet.postStatus = postStatus.Success;
         await pet.save();
+
+        var multiplierPoints = await db.Multiplier.findAll()
+
+        userDemanding.isAdopter = userDemanding.isAdopter + 1;
+        userDemanding.points = userDemanding.points + (100 * multiplierPoints.number)
+        await userDemanding.save();
+
+        userOffering.gaveUpForAdoption = userOffering.gaveUpForAdoption + 1;
+        userOffering.points = userOffering.points + (100 * multiplierPoints.number)
+        await userOffering.save();
+
         console.log('se acutalizo withNewOner y postStatus de la mascota')
       } else {
         pet.backWithItsOwner = 'true';
         pet.postStatus = postStatus.Success;
         await pet.save();
+
+        if(pet.status === 'encontrado'){
+          userDemanding.gotAPetBack = userDemanding.gotAPetBack + 1;
+          userDemanding.points = userDemanding.points + (25 * multiplierPoints.number)
+          
+          await userDemanding.save();
+
+          userOffering.foundAPet = userOffering.foundAPet + 1;
+          userOffering.points = userOffering.points + (100 * multiplierPoints.number)
+          await userOffering.save();
+
+        } else {
+          userDemanding.foundAPet = userDemanding.foundAPet + 1;
+          userDemanding.points = userDemanding.points + (100 * multiplierPoints.number)
+          await userDemanding.save();
+
+          userOffering.gotAPetBack = userOffering.gotAPetBack + 1;
+          userOffering.points = userOffering.points + (25 * multiplierPoints.number)
+          await userOffering.save();
+        }
+
         console.log('se acutalizo backWithItsOwner y postStatus de la mascota')
       }
       

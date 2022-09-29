@@ -10,7 +10,7 @@ import {
 import { IReview } from "../types/reviewTypes";
 
 const router = Router();
-
+const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 
 const getAllUsers = async () => {
@@ -65,6 +65,11 @@ async function getSomeUserInfo(userId: any) {
         image: userInfo.image,
         contact: userInfo.contact,
         isDonator: userInfo.isDonator,
+        isAdopter: userInfo.isAdopter,
+        gaveUpForAdoption: userInfo.gaveUpForAdoption,
+        foundAPet: userInfo.foundAPet,
+        gotAPetBack: userInfo.gotAPetBack,
+        points: userInfo.points
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
@@ -139,6 +144,33 @@ async function getParsedReviewsToOwner(id: string) {
   }
 }
 
+function parseReviewerName(reviewerName: any) {
+  console.log(`Parseando reviewer name`);
+  try {
+    if (!reviewerName) {
+      return "Anónimo";
+    } else {
+      return reviewerName;
+    }
+  } catch (error: any) {
+    console.log(`Error en el parseReviewerName. ${error.message}`);
+    return error.message;
+  }
+}
+
+function parseReviewerImage(reviewerImage: any) {
+  try {
+    if (!reviewerImage) {
+      return "https://www.utas.edu.au/__data/assets/image/0013/210811/varieties/profile_image.png";
+    } else {
+      return reviewerImage;
+    }
+  } catch (error: any) {
+    console.log(`Error en la function parseReviewerImage. ${error.message}`);
+    return error.message;
+  }
+}
+
 async function parseReviewsToOwner(arrayOfReviews: any) {
   console.log(`Parseando las reviews...`);
   // console.log(arrayOfReviews);
@@ -159,8 +191,8 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
           createdAt: review.dataValues.createdAt,
           updatedAt: review.dataValues.updatedAt,
           UserId: review.dataValues.UserId,
-          reviewer_name: reviewer.name,
-          reviewer_image: reviewer.image,
+          reviewer_name: parseReviewerName(reviewer?.name),
+          reviewer_image: parseReviewerImage(reviewer?.image),
         };
       })
     );
@@ -168,7 +200,7 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
     // console.log(parsedReviews);
     return parsedReviews;
   } catch (error: any) {
-    console.log(`Error en el parseReviewsToOwner`);
+    console.log(`Error en el parseReviewsToOwner. ${error.message}`);
     return error.message;
   }
 }
@@ -440,5 +472,55 @@ router.post("/getMultipleUserInfo", async (req, res) => {
     return res.status(400).send(error.message);
   }
 });
+
+router.get("/ranking", async(req, res) => {
+  console.log(`Estoy en /users/ranking.`);
+  try {
+  let allTheUsers = await getAllUsers();
+    
+  const ranking = allTheUsers.sort(function(a: any, b:any) { return b.points - a.points })
+  
+  const topTen = ranking.slice(0, 9);
+  
+  res.status(200).send(topTen)
+
+  } catch (error: any) {
+    console.log(`Error en /users/ranking. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+})
+
+router.post("/points", async (req, res) => {
+  console.log(`Estoy en /users/points.`);
+  try {
+    const { id } = req.body;
+    const user = await db.User.findOne({ where: { id: id }});
+    if(user) {
+      res.send(user.points)
+    }
+    res.send('no existe el usuario')
+  } catch (error: any) {
+    console.log(`Error en /users/points ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+});
+
+router.get("/rankingGaveAdoption", async(req, res) => {
+  console.log(`Estoy en /users/rankingGaveAdoption.`);
+  try {
+  let allTheUsers = await getAllUsers();
+    
+  const ranking = allTheUsers.sort(function(a: any, b:any) { return b.gaveUpForAdoption - a.gaveUpForAdoption })
+  
+  const topTen = ranking.slice(0, 9);
+  
+  res.status(200).send(topTen)
+
+  } catch (error: any) {
+    console.log(`Error en /users/rankingGaveAdoption. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+})
+
 
 export default router;
