@@ -53,29 +53,3 @@ var VaccinationStatus;
     VaccinationStatus["Incompleto"] = "incompleto";
     VaccinationStatus["Desconocido"] = "desconocido";
 })(VaccinationStatus = exports.VaccinationStatus || (exports.VaccinationStatus = {}));
-//--------- Interfaces y types para "Otros": -----------
-//! Si la especie no es gato ni perro, que se use la interface de Pet.
-//! Si la specie === "gato", que use la interface de Pet entendida a Cat. Lo mismo para "dog"...
-//? PERO ESTA ES UNA MALA IDEA. MEJOR USAR LA INTERFACE DE PET ÚNICAMENTE.
-//----------- EXPERIMENTOS Y PRUEBAS: ------------
-// export interface PetReviewed extends Pet {
-//   review: string;
-// }
-// console.log(perrito);
-// console.log(lokiMissing);
-// ----NOTAS Y COMENTARIOS DE TYPES, INTERFACES, OMIT, ETC PARA EL USO DE TypeScript: ---------------------
-// export type NonSensitiveInfoDiaryEntry = Pick<DiaryEntry, "id" | "date" | "weather" | "visibility">
-// export type NonSensitiveInfoDiaryEntry = Omit<DiaryEntry, "comment">;
-// export type NewDiaryEntry = Omit<DiaryEntry, "id">;
-//Cuándo debo utilizar types y/o interface?? Estudiar mejor los detalles, pero básicamente Midudev dice...:
-// La interface está pensada para ser extendida: Por ejemplo:
-// interface SpecialDiaryEntry extends DiaryEntry {
-//   flightNumber: number;
-// y acá también tendría todo lo que tiene DiaryEntry
-// }
-// En cambio, los types están mejor para cosas más estáticas. Ya que si quisiese hacer lo mismo con types, debería hacer esto:
-// type SpecialDiaryEntry2 = DiaryEntry & {
-//   flightNumber: number;
-// };
-// Y esto de acá arriba queda medio raro utilizado de esta manera.
-// export type OnlyPublicDataOfUser = Omit<User, "privateHobbies">;

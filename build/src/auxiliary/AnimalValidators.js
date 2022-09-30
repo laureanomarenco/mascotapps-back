@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isUndefinedOrNull = exports.isStringBetween1And101CharsLong = exports.isString = exports.checkId = exports.isValidId = exports.checkName = exports.checkComments = exports.checkImageURL = exports.isValidURL = exports.checkVaccinationSchemeStatus = exports.checkRace = exports.checkAge = exports.checkGender = exports.checkStatus = exports.checkSpecies = exports.validateNewPet = void 0;
+exports.isUndefinedOrNull = exports.isStringBetween1And101CharsLong = exports.isString = exports.checkId = exports.isValidId = exports.checkName = exports.checkComments = exports.checkImageURL = exports.isValidURL = exports.checkVaccinationSchemeStatus = exports.checkRace = exports.checkAge = exports.checkGender = exports.checkStatus = exports.checkSpecies = exports.validateUpdatedPet = exports.validateNewPet = void 0;
 const petTypes_1 = require("../types/petTypes");
 const ReviewValidators_1 = require("./ReviewValidators");
 //! VALIDAR TODO EL PET ENTERO:
@@ -18,7 +18,7 @@ function validateNewPet(reqBody) {
             gender: checkGender(reqBody.gender),
             status: checkStatus(reqBody.status),
             vaccinationSchemeStatus: checkVaccinationSchemeStatus(reqBody.vaccinationSchemeStatus),
-            image: reqBody.image,
+            image: checkImageURL(reqBody.image),
             backWithItsOwner: undefined,
             withNewOwner: undefined,
             comments: checkComments(reqBody.comments),
@@ -31,7 +31,45 @@ function validateNewPet(reqBody) {
     }
 }
 exports.validateNewPet = validateNewPet;
+function validateUpdatedPet(petFromReq) {
+    console.log(`Validando el pet por req para el update de la pet`);
+    try {
+        let updatedPet = {
+            name: checkName(petFromReq.name),
+            specie: checkSpecies(petFromReq.specie),
+            race: checkRace(petFromReq.race),
+            city: checkCity(petFromReq.city),
+            age: checkAge(petFromReq.age),
+            gender: checkGender(petFromReq.gender),
+            status: checkStatus(petFromReq.status),
+            vaccinationSchemeStatus: checkVaccinationSchemeStatus(petFromReq.vaccinationSchemeStatus),
+            image: checkImageURL(petFromReq.image),
+            comments: checkComments(petFromReq.comments),
+        };
+        return updatedPet;
+    }
+    catch (error) {
+        console.log(`Error en function validateUpdatedPet. ${error.message}`);
+        throw new Error(`${error.message}`);
+    }
+}
+exports.validateUpdatedPet = validateUpdatedPet;
 //! FUNCIONES VALIDADORAS DE PROPIEDADES que usa la función validateNewPet:
+function checkCity(cityFromReq) {
+    try {
+        if (isUndefinedOrNull(cityFromReq) || (0, ReviewValidators_1.isEmptyString)(cityFromReq)) {
+            return undefined;
+        }
+        if (isStringBetween1And101CharsLong(cityFromReq)) {
+            return cityFromReq;
+        }
+        throw new Error(`Error al validar la ciudad.`);
+    }
+    catch (error) {
+        console.log(`Error en function checkCity. ${error.message}`);
+        throw new Error(`${error.message}`);
+    }
+}
 function isPostStatus(arg) {
     return Object.values(petTypes_1.postStatus).includes(arg);
 }
@@ -128,7 +166,7 @@ function isValidURL(argumento) {
 }
 exports.isValidURL = isValidURL;
 function checkImageURL(imageFromReq) {
-    if (isUndefinedOrNull(imageFromReq)) {
+    if (isUndefinedOrNull(imageFromReq) || (0, ReviewValidators_1.isEmptyString)(imageFromReq)) {
         return undefined;
     }
     if (isValidURL(imageFromReq)) {

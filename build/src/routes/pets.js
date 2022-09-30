@@ -309,26 +309,17 @@ router.post("/postNewPet", (req, res) => __awaiter(void 0, void 0, void 0, funct
         return res.status(404).send(error.message);
     }
 }));
+//PUT Update detalles de la mascota
 router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _c, _d;
     console.log(`Entré a pets/update`);
     console.log(`req.body = ${req.body}`);
     try {
         const { userId } = req.body.user;
-        const { id, name, specie, race, city, age, gender, status, vaccinationSchemeStatus, image, comments, } = req.body.pet;
+        const { id } = req.body.pet;
         console.log(`req.body.pet.image = ${(_d = (_c = req.body) === null || _c === void 0 ? void 0 : _c.pet) === null || _d === void 0 ? void 0 : _d.image}`);
-        const newProfile = yield index_1.default.Animal.update({
-            name,
-            specie,
-            race,
-            city,
-            age,
-            gender,
-            status,
-            vaccinationSchemeStatus,
-            image,
-            comments,
-        }, {
+        let validatedPetFromReq = (0, AnimalValidators_1.validateUpdatedPet)(req.body.pet);
+        const newProfile = yield index_1.default.Animal.update(validatedPetFromReq, {
             where: {
                 id: id,
                 UserId: userId,
@@ -337,10 +328,11 @@ router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         console.log(`Animal UPDATED. Datos de la mascota actualizada.`);
         console.log("new profile = ");
         console.log(newProfile);
-        res.status(200).send(newProfile);
+        return res.status(200).send(newProfile);
     }
     catch (error) {
-        res.status(400).send(error);
+        console.log(`Error en la ruta "/pets/update"`);
+        return res.status(400).send(error.message);
     }
 }));
 // GET NUMBER OF PETS IN DB:
@@ -508,34 +500,62 @@ router.get("/successFound", (req, res) => __awaiter(void 0, void 0, void 0, func
         return res.status(404).send(error.message);
     }
 }));
-let pushSubscription = undefined;
-router.post("/subscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { subscription } = req.body;
-    console.log("entre a subscribe");
-    pushSubscription = yield subscription;
-    console.log(pushSubscription);
-    return res.status(200).send('suscripción creada correctamente');
-}));
-router.post("/notify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { name } = req.body;
-        console.log("entre a notify", req.body);
-        const payload = {
-            title: name,
-            text: "Está perdido por tu zona,¿lo has visto?",
-        };
-        const string = JSON.stringify(payload);
-        web_push_1.default.sendNotification(pushSubscription, string);
-        res.status(200).json();
-    }
-    catch (error) {
-        console.log(error);
-    }
-}));
 //GET BY ID:
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _e;
     console.log(`Entré al GET pets/:id con params.id = ${(_e = req === null || req === void 0 ? void 0 : req.params) === null || _e === void 0 ? void 0 : _e.id}`);
+    try {
+        let paramsID = req.params.id;
+        let petFoundById = yield getPetById(paramsID);
+        return res.status(200).send(petFoundById);
+    }
+    catch (error) {
+        console.log(`retornando error en GET pets/:id: ${error.message}`);
+        return res.status(404).send(error.message);
+    }
+}));
+let identificator = [];
+let pushSubscription = [];
+router.post("/subscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { subscription } = req.body;
+    identificator = req.body;
+    console.log("entre a subscribe");
+    pushSubscription = yield [...pushSubscription, subscription];
+    console.log(pushSubscription);
+    return res.status(200).send('suscripción creada correctamente');
+}));
+router.post("/desubscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    const usuario = yield identificator.filter((e) => e.id == id);
+    const endpoint = usuario.subscription.endpoint;
+    pushSubscription = yield pushSubscription.filter((e) => e.endpoint !== endpoint);
+    res.status(200).send("endpoint borrado");
+}));
+router.post("/notify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (pushSubscription.length == 0) {
+        res.send("no hay nadie subscripto a las notificaciones");
+    }
+    else {
+        try {
+            const { name } = req.body;
+            console.log("entre a notify", req.body);
+            const payload = {
+                title: name,
+                text: "Está perdido por tu zona,¿lo has visto?",
+            };
+            const string = JSON.stringify(payload);
+            pushSubscription.map((s) => web_push_1.default.sendNotification(s, string));
+            res.status(200).json();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+}));
+//GET BY ID:
+router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _f;
+    console.log(`Entré al GET pets/:id con params.id = ${(_f = req === null || req === void 0 ? void 0 : req.params) === null || _f === void 0 ? void 0 : _f.id}`);
     try {
         let paramsID = req.params.id;
         let petFoundById = yield getPetById(paramsID);

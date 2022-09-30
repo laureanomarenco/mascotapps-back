@@ -496,9 +496,9 @@ router.post("/points", (req, res) => __awaiter(void 0, void 0, void 0, function*
         const { id } = req.body;
         const user = yield index_1.default.User.findOne({ where: { id: id } });
         if (user) {
-            res.send(user.points);
+            return res.status(200).send({ points: user.points });
         }
-        res.send('no existe el usuario');
+        return res.status(200).send('no existe el usuario');
     }
     catch (error) {
         console.log(`Error en /users/points ${error.message}`);
@@ -541,7 +541,7 @@ router.post("/buyProducts", (req, res) => __awaiter(void 0, void 0, void 0, func
                 from: "service.mascotapp@gmail.com",
                 to: mail,
                 subject: "Tu compra está siendo preparada",
-                html: `<div>${msgMail}</div><div>Productos: ${items.map((i) => { return { i }; })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
+                html: `<div>${msgMail}</div><div>Productos: ${items.map((i) => { return i.title; })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
             };
             transporter.sendMail(mailOptions, function (error, info) {
                 if (error)
