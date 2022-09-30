@@ -535,11 +535,11 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-let pushSubscription:any = undefined;
+let pushSubscription:any = [];
 router.post("/subscribe", async(req,res)=>{
   const {subscription} = req.body
   console.log("entre a subscribe")
-  pushSubscription = await subscription
+  pushSubscription = await [...pushSubscription, subscription]
   console.log(pushSubscription)
   res.status(200).json()
  
@@ -558,7 +558,7 @@ router.post("/notify" ,async(req,res)=>{
         text: "Está perdido por tu zona,¿lo has visto?",
       }
       const string = JSON.stringify(payload)
-      webPush.sendNotification(pushSubscription, string)
+      pushSubscription.map((s:any)=> webPush.sendNotification(s,string))
       res.status(200).json()
     } catch (error) {
       console.log(error)
