@@ -55,6 +55,19 @@ export enum VaccinationStatus {
 
 export type NewPetEntry = Omit<Pet, "id">;
 
+export interface updatedPet {
+  name: string | undefined;
+  specie: Species; //! OBLIGATORIO
+  race: string | undefined;
+  city: string | undefined;
+  age: Ages | undefined;
+  gender: Genders | undefined;
+  status: Status; //! OBLIGATORIO
+  vaccinationSchemeStatus: VaccinationStatus | undefined;
+  image: string | undefined;
+  comments: string | undefined;
+}
+
 export interface Pet {
   id: string | undefined; //! Le damos la opción al cliente de setear su id al string q quiera
   name: string | undefined;
