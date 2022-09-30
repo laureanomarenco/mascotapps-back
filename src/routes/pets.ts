@@ -545,8 +545,8 @@ router.post("/subscribe", async(req,res)=>{
 })
 
 router.post("/notify" ,async(req,res)=>{
-  if(pushSubscription == undefined){
-    res.send("no esta subscripto, no se mandan notificaciones")
+  if(pushSubscription.length == 0){
+    res.send("no hay nadie subscripto a las notificaciones")
   }
   else{
     try {
