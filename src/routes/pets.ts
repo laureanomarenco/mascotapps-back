@@ -553,11 +553,8 @@ router.post("/notify" ,async(req,res)=>{
       text: "Está perdido por tu zona,¿lo has visto?",
     }
     const string = JSON.stringify(payload)
-    console.log("soy string", string)
     webPush.sendNotification(pushSubscription, string)
-    console.log("estoy despues de sendNOtiifcationsa")
     res.status(200).json()
-    console.log("estoy despues de json")
   } catch (error) {
     console.log(error)
   }
