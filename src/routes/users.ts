@@ -523,7 +523,7 @@ router.get("/rankingGaveAdoption", async(req, res) => {
   }
 })
 
-router.get("/buyProducts", async(req, res) => {
+router.post("/buyProducts", async(req, res) => {
   console.log(`Estoy en /users/buyProducts.`);
   try {
     const { userID, name, items, totalPoints, mail, direccion } = req.body;

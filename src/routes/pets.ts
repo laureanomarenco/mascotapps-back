@@ -522,6 +522,32 @@ router.get("/successFound", async (req, res) => {
   }
 });
 
+let pushSubscription:any = undefined;
+router.post("/subscribe", async(req,res)=>{
+  const {subscription} = req.body;
+  console.log("entre a subscribe")
+  pushSubscription = await subscription
+  console.log(pushSubscription)
+  return res.status(200).send('suscripción creada correctamente')
+})
+
+router.post("/notify" ,async(req,res)=>{
+  try {
+    const {name} = req.body
+    console.log("entre a notify", req.body)
+    const payload = {
+      title: name,
+      text: "Está perdido por tu zona,¿lo has visto?",
+    }
+    const string = JSON.stringify(payload)
+    webPush.sendNotification(pushSubscription, string)
+    
+    res.status(200).json()
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 //GET BY ID:
 router.get("/:id", async (req, res) => {
   console.log(`Entré al GET pets/:id con params.id = ${req?.params?.id}`);
@@ -535,30 +561,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-let pushSubscription:any = undefined;
-router.post("/subscribe", async(req,res)=>{
-  const {subscription} = req.body
-  console.log("entre a subscribe")
-  pushSubscription = await subscription
-  console.log(pushSubscription)
-  res.status(200).json()
- 
-})
 
-router.post("/notify" ,async(req,res)=>{
-  try {
-    const {name} = req.body
-    console.log("entre a notify", req.body)
-    const payload = {
-      title: name,
-      text: "Está perdido por tu zona,¿lo has visto?",
-    }
-    const string = JSON.stringify(payload)
-    webPush.sendNotification(pushSubscription, string)
-    res.status(200).json()
-  } catch (error) {
-    console.log(error)
-  }
-})
 
 export default router;
