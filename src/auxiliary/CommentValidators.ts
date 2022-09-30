@@ -5,7 +5,7 @@ import { isEmptyString, isUndefinedOrNull } from "./ReviewValidators";
 export function validateNewComment(reqBody: any): INewComment {
   try {
     let commentFromReqChecked: INewComment = {
-      name: checkName(reqBody.name),
+      nombre: checkNombre(reqBody.nombre),
       provincia: checkProvincia(reqBody.provincia),
       localidad: checkLocalidad(reqBody.localidad),
       fecha: checkFecha(reqBody.fecha),
@@ -88,7 +88,7 @@ function isStringBetween1And50CharsLong(argumento: any): boolean {
   }
 }
 
-function checkName(nameFromReq: any): string | undefined {
+function checkNombre(nameFromReq: any): string | undefined {
   if (isUndefinedOrNull(nameFromReq) || isEmptyString(nameFromReq)) {
     return undefined;
   }
