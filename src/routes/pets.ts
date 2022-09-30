@@ -525,7 +525,7 @@ router.post("/subscribe", async(req,res)=>{
 
 router.post("/desubscribe", async(req,res)=>{
   const {id} = req.body
-  const usuario = await identificator.filter((e:any) => e.id == id )
+  const usuario = await identificator.find((e:any) => e.id == id )
   const endpoint = usuario.subscription.endpoint
   pushSubscription = await pushSubscription.filter((e:any) => e.endpoint !== endpoint)
   res.status(200).send("endpoint borrado")
