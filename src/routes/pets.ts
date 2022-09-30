@@ -534,14 +534,23 @@ router.get("/:id", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
-
+let identificator:any = []
 let pushSubscription:any = [];
 router.post("/subscribe", async(req,res)=>{
   const {subscription} = req.body;
+  identificator = req.body
   console.log("entre a subscribe")
   pushSubscription = await [...pushSubscription, subscription]
   console.log(pushSubscription)
   return res.status(200).send('suscripción creada correctamente')
+})
+
+router.post("/desubscribe", async(req,res)=>{
+  const {id} = req.body
+  const usuario = await identificator.filter((e:any) => e.id == id )
+  const endpoint = usuario.subscription.endpoint
+  pushSubscription = await pushSubscription.filter((e:any) => e.endpoint !== endpoint)
+  res.status(200).send("endpoint borrado")
 })
 
 router.post("/notify" ,async(req,res)=>{
