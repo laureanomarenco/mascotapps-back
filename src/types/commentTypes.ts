@@ -1,6 +1,6 @@
 export interface IComment {
   id: undefined;
-  name: string | undefined;
+  nombre: string | undefined;
   provincia: string;
   localidad: string;
   fecha: string;
@@ -12,7 +12,7 @@ export interface IComment {
 }
 
 export interface INewComment {
-  name: string | undefined;
+  nombre: string | undefined;
   provincia: string;
   localidad: string;
   fecha: string;
@@ -24,7 +24,7 @@ export interface INewComment {
 
 export interface ICommentResponse {
   length: any;
-  name: string | undefined;
+  nombre: string | undefined;
   provincia: string;
   localidad: string;
   fecha: string;

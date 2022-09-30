@@ -537,12 +537,11 @@ router.get("/:id", async (req, res) => {
 
 let pushSubscription:any = [];
 router.post("/subscribe", async(req,res)=>{
-  const {subscription} = req.body
+  const {subscription} = req.body;
   console.log("entre a subscribe")
   pushSubscription = await [...pushSubscription, subscription]
   console.log(pushSubscription)
-  res.status(200).json()
- 
+  return res.status(200).send('suscripción creada correctamente')
 })
 
 router.post("/notify" ,async(req,res)=>{
@@ -563,8 +562,22 @@ router.post("/notify" ,async(req,res)=>{
     } catch (error) {
       console.log(error)
     }
-    
-  }
+ } 
 })
+
+//GET BY ID:
+router.get("/:id", async (req, res) => {
+  console.log(`Entré al GET pets/:id con params.id = ${req?.params?.id}`);
+  try {
+    let paramsID = req.params.id;
+    let petFoundById = await getPetById(paramsID);
+    return res.status(200).send(petFoundById);
+  } catch (error: any) {
+    console.log(`retornando error en GET pets/:id: ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+});
+
+
 
 export default router;

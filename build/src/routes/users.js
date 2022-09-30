@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
 const sequelize_1 = require("sequelize");
+const { GMAIL_PASS, GMAIL_USER } = process.env;
 const router = (0, express_1.Router)();
 const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
@@ -514,6 +515,46 @@ router.get("/rankingGaveAdoption", (req, res) => __awaiter(void 0, void 0, void 
     }
     catch (error) {
         console.log(`Error en /users/rankingGaveAdoption. ${error.message}`);
+        return res.status(400).send(error.message);
+    }
+}));
+router.post("/buyProducts", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Estoy en /users/buyProducts.`);
+    try {
+        const { userID, name, items, totalPoints, mail, direccion } = req.body;
+        const user = yield index_1.default.User.findOne({ where: { id: userID } });
+        if (user) {
+            console.log(user, totalPoints, items);
+            user.points = user.points - totalPoints;
+            yield user.save();
+            const nodemailer = require("nodemailer");
+            console.log(GMAIL_PASS, GMAIL_USER);
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: GMAIL_USER,
+                    pass: GMAIL_PASS,
+                },
+            });
+            const msgMail = `Hola ${name} estamos preparando tu compra para enviarla a ${direccion}. Te daremos aviso cuando el producto esté en camino.`;
+            const mailOptions = {
+                from: "service.mascotapp@gmail.com",
+                to: mail,
+                subject: "Tu compra está siendo preparada",
+                html: `<div>${msgMail}</div><div>Productos: ${items.map((i) => { return { i }; })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error)
+                    console.log(error);
+                else
+                    console.log("Email enviado: " + info.response);
+            });
+            return res.status(200).send('compra realizada exitosamente');
+        }
+        return res.send('el usuario no existe');
+    }
+    catch (error) {
+        console.log(`Error en /users/buyProducts. ${error.message}`);
         return res.status(400).send(error.message);
     }
 }));
