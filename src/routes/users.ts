@@ -497,9 +497,9 @@ router.post("/points", async (req, res) => {
     const { id } = req.body;
     const user = await db.User.findOne({ where: { id: id }});
     if(user) {
-      res.send(user.points)
+      return res.send(user.points)
     }
-    res.send('no existe el usuario')
+    return res.send('no existe el usuario')
   } catch (error: any) {
     console.log(`Error en /users/points ${error.message}`);
     return res.status(400).send(error.message);
