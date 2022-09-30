@@ -28,7 +28,8 @@ router.post("/newComment", async (req, res) => {
 
     let commentFromReq = validateNewComment(req.body);
     let newComment = await db.Comment.create(commentFromReq);
-    await newComment.setAnimal(petId);
+    let petAsociado = await db.Animal.findByPk(petId);
+    await newComment.setAnimal(petAsociado);
     console.log(`Nuevo comentario creado y asociado a la mascota ${petId}`);
     if (Array.isArray(fotos) && fotos.length > 0) {
       for (const foto of fotos) {
@@ -60,7 +61,7 @@ router.post("/getComments", async (req, res) => {
       where: {
         AnimalId: petId,
       },
-      include: { model: db.Image, as: "fotos" },
+      include: [{ model: db.Image }],
     });
     console.log(
       `Cantidad de comentarios encontrados: ${allTheComments?.length}`

@@ -34,7 +34,8 @@ router.post("/newComment", (req, res) => __awaiter(void 0, void 0, void 0, funct
         console.log(fotos);
         let commentFromReq = (0, CommentValidators_1.validateNewComment)(req.body);
         let newComment = yield index_1.default.Comment.create(commentFromReq);
-        yield newComment.setAnimal(petId);
+        let petAsociado = yield index_1.default.Animal.findByPk(petId);
+        yield newComment.setAnimal(petAsociado);
         console.log(`Nuevo comentario creado y asociado a la mascota ${petId}`);
         if (Array.isArray(fotos) && fotos.length > 0) {
             for (const foto of fotos) {
@@ -64,7 +65,7 @@ router.post("/getComments", (req, res) => __awaiter(void 0, void 0, void 0, func
             where: {
                 AnimalId: petId,
             },
-            include: { model: index_1.default.Image, as: "fotos" },
+            include: [{ model: index_1.default.Image }],
         });
         console.log(`Cantidad de comentarios encontrados: ${allTheComments === null || allTheComments === void 0 ? void 0 : allTheComments.length}`);
         return res.status(200).send(allTheComments);
