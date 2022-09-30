@@ -546,18 +546,24 @@ router.post("/subscribe", async(req,res)=>{
 })
 
 router.post("/notify" ,async(req,res)=>{
-  try {
-    const {name} = req.body
-    console.log("entre a notify", req.body)
-    const payload = {
-      title: name,
-      text: "Está perdido por tu zona,¿lo has visto?",
+  if(pushSubscription == undefined){
+    res.send("no esta subscripto, no se mandan notificaciones")
+  }
+  else{
+    try {
+      const {name} = req.body
+      console.log("entre a notify", req.body)
+      const payload = {
+        title: name,
+        text: "Está perdido por tu zona,¿lo has visto?",
+      }
+      const string = JSON.stringify(payload)
+      webPush.sendNotification(pushSubscription, string)
+      res.status(200).json()
+    } catch (error) {
+      console.log(error)
     }
-    const string = JSON.stringify(payload)
-    webPush.sendNotification(pushSubscription, string)
-    res.status(200).json()
-  } catch (error) {
-    console.log(error)
+    
   }
 })
 
