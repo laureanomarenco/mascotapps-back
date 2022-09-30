@@ -121,11 +121,12 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
             throw new Error(`el pet, usserOffering o userDemanding es falso.`);
         }
         if (pet.UserId === id) {
+            const multiplierPoints = yield index_1.default.Multiplier.findOne({ where: { id: 1 } });
             if (pet.status === petTypes_1.Status.enAdopcion) {
                 pet.withNewOwner = "true";
                 pet.postStatus = petTypes_1.postStatus.Success;
                 yield pet.save();
-                var multiplierPoints = yield index_1.default.Multiplier.findByPk(1);
+                console.log(multiplierPoints);
                 userDemanding.isAdopter = userDemanding.isAdopter + 1;
                 userDemanding.points = Math.ceil(userDemanding.points + 100 * multiplierPoints.number);
                 yield userDemanding.save();
