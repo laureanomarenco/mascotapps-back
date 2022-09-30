@@ -518,12 +518,13 @@ router.get("/rankingGaveAdoption", (req, res) => __awaiter(void 0, void 0, void 
         return res.status(400).send(error.message);
     }
 }));
-router.get("/buyProducts", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/buyProducts", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Estoy en /users/buyProducts.`);
     try {
         const { userID, name, items, totalPoints, mail, direccion } = req.body;
-        const user = index_1.default.User.findOne({ where: { id: userID } });
+        const user = yield index_1.default.User.findOne({ where: { id: userID } });
         if (user) {
+            console.log(user, totalPoints, items);
             user.points = user.points - totalPoints;
             yield user.save();
             const nodemailer = require("nodemailer");
