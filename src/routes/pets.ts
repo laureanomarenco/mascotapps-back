@@ -5,7 +5,7 @@ import db from "../../models/index";
 import { validateNewPet } from "../auxiliary/AnimalValidators";
 import { Pet, postStatus, Species } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
-
+import webPush from "../../config/web_push";
 const router = Router();
 
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
@@ -534,5 +534,31 @@ router.get("/:id", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
+
+let pushSubscription:any = undefined;
+router.post("/subscribe", async(req,res)=>{
+  const {subscription} = req.body
+  console.log("entre a subscribe")
+  pushSubscription = await subscription
+  console.log(pushSubscription)
+  res.status(200).json()
+ 
+})
+
+router.post("/notify" ,async(req,res)=>{
+  try {
+    const {name} = req.body
+    console.log("entre a notify", req.body)
+    const payload = {
+      title: name,
+      text: "Está perdido por tu zona,¿lo has visto?",
+    }
+    const string = JSON.stringify(payload)
+    webPush.sendNotification(pushSubscription, string)
+    res.status(200).json()
+  } catch (error) {
+    console.log(error)
+  }
+})
 
 export default router;
