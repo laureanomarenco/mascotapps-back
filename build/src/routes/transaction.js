@@ -273,7 +273,7 @@ router.post("/newTransaction", (req, res) => __awaiter(void 0, void 0, void 0, f
         });
         if (prevTransaction) {
             console.log(`esta transacción ya existe por lo que no se creará`);
-            res.send({ msg: "transacción ya existente" });
+            return res.send({ msg: "transacción ya existente" });
         }
         const userDemanding = yield index_1.default.User.findOne({ where: { id: id } });
         const offeringPet = yield index_1.default.Animal.findOne({ where: { id: petId } });

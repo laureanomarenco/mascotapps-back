@@ -18,6 +18,7 @@ const index_1 = __importDefault(require("../../models/index"));
 const AnimalValidators_1 = require("../auxiliary/AnimalValidators");
 const petTypes_1 = require("../types/petTypes");
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
+const web_push_1 = __importDefault(require("../../config/web_push"));
 const router = (0, express_1.Router)();
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 function mapSpecies() {
@@ -505,6 +506,30 @@ router.get("/successFound", (req, res) => __awaiter(void 0, void 0, void 0, func
     catch (error) {
         console.log(`retornando error en GET pets/successFound ${error.message}`);
         return res.status(404).send(error.message);
+    }
+}));
+let pushSubscription = undefined;
+router.post("/subscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { subscription } = req.body;
+    console.log("entre a subscribe");
+    pushSubscription = yield subscription;
+    console.log(pushSubscription);
+    return res.status(200).send('suscripción creada correctamente');
+}));
+router.post("/notify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { name } = req.body;
+        console.log("entre a notify", req.body);
+        const payload = {
+            title: name,
+            text: "Está perdido por tu zona,¿lo has visto?",
+        };
+        const string = JSON.stringify(payload);
+        web_push_1.default.sendNotification(pushSubscription, string);
+        res.status(200).json();
+    }
+    catch (error) {
+        console.log(error);
     }
 }));
 //GET BY ID:

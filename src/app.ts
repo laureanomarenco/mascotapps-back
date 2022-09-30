@@ -20,12 +20,8 @@ const app = express();
 app.use(express.json());
 
 var corsOptions = {
-  origin: [
-    "https://mascotapps.vercel.app",
-    "http://localhost:3000",
-    "https://checkout.stripe.com",
-  ],
-  headers: "*",
+  origin: ["https://mascotapps.vercel.app", "http://localhost:3000", "https://checkout.stripe.com"],
+  headers: "*", 
   methods: "*",
   credentials: true,
 };
