@@ -531,8 +531,8 @@ router.post("/buyProducts", async(req, res) => {
     const user = db.User.findOne({ where: { id: userID }})
     if(user){
 
-      user.points = user.points - totalPoints;
-      await user.save();
+      const newPoints = user.points - totalPoints;
+      await user.update({ points: newPoints });
 
     const nodemailer = require("nodemailer");
     console.log(GMAIL_PASS, GMAIL_USER);
