@@ -16,6 +16,7 @@ const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
 const sequelize_1 = require("sequelize");
 const router = (0, express_1.Router)();
+const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -70,6 +71,11 @@ function getSomeUserInfo(userId) {
                     image: userInfo.image,
                     contact: userInfo.contact,
                     isDonator: userInfo.isDonator,
+                    isAdopter: userInfo.isAdopter,
+                    gaveUpForAdoption: userInfo.gaveUpForAdoption,
+                    foundAPet: userInfo.foundAPet,
+                    gotAPetBack: userInfo.gotAPetBack,
+                    points: userInfo.points
                 };
                 console.log(`retornando someUserInfo: ${someUserInfo}`);
                 return someUserInfo;
@@ -148,6 +154,35 @@ function getParsedReviewsToOwner(id) {
         }
     });
 }
+function parseReviewerName(reviewerName) {
+    console.log(`Parseando reviewer name`);
+    try {
+        if (!reviewerName) {
+            return "Anónimo";
+        }
+        else {
+            return reviewerName;
+        }
+    }
+    catch (error) {
+        console.log(`Error en el parseReviewerName. ${error.message}`);
+        return error.message;
+    }
+}
+function parseReviewerImage(reviewerImage) {
+    try {
+        if (!reviewerImage) {
+            return "https://www.utas.edu.au/__data/assets/image/0013/210811/varieties/profile_image.png";
+        }
+        else {
+            return reviewerImage;
+        }
+    }
+    catch (error) {
+        console.log(`Error en la function parseReviewerImage. ${error.message}`);
+        return error.message;
+    }
+}
 function parseReviewsToOwner(arrayOfReviews) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`Parseando las reviews...`);
@@ -168,8 +203,8 @@ function parseReviewsToOwner(arrayOfReviews) {
                     createdAt: review.dataValues.createdAt,
                     updatedAt: review.dataValues.updatedAt,
                     UserId: review.dataValues.UserId,
-                    reviewer_name: reviewer.name,
-                    reviewer_image: reviewer.image,
+                    reviewer_name: parseReviewerName(reviewer === null || reviewer === void 0 ? void 0 : reviewer.name),
+                    reviewer_image: parseReviewerImage(reviewer === null || reviewer === void 0 ? void 0 : reviewer.image),
                 };
             })));
             console.log(`Devolviendo las parsedReviews:`);
@@ -177,7 +212,7 @@ function parseReviewsToOwner(arrayOfReviews) {
             return parsedReviews;
         }
         catch (error) {
-            console.log(`Error en el parseReviewsToOwner`);
+            console.log(`Error en el parseReviewsToOwner. ${error.message}`);
             return error.message;
         }
     });
@@ -438,6 +473,47 @@ router.post("/getMultipleUserInfo", (req, res) => __awaiter(void 0, void 0, void
     }
     catch (error) {
         console.log(`Error en /users/getMultipleUserInfo. ${error.message}`);
+        return res.status(400).send(error.message);
+    }
+}));
+router.get("/ranking", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Estoy en /users/ranking.`);
+    try {
+        let allTheUsers = yield getAllUsers();
+        const ranking = allTheUsers.sort(function (a, b) { return b.points - a.points; });
+        const topTen = ranking.slice(0, 9);
+        res.status(200).send(topTen);
+    }
+    catch (error) {
+        console.log(`Error en /users/ranking. ${error.message}`);
+        return res.status(400).send(error.message);
+    }
+}));
+router.post("/points", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Estoy en /users/points.`);
+    try {
+        const { id } = req.body;
+        const user = yield index_1.default.User.findOne({ where: { id: id } });
+        if (user) {
+            res.send(user.points);
+        }
+        res.send('no existe el usuario');
+    }
+    catch (error) {
+        console.log(`Error en /users/points ${error.message}`);
+        return res.status(400).send(error.message);
+    }
+}));
+router.get("/rankingGaveAdoption", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Estoy en /users/rankingGaveAdoption.`);
+    try {
+        let allTheUsers = yield getAllUsers();
+        const ranking = allTheUsers.sort(function (a, b) { return b.gaveUpForAdoption - a.gaveUpForAdoption; });
+        const topTen = ranking.slice(0, 9);
+        res.status(200).send(topTen);
+    }
+    catch (error) {
+        console.log(`Error en /users/rankingGaveAdoption. ${error.message}`);
         return res.status(400).send(error.message);
     }
 }));

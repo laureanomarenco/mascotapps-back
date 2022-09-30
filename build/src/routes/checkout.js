@@ -17,12 +17,12 @@ const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
 const express_1 = require("express");
 const models_1 = __importDefault(require("../../models"));
-const Stripe = require('stripe');
+const Stripe = require("stripe");
 const router = (0, express_1.Router)();
 let stripe;
 stripe = new Stripe(STRIPE_KEY);
 const getAllDonations = () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('en function getAllDonations');
+    console.log("en function getAllDonations");
     try {
         const allDonations = yield models_1.default.Donation.findAll();
         return allDonations;
@@ -32,74 +32,77 @@ const getAllDonations = () => __awaiter(void 0, void 0, void 0, function* () {
         return error;
     }
 });
-router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('EN LA RUTA POST DE CHECKOUT');
+router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("EN LA RUTA POST DE CHECKOUT");
     console.log(req.body);
     try {
         const { id, amount, email } = req.body;
         const user = yield models_1.default.User.findOne({ where: { email: email } });
+        const multiplierPoints = yield models_1.default.Multiplier.findByPk(1);
+        user.points = Math.ceil(user.points + 10 * amount * multiplierPoints.number);
+        yield user.save();
         //DONACIÓN
         const payment = yield stripe.paymentIntents.create({
             amount,
             currency: "USD",
             description: "Donation",
             payment_method: id,
-            confirm: true
+            confirm: true,
         });
-        console.log('payment: ' + payment);
+        console.log("payment: " + payment);
         const donation = yield models_1.default.Donation.create({
             id,
             amount,
-            email
+            email,
         });
         // MAILER
-        const nodemailer = require('nodemailer');
+        const nodemailer = require("nodemailer");
         console.log(GMAIL_PASS, GMAIL_USER);
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
                 user: GMAIL_USER,
-                pass: GMAIL_PASS
-            }
+                pass: GMAIL_PASS,
+            },
         });
         const msgMail = `Te damos profundas gracias desde Mascotapp por colaborar. Nuestro proyecto necesita de las financiación de los usuarios por lo cual tu aporte es muy importante.`;
         const mailOptions = {
-            from: 'service.mascotapp@gmail.com',
+            from: "service.mascotapp@gmail.com",
             to: email,
-            subject: 'Donación recibida!',
-            html: `<div>${msgMail}</div><div>Monto donado: ${amount / 100} USD</div><div>ID de la transferencia: ${id}</div>`
+            subject: "Donación recibida!",
+            html: `<div>${msgMail}</div><div>Monto donado: ${amount / 100} USD</div><div>ID de la transferencia: ${id}</div>`,
         };
         transporter.sendMail(mailOptions, function (error, info) {
             if (error)
                 console.log(error);
             else
-                console.log('Email enviado: ' + info.response);
+                console.log("Email enviado: " + info.response);
         });
         //CHECK USER
         if (user) {
             yield donation.setUser(user.id);
             yield models_1.default.User.update({ isDonator: "true" }, { where: { id: user.id } });
-            return res.send({ msg: 'Succesfull payment from', user });
+            return res.send({ msg: "Succesfull payment from", user });
         }
         else {
-            console.log('donation: ' + donation);
-            return res.send({ msg: 'Succesfull payment' });
+            console.log("donation: " + donation);
+            return res.send({ msg: "Succesfull payment" });
         }
     }
     catch (err) {
-        console.log('error en /checkout');
+        console.log("error en /checkout");
         return res.json({ msg: err.raw.message });
     }
 }));
-router.get('/balance', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('ENTRE A LA RUTA BALANCE');
+router.get("/balance", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("ENTRE A LA RUTA BALANCE");
     try {
         let allTheDonations = yield getAllDonations();
-        console.log('All the donations: ' + allTheDonations);
+        console.log("All the donations: " + allTheDonations);
         return res.status(200).send(allTheDonations);
     }
     catch (error) {
-        console.log('error en /balance');
+        console.log("error en /balance");
         return res.status(404).send(error.message);
     }
 }));

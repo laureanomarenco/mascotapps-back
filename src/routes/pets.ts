@@ -319,6 +319,9 @@ router.put("/update", async (req, res) => {
       image,
       comments,
     } = req.body.pet;
+
+    console.log(`req.body.pet.image = ${req.body?.pet?.image}`);
+
     const newProfile = await db.Animal.update(
       {
         name,
@@ -339,6 +342,11 @@ router.put("/update", async (req, res) => {
         },
       }
     );
+    console.log(`Animal UPDATED. Datos de la mascota actualizada.`);
+    console.log("new profile = ");
+
+    console.log(newProfile);
+
     res.status(200).send(newProfile);
   } catch (error) {
     res.status(400).send(error);
@@ -475,38 +483,44 @@ router.get("/search", async (req, res) => {
   }
 });
 
-router.get("/success", async(req, res) => {
+router.get("/success", async (req, res) => {
   console.log(`Entré al GET pets/success`);
   try {
-    const pets = await db.Animal.findAll({ where : { postStatus: postStatus.Success }});
-    return res.send(pets)
+    const pets = await db.Animal.findAll({
+      where: { postStatus: postStatus.Success },
+    });
+    return res.send(pets);
   } catch (error: any) {
     console.log(`retornando error en GET pets/success ${error.message}`);
     return res.status(404).send(error.message);
   }
-})
+});
 
-router.get("/successAdoptions", async(req, res) => {
+router.get("/successAdoptions", async (req, res) => {
   console.log(`Entré al GET pets/successAdoptions`);
   try {
-    const pets = await db.Animal.findAll({ where : { withNewOwner: 'true' }});
-    res.send(pets)
+    const pets = await db.Animal.findAll({ where: { withNewOwner: "true" } });
+    res.send(pets);
   } catch (error: any) {
-    console.log(`retornando error en GET pets/successAdoptions ${error.message}`);
+    console.log(
+      `retornando error en GET pets/successAdoptions ${error.message}`
+    );
     return res.status(404).send(error.message);
   }
-})
+});
 
-router.get("/successFound", async(req, res) => {
+router.get("/successFound", async (req, res) => {
   console.log(`Entré al GET pets/successFound`);
   try {
-    const pets = await db.Animal.findAll({ where : { backWithItsOwner: 'true' }});
-    res.send(pets)
+    const pets = await db.Animal.findAll({
+      where: { backWithItsOwner: "true" },
+    });
+    res.send(pets);
   } catch (error: any) {
     console.log(`retornando error en GET pets/successFound ${error.message}`);
     return res.status(404).send(error.message);
   }
-})
+});
 
 //GET BY ID:
 router.get("/:id", async (req, res) => {

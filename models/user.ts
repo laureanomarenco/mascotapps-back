@@ -28,6 +28,11 @@ module.exports = (sequelize: any, DataTypes: any) => {
     contact: string | undefined;
     image: string | undefined;
     isDonator: string | undefined;
+    isAdopter: number | undefined;
+    gaveUpForAdoption: number | undefined;
+    foundAPet: number | undefined;
+    gotAPetBack: number | undefined;
+    points: number | undefined;
     static associate(models: any) {
       // define association here
       User.hasMany(models.Animal);
@@ -68,6 +73,31 @@ module.exports = (sequelize: any, DataTypes: any) => {
       isDonator: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      isAdopter: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+      },
+      gaveUpForAdoption: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+      },
+      foundAPet: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+      },
+      gotAPetBack: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+      },
+      points: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
+        allowNull: false,
       },
     },
     {
