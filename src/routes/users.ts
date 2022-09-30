@@ -528,7 +528,7 @@ router.post("/buyProducts", async(req, res) => {
   try {
     const { userID, name, items, totalPoints, mail, direccion } = req.body;
 
-    const user = db.User.findOne({ where: { id: userID }})
+    const user = await db.User.findOne({ where: { id: userID }})
     if(user){
       console.log(user, totalPoints, items)
       user.points = user.points - totalPoints;
