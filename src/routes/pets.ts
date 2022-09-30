@@ -537,8 +537,9 @@ router.get("/:id", async (req, res) => {
 
 let pushSubscription:any = undefined;
 router.post("/subscribe", async(req,res)=>{
+  const {subscription} = req.body
   console.log("entre a subscribe")
-  pushSubscription = req.body.subscription
+  pushSubscription = await subscription
   console.log(pushSubscription)
   res.status(200).json()
  
