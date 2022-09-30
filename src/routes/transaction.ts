@@ -3,7 +3,7 @@ import { Op } from "sequelize";
 import db from "../../models/index";
 import { validateNewTransaction } from "../auxiliary/TransactionValidators";
 import { ITransaction, transactionStatus } from "../types/transactionTypes";
-import { postStatus } from "../types/petTypes";
+import { postStatus, Status } from "../types/petTypes";
 
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 
@@ -96,94 +96,136 @@ router.post("/postSuccess", async (req, res) => {
   try {
     const { id } = req.body;
     const { petId } = req.body;
-    const { id_demanding } = req.body // el usuario selecciona al usuario con el que realizó existosamente la transacción
+    const { id_demanding } = req.body; // el usuario selecciona al usuario con el que realizó existosamente la transacción
 
     const pet = await db.Animal.findOne({ where: { id: petId } });
-    const userOffering = await db.User.findOne({ where: { id: id } })
-    const userDemanding = await db.User.findOne({ where: { id: id_demanding } })
+    const userOffering = await db.User.findOne({ where: { id: id } });
+    const userDemanding = await db.User.findOne({
+      where: { id: id_demanding },
+    });
+    console.log(`pet name = ${pet?.name}`);
+    console.log(`userOffering.name = ${userOffering?.name}`);
+    console.log(`userDemanding.name = ${userDemanding?.name}`);
+
+    if (!pet || !userOffering || !userDemanding) {
+      console.log(
+        +`Error en el chequeo de si alguna de las instancias buscadas en la DB es falsa. Alguna lo es`
+      );
+      throw new Error(`el pet, usserOffering o userDemanding es falso.`);
+    }
 
     if (pet.UserId === id) {
-      if (pet.status === 'en adopción') {
-        pet.withNewOwner = 'true';
+      if (pet.status === Status.enAdopcion) {
+        pet.withNewOwner = "true";
         pet.postStatus = postStatus.Success;
         await pet.save();
 
-        var multiplierPoints = await db.Multiplier.findAll()
+        var multiplierPoints = await db.Multiplier.findByPk(1);
 
         userDemanding.isAdopter = userDemanding.isAdopter + 1;
-        userDemanding.points = userDemanding.points + (100 * multiplierPoints.number)
+        userDemanding.points = Math.ceil(
+          userDemanding.points + 100 * multiplierPoints.number
+        );
         await userDemanding.save();
 
         userOffering.gaveUpForAdoption = userOffering.gaveUpForAdoption + 1;
-        userOffering.points = userOffering.points + (100 * multiplierPoints.number)
+        userOffering.points = Math.ceil(
+          userOffering.points + 100 * multiplierPoints.number
+        );
         await userOffering.save();
 
-        console.log('se acutalizo withNewOner y postStatus de la mascota')
+        console.log("se acutalizo withNewOner y postStatus de la mascota");
       } else {
-        pet.backWithItsOwner = 'true';
+        pet.backWithItsOwner = "true";
         pet.postStatus = postStatus.Success;
         await pet.save();
 
-        if(pet.status === 'encontrado'){
+        if (pet.status === "encontrado") {
           userDemanding.gotAPetBack = userDemanding.gotAPetBack + 1;
-          userDemanding.points = userDemanding.points + (25 * multiplierPoints.number)
-          
+          userDemanding.points = Math.ceil(
+            userDemanding.points + 25 * multiplierPoints.number
+          );
+
           await userDemanding.save();
 
           userOffering.foundAPet = userOffering.foundAPet + 1;
-          userOffering.points = userOffering.points + (100 * multiplierPoints.number)
+          userOffering.points = Math.ceil(
+            userOffering.points + 100 * multiplierPoints.number
+          );
           await userOffering.save();
-
         } else {
           userDemanding.foundAPet = userDemanding.foundAPet + 1;
-          userDemanding.points = userDemanding.points + (100 * multiplierPoints.number)
+          userDemanding.points = Math.ceil(
+            userDemanding.points + 100 * multiplierPoints.number
+          );
           await userDemanding.save();
 
           userOffering.gotAPetBack = userOffering.gotAPetBack + 1;
-          userOffering.points = userOffering.points + (25 * multiplierPoints.number)
+          userOffering.points = Math.ceil(
+            userOffering.points + 25 * multiplierPoints.number
+          );
           await userOffering.save();
         }
 
-        console.log('se acutalizo backWithItsOwner y postStatus de la mascota')
+        console.log("se acutalizo backWithItsOwner y postStatus de la mascota");
       }
-      
-      const transaction = await db.Transaction.findOne({ where: { [Op.and]: [{ user_offering_id: id }, { user_demanding_id: id_demanding }, { pet_id: petId }] } })
-      transaction.status = transactionStatus.Success
-      if(transaction.user_demanding_check !== 'calificado'){
-        transaction.user_demanding_check = 'finalizado'
+
+      const transaction = await db.Transaction.findOne({
+        where: {
+          [Op.and]: [
+            { user_offering_id: id },
+            { user_demanding_id: id_demanding },
+            { pet_id: petId },
+          ],
+        },
+      });
+      transaction.status = transactionStatus.Success;
+      if (transaction.user_demanding_check !== "calificado") {
+        transaction.user_demanding_check = "finalizado";
       }
-      if(transaction.user_offering_check !== 'calificado'){
-        transaction.user_offering_check = 'finalizado'
+      if (transaction.user_offering_check !== "calificado") {
+        transaction.user_offering_check = "finalizado";
       }
       await transaction.save();
-      console.log('transactionStatus seteada a concretado')
+      console.log("transactionStatus seteada a concretado");
 
-      const transactionsToCancel = await db.Transaction.findAll({ where: {[Op.and]: [{pet_id: petId},{ user_demanding_id: {[Op.not]: id_demanding }}]}})
-      console.log('transacciones a cancelar')
-      console.log(transactionsToCancel)
+      const transactionsToCancel = await db.Transaction.findAll({
+        where: {
+          [Op.and]: [
+            { pet_id: petId },
+            { user_demanding_id: { [Op.not]: id_demanding } },
+          ],
+        },
+      });
+      console.log("transacciones a cancelar");
+      console.log(transactionsToCancel);
 
-      for(const transaction of transactionsToCancel){
-        transaction.status = transactionStatus.Cancel
-        if(transaction.user_demanding_check !== 'calificado'){
-          transaction.user_demanding_check = 'finalizado'
+      for (const transaction of transactionsToCancel) {
+        transaction.status = transactionStatus.Cancel;
+        if (transaction.user_demanding_check !== "calificado") {
+          transaction.user_demanding_check = "finalizado";
         }
-        if(transaction.user_offering_check !== 'calificado'){
-          transaction.user_offering_check = 'finalizado'
+        if (transaction.user_offering_check !== "calificado") {
+          transaction.user_offering_check = "finalizado";
         }
         await transaction.save();
-        console.log('transaction saved')
+        console.log("transaction saved");
       }
 
-      console.log('transacciones a cancelar, canceladas')
-      return res.send({ msg: 'estados actualizados y transacciones canceladas' })
+      console.log("transacciones a cancelar, canceladas");
+      return res.send({
+        msg: "estados actualizados y transacciones canceladas",
+      });
     }
 
-    throw new Error('No puedes modificar el estado de esta mascota porque no eres quién la publicó.')
+    throw new Error(
+      "No puedes modificar el estado de esta mascota porque no eres quién la publicó."
+    );
   } catch (error: any) {
-    console.log(`Error en /transactions/postSuccess`);
+    console.log(`Error en /transactions/postSuccess. ${error.message}`);
     return res.status(404).send(error.message);
   }
-})
+});
 
 router.post("/cancelPost", async (req, res) => {
   console.log(`Entré a la ruta /transactions/cancelPost`);
@@ -192,34 +234,42 @@ router.post("/cancelPost", async (req, res) => {
     const { petId } = req.body;
 
     const pet = await db.Animal.findOne({ where: { id: petId } });
-    const transactionsWithPetId = await db.Transaction.findAll({ where: { pet_id: petId }})
+    const transactionsWithPetId = await db.Transaction.findAll({
+      where: { pet_id: petId },
+    });
     if (pet.UserId === id) {
       pet.postStatus = postStatus.Cancel;
       await pet.save();
 
-      for(const transaction of transactionsWithPetId){
+      for (const transaction of transactionsWithPetId) {
         transaction.status = transactionStatus.Cancel;
-        if(transaction.user_demanding_check !== 'calificado'){
-          transaction.user_demanding_check = 'finalizado'
+        if (transaction.user_demanding_check !== "calificado") {
+          transaction.user_demanding_check = "finalizado";
         }
-        if(transaction.user_offering_check !== 'calificado'){
-          transaction.user_offering_check = 'finalizado'
+        if (transaction.user_offering_check !== "calificado") {
+          transaction.user_offering_check = "finalizado";
         }
         await transaction.save();
-        console.log(`${transaction.id} status cancelada`)
-        console.log('transaction status cancelado')
+        console.log(`${transaction.id} status cancelada`);
+        console.log("transaction status cancelado");
       }
 
-      console.log('se acutalizo postStatus a canceled y se cancelaron todas las transacciones de este pet')
+      console.log(
+        "se acutalizo postStatus a canceled y se cancelaron todas las transacciones de este pet"
+      );
 
-      return res.status(200).send({msg: 'Se cancelo la transacción correctamente.'})
+      return res
+        .status(200)
+        .send({ msg: "Se cancelo la transacción correctamente." });
     }
-    throw new Error('No puedes modificar el estado de esta mascota porque no eres quién la publicó.')
+    throw new Error(
+      "No puedes modificar el estado de esta mascota porque no eres quién la publicó."
+    );
   } catch (error: any) {
     console.log(`Error en /Transactions/cancelPost. ${error.message}`);
     return res.status(404).send(error.message);
   }
-})
+});
 
 router.post("/getUserTransactions", async (req, res) => {
   console.log(`Entré a la ruta /Transactions/getUserTransactions`);
@@ -248,11 +298,13 @@ router.post("/newTransaction", async (req, res) => {
       console.log(`req.body.id  o  req.query.petId  es falso/undefined.`);
       throw new Error(`req.body.id  o  req.query.petId  es falso/undefined.`);
     }
-    const prevTransaction = await db.Transaction.findOne({ where: { [Op.and]: [{ pet_id: petId }, { user_demanding_id: id }] } })
+    const prevTransaction = await db.Transaction.findOne({
+      where: { [Op.and]: [{ pet_id: petId }, { user_demanding_id: id }] },
+    });
 
     if (prevTransaction) {
       console.log(`esta transacción ya existe por lo que no se creará`);
-      res.send({ msg: 'transacción ya existente' })
+      return res.send({ msg: "transacción ya existente" });
     }
     const userDemanding = await db.User.findOne({ where: { id: id } });
     const offeringPet = await db.Animal.findOne({ where: { id: petId } });
@@ -293,9 +345,7 @@ router.post("/newTransaction", async (req, res) => {
     let createdTransaction = await db.Transaction.create(
       validatedTransactionObj
     );
-    console.log(
-      `Nueva transacción creada.`
-    );
+    console.log(`Nueva transacción creada.`);
 
     //mailer
     await mailer(userDemanding, userOffering, offeringPet);
