@@ -115,12 +115,12 @@ router.post("/postSuccess", async (req, res) => {
     }
 
     if (pet.UserId === id) {
+      const multiplierPoints = await db.Multiplier.findOne({ where: { id: 1 }});
       if (pet.status === Status.enAdopcion) {
         pet.withNewOwner = "true";
         pet.postStatus = postStatus.Success;
         await pet.save();
 
-        const multiplierPoints = await db.Multiplier.findOne({ where: { id: 1 }});
         console.log(multiplierPoints)
         userDemanding.isAdopter = userDemanding.isAdopter + 1;
         userDemanding.points = Math.ceil(
@@ -142,7 +142,6 @@ router.post("/postSuccess", async (req, res) => {
 
 
         if (pet.status === "encontrado") {
-          const multiplierPoints = await db.Multiplier.findOne({ where: { id: 1 }});
           userDemanding.gotAPetBack = userDemanding.gotAPetBack + 1;
           userDemanding.points = Math.ceil(
             userDemanding.points + 25 * multiplierPoints.number
@@ -156,7 +155,6 @@ router.post("/postSuccess", async (req, res) => {
           );
           await userOffering.save();
         } else {
-          const multiplierPoints = await db.Multiplier.findOne({ where: { id: 1 }});
           userDemanding.foundAPet = userDemanding.foundAPet + 1;
           userDemanding.points = Math.ceil(
             userDemanding.points + 100 * multiplierPoints.number
