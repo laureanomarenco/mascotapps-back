@@ -23,7 +23,6 @@ export interface INewComment {
 }
 
 export interface ICommentResponse {
-  length: any;
   nombre: string | undefined;
   provincia: string;
   localidad: string;

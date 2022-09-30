@@ -28,7 +28,7 @@ export function validateNewPet(reqBody: any): Pet {
       vaccinationSchemeStatus: checkVaccinationSchemeStatus(
         reqBody.vaccinationSchemeStatus
       ),
-      image: reqBody.image,
+      image: checkImageURL(reqBody.image),
       backWithItsOwner: undefined,
       withNewOwner: undefined,
       comments: checkComments(reqBody.comments),
@@ -147,7 +147,7 @@ export function isValidURL(argumento: any): boolean {
 }
 
 export function checkImageURL(imageFromReq: any): string | undefined {
-  if (isUndefinedOrNull(imageFromReq)) {
+  if (isUndefinedOrNull(imageFromReq) || isEmptyString(imageFromReq)) {
     return undefined;
   }
   if (isValidURL(imageFromReq)) {
