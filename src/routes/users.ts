@@ -550,7 +550,7 @@ router.post("/buyProducts", async(req, res) => {
       from: "service.mascotapp@gmail.com",
       to: mail,
       subject: "Tu compra está siendo preparada",
-      html: `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => { return {i}})}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
+      html: `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => { return i.title})}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
     };
 
     transporter.sendMail(mailOptions, function (error: any, info: any) {

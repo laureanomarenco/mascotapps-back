@@ -120,7 +120,7 @@ router.post("/postSuccess", async (req, res) => {
         pet.postStatus = postStatus.Success;
         await pet.save();
 
-        var multiplierPoints = await db.Multiplier.findByPk(1);
+        var multiplierPoints = await db.Multiplier.findOne({ where: { id: 1 }});
 
         userDemanding.isAdopter = userDemanding.isAdopter + 1;
         userDemanding.points = Math.ceil(
