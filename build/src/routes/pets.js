@@ -508,27 +508,13 @@ router.get("/successFound", (req, res) => __awaiter(void 0, void 0, void 0, func
         return res.status(404).send(error.message);
     }
 }));
-//GET BY ID:
-router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e;
-    console.log(`Entré al GET pets/:id con params.id = ${(_e = req === null || req === void 0 ? void 0 : req.params) === null || _e === void 0 ? void 0 : _e.id}`);
-    try {
-        let paramsID = req.params.id;
-        let petFoundById = yield getPetById(paramsID);
-        return res.status(200).send(petFoundById);
-    }
-    catch (error) {
-        console.log(`retornando error en GET pets/:id: ${error.message}`);
-        return res.status(404).send(error.message);
-    }
-}));
 let pushSubscription = undefined;
 router.post("/subscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { subscription } = req.body;
     console.log("entre a subscribe");
     pushSubscription = yield subscription;
     console.log(pushSubscription);
-    res.status(200).json();
+    return res.status(200).send('suscripción creada correctamente');
 }));
 router.post("/notify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -544,6 +530,20 @@ router.post("/notify", (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     catch (error) {
         console.log(error);
+    }
+}));
+//GET BY ID:
+router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _e;
+    console.log(`Entré al GET pets/:id con params.id = ${(_e = req === null || req === void 0 ? void 0 : req.params) === null || _e === void 0 ? void 0 : _e.id}`);
+    try {
+        let paramsID = req.params.id;
+        let petFoundById = yield getPetById(paramsID);
+        return res.status(200).send(petFoundById);
+    }
+    catch (error) {
+        console.log(`retornando error en GET pets/:id: ${error.message}`);
+        return res.status(404).send(error.message);
     }
 }));
 exports.default = router;
