@@ -2,8 +2,11 @@ import { Router } from "express";
 import { Op } from "sequelize";
 
 import db from "../../models/index";
-import { validateNewPet } from "../auxiliary/AnimalValidators";
-import { Pet, postStatus, Species } from "../types/petTypes";
+import {
+  validateNewPet,
+  validateUpdatedPet,
+} from "../auxiliary/AnimalValidators";
+import { Pet, postStatus, Species, updatedPet } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 import webPush from "../../config/web_push";
 const router = Router();
@@ -300,56 +303,31 @@ router.post("/postNewPet", async (req: any, res) => {
   }
 });
 
+//PUT Update detalles de la mascota
 router.put("/update", async (req, res) => {
   console.log(`Entré a pets/update`);
   console.log(`req.body = ${req.body}`);
 
   try {
     const { userId } = req.body.user;
-    const {
-      id,
-      name,
-      specie,
-      race,
-      city,
-      age,
-      gender,
-      status,
-      vaccinationSchemeStatus,
-      image,
-      comments,
-    } = req.body.pet;
+    const { id } = req.body.pet;
 
     console.log(`req.body.pet.image = ${req.body?.pet?.image}`);
-
-    const newProfile = await db.Animal.update(
-      {
-        name,
-        specie,
-        race,
-        city,
-        age,
-        gender,
-        status,
-        vaccinationSchemeStatus,
-        image,
-        comments,
+    let validatedPetFromReq: updatedPet = validateUpdatedPet(req.body.pet);
+    const newProfile = await db.Animal.update(validatedPetFromReq, {
+      where: {
+        id: id,
+        UserId: userId,
       },
-      {
-        where: {
-          id: id,
-          UserId: userId,
-        },
-      }
-    );
+    });
     console.log(`Animal UPDATED. Datos de la mascota actualizada.`);
     console.log("new profile = ");
-
     console.log(newProfile);
 
-    res.status(200).send(newProfile);
-  } catch (error) {
-    res.status(400).send(error);
+    return res.status(200).send(newProfile);
+  } catch (error: any) {
+    console.log(`Error en la ruta "/pets/update"`);
+    return res.status(400).send(error.message);
   }
 });
 
@@ -535,35 +513,34 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-let pushSubscription:any = [];
-router.post("/subscribe", async(req,res)=>{
-  const {subscription} = req.body;
-  console.log("entre a subscribe")
-  pushSubscription = await [...pushSubscription, subscription]
-  console.log(pushSubscription)
-  return res.status(200).send('suscripción creada correctamente')
-})
+let pushSubscription: any = [];
+router.post("/subscribe", async (req, res) => {
+  const { subscription } = req.body;
+  console.log("entre a subscribe");
+  pushSubscription = await [...pushSubscription, subscription];
+  console.log(pushSubscription);
+  return res.status(200).send("suscripción creada correctamente");
+});
 
-router.post("/notify" ,async(req,res)=>{
-  if(pushSubscription.length == 0){
-    res.send("no hay nadie subscripto a las notificaciones")
-  }
-  else{
+router.post("/notify", async (req, res) => {
+  if (pushSubscription.length == 0) {
+    res.send("no hay nadie subscripto a las notificaciones");
+  } else {
     try {
-      const {name} = req.body
-      console.log("entre a notify", req.body)
+      const { name } = req.body;
+      console.log("entre a notify", req.body);
       const payload = {
         title: name,
         text: "Está perdido por tu zona,¿lo has visto?",
-      }
-      const string = JSON.stringify(payload)
-      pushSubscription.map((s:any)=> webPush.sendNotification(s,string))
-      res.status(200).json()
+      };
+      const string = JSON.stringify(payload);
+      pushSubscription.map((s: any) => webPush.sendNotification(s, string));
+      res.status(200).json();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
- } 
-})
+  }
+});
 
 //GET BY ID:
 router.get("/:id", async (req, res) => {
@@ -577,7 +554,5 @@ router.get("/:id", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
-
-
 
 export default router;
