@@ -11,6 +11,7 @@ import { Pet, postStatus, Species, updatedPet } from "../types/petTypes";
 import webPush from "../../config/web_push";
 const router = Router();
 
+
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 
 function mapSpecies() {
@@ -500,18 +501,7 @@ router.get("/successFound", async (req, res) => {
   }
 });
 
-//GET BY ID:
-router.get("/:id", async (req, res) => {
-  console.log(`Entré al GET pets/:id con params.id = ${req?.params?.id}`);
-  try {
-    let paramsID = req.params.id;
-    let petFoundById = await getPetById(paramsID);
-    return res.status(200).send(petFoundById);
-  } catch (error: any) {
-    console.log(`retornando error en GET pets/:id: ${error.message}`);
-    return res.status(404).send(error.message);
-  }
-});
+
 let identificator:any = [];
 let pushSubscription:any = [];
 router.post("/subscribe", async(req,res)=>{
@@ -548,6 +538,7 @@ router.post("/notify" ,async(req,res)=>{
       };
       const string = JSON.stringify(payload);
       pushSubscription.map((s: any) => webPush.sendNotification(s, string));
+
       res.status(200).json();
     } catch (error) {
       console.log(error);

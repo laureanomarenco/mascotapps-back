@@ -567,4 +567,28 @@ router.post("/buyProducts", async(req, res) => {
   }
 })
 
+router.post("/donatePoints", async(req, res) => {
+  console.log(`Estoy en /users/donatePoints.`);
+  try {
+    const { id, idToDonate, pointsToDonate } = req.body;
+
+    const user = db.User.findOne({ where: {id: id}});
+    const userToDonate = db.User.findOne({ where: {id: idToDonate}});
+
+    if(user && userToDonate && user.points > pointsToDonate){
+      user.points = user.points - pointsToDonate;
+      await user.save();
+
+      userToDonate.points = user.points + pointsToDonate;
+      await userToDonate.save();
+
+      return res.status(200).send("puntos donados correctamente")
+    }
+    return res.status(200).send("hubo un error en la donación")
+  } catch (error: any) {
+    console.log(`Error en /users/donatePoints. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+})
+
 export default router;
