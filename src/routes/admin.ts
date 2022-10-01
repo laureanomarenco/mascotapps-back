@@ -193,6 +193,10 @@ router.post("/deletePetsWithNoUserId", async (req, res) => {
 router.post("/deletePet", async (req, res) => {
   console.log(`En ruta /admin/deletePet`);
   try {
+    let passwordFromReq = req.body.password;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).send(`La password de administrador no es válida`);
+    }
     const { petID } = req.body;
     const pet = await db.Animal.findOne({ where: { id: petID }})
     if(pet){
