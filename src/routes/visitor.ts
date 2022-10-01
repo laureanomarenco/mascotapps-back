@@ -32,28 +32,33 @@ route.get("/numbervisitors", async (req: any, res: any) => {
 });
 
 route.post('/mailAdmin', async (req, res) => {
-  const { email, comment } = req.body;
+  try {
+    const { email, comment } = req.body;
 
-  const nodemailer = require('nodemailer')
-        console.log(GMAIL_PASS, GMAIL_USER)
-        const transporter = nodemailer.createTransport({
-          service: 'gmail',
-            auth: {
-              user: GMAIL_USER,
-              pass: GMAIL_PASS
-            }
-          })
-      
-        const mailOptions = {
-          from: email,
-          to: 'service.mascotapp@gmail.com',
-          subject: 'Consulta sobre la página',
-          html: comment
-        }
+    const nodemailer = require('nodemailer')
+    console.log(GMAIL_PASS, GMAIL_USER)
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: GMAIL_USER,
+        pass: GMAIL_PASS
+      }
+    })
 
-        transporter.sendMail(mailOptions, function(error: any, info: any) {
-          if(error) console.log(error)
-          else console.log('Email enviado: ' + info.response)
-        })
+    const mailOptions = {
+      from: 'service.mascotapp@gmail.com',
+      to: 'service.mascotapp@gmail.com',
+      subject: 'Consulta sobre la página',
+      html: `Llegó la siguiente consulta desde el mail ${email}: <div>${comment}</div>`
+    }
+
+    transporter.sendMail(mailOptions, function (error: any, info: any) {
+      if (error) console.log(error)
+      else console.log('Email enviado: ' + info.response)
+    })
+  } catch (error) {
+    res.status(404).send(error);
+  }
+
 })
 export default route;
