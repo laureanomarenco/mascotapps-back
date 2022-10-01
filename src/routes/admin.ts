@@ -190,6 +190,22 @@ router.post("/deletePetsWithNoUserId", async (req, res) => {
   }
 });
 
+router.post("/deletePet", async (req, res) => {
+  console.log(`En ruta /admin/deletePet`);
+  try {
+    const { petID } = req.body;
+    const pet = await db.Animal.findOne({ where: { id: petID }})
+    if(pet){
+      await pet.destroy();
+      return res.status(200).send('la publicación fue eliminada')
+    }
+    return res.status(200).send('la publicación no existe')
+  } catch (error: any) {
+    console.log(`Error en /admin/deletePets ${error.message}`);
+  }
+});
+
+
 // ----   RUTAS MULTIPLICADORAS:  -----------
 router.get("/createMultiplier", async (req, res) => {
   try {
