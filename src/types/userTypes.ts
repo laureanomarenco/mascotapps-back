@@ -11,6 +11,7 @@ export interface UserAttributes {
   foundAPet: number | undefined;
   gotAPetBack: number | undefined;
   points: number | undefined;
+  linkToDonate: string | undefined;
 }
 
 export interface ISomeUserInfo {
@@ -24,6 +25,7 @@ export interface ISomeUserInfo {
   foundAPet: number | undefined;
   gotAPetBack: number | undefined;
   points: number | undefined;
+  linkToDonate: string | undefined;
 }
 
 export interface IContactInfoOfOwner {
