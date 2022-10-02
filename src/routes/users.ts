@@ -10,12 +10,25 @@ import {
 import { IReview } from "../types/reviewTypes";
 import { requiresAuth } from "express-openid-connect";
 const { GMAIL_PASS, GMAIL_USER } = process.env;
-
-import { jwtCheck } from "../app";
-
+// import { jwtCheck } from "../app";
 const router = Router();
 const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
+const { expressjwt: jwt } = require("express-jwt");
+var jwks = require("jwks-rsa");
+const jwtCheck = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
+  }),
+  audience: "https://juka-production.up.railway.app/",
+  issuer: "https://dev-nxuk8wmn.us.auth0.com/",
+  algorithms: ["RS256"],
+});
+
+//!------------
 
 const getAllUsers = async () => {
   try {
