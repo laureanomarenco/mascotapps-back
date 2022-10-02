@@ -45,9 +45,9 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 // app.use(cors());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 // auth router attaches /login, /logout, and /callback routes to the baseURL
-app.use(auth(config));
+// app.use(auth(config));
 // RUTAS:
 app.use("/users", usersRouter);
 app.use("/pets", animalRouter);
