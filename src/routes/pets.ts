@@ -9,6 +9,20 @@ import {
 import { Pet, postStatus, Species, updatedPet } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 import webPush from "../../config/web_push";
+
+const { expressjwt: jwt } = require("express-jwt");
+var jwks = require("jwks-rsa");
+const jwtCheck = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
+  }),
+  audience: "https://juka-production.up.railway.app/",
+  issuer: "https://dev-nxuk8wmn.us.auth0.com/",
+  algorithms: ["RS256"],
+});
 const router = Router();
 
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
@@ -267,10 +281,10 @@ async function idExistsInDataBase(id: any): Promise<boolean> {
 
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
-router.post("/postNewPet", async (req: any, res) => {
+router.post("/postNewPet", jwtCheck, async (req: any, res) => {
   console.log(`Entré a users/postnewpet`);
   try {
-    const id = req.body?.user?.id;
+    const id = req.auth?.sub;
     if (!id) {
       throw new Error(`El Id de usuario es inválido/falso`);
     }
@@ -298,7 +312,7 @@ router.post("/postNewPet", async (req: any, res) => {
     }
   } catch (error: any) {
     console.log(`Error en /postnewpet. ${error.message}`);
-    console.log(`req.body.id de la request = '${req.body.id}'`);
+    console.log(`req.auth.sub de la request = '${req.auth?.sub}'`);
     return res.status(404).send(error.message);
   }
 });
