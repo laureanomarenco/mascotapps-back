@@ -572,8 +572,8 @@ router.post("/donatePoints", async(req, res) => {
   try {
     const { id, idToDonate, pointsToDonate } = req.body;
 
-    const user = db.User.findOne({ where: {id: id}});
-    const userToDonate = db.User.findOne({ where: {id: idToDonate}});
+    let user = db.User.findOne({ where: {id: id}});
+    let userToDonate = db.User.findOne({ where: {id: idToDonate}});
 
     if(user && userToDonate && user.points >= pointsToDonate){
       user.points = user.points - pointsToDonate;
