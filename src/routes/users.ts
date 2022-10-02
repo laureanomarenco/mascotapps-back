@@ -8,6 +8,7 @@ import {
   UserAttributes,
 } from "../types/userTypes";
 import { IReview } from "../types/reviewTypes";
+import { requiresAuth } from "express-openid-connect";
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 
 const router = Router();
@@ -70,7 +71,7 @@ async function getSomeUserInfo(userId: any) {
         gaveUpForAdoption: userInfo.gaveUpForAdoption,
         foundAPet: userInfo.foundAPet,
         gotAPetBack: userInfo.gotAPetBack,
-        points: userInfo.points
+        points: userInfo.points,
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
@@ -300,23 +301,27 @@ router.get("/contactinfo/:petid", async (req, res) => {
 });
 
 // GET(post) ALL PETS OF USER ID:
-router.post("/getallpetsofuser", async (req: any, res) => {
+router.get("/getallpetsofuser", requiresAuth(), async (req: any, res) => {
   console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
-  console.log(req.body);
+  // console.log(req.body);
   console.log(`user ID = ${req.body?.id}`);
+  console.log(`req.oidc.user =`);
+  console.log(req.oidc.user);
+
   try {
-    if (!req.body.id) {
+    let idFromOIDC = req?.oidc?.user.sub;
+    if (!idFromOIDC) {
       console.log(
-        `Error en /users/getallpetsofuser. El req.body.id es falso/undefined`
+        `Error en /users/getallpetsofuser. El req.oidc.sub es falso/undefined`
       );
       throw new Error(
-        `Error en /users/getallpetsofuser. El req.body.id es falso/undefined`
+        `Error en /users/getallpetsofuser. El req.oidc.sub es falso/undefined`
       );
     }
-    let id = req.body.id;
+    // let id = req.body.id;
     let petsPostedByUser: Pet[] = await db.Animal.findAll({
       where: {
-        UserId: id,
+        UserId: idFromOIDC,
       },
     });
 
@@ -474,124 +479,126 @@ router.post("/getMultipleUserInfo", async (req, res) => {
   }
 });
 
-router.get("/ranking", async(req, res) => {
+router.get("/ranking", async (req, res) => {
   console.log(`Estoy en /users/ranking.`);
   try {
-  let allTheUsers = await getAllUsers();
-    
-  const ranking = allTheUsers.sort(function(a: any, b:any) { return b.points - a.points })
-  
-  const topTen = ranking.slice(0, 9);
-  
-  res.status(200).send(topTen)
+    let allTheUsers = await getAllUsers();
 
+    const ranking = allTheUsers.sort(function (a: any, b: any) {
+      return b.points - a.points;
+    });
+
+    const topTen = ranking.slice(0, 9);
+
+    res.status(200).send(topTen);
   } catch (error: any) {
     console.log(`Error en /users/ranking. ${error.message}`);
     return res.status(400).send(error.message);
   }
-})
+});
 
 router.post("/points", async (req, res) => {
   console.log(`Estoy en /users/points.`);
   try {
     const { id } = req.body;
-    const user = await db.User.findOne({ where: { id: id }});
-    if(user) {
-      return res.status(200).send({points: user.points})
+    const user = await db.User.findOne({ where: { id: id } });
+    if (user) {
+      return res.status(200).send({ points: user.points });
     }
-    return res.status(200).send('no existe el usuario')
+    return res.status(200).send("no existe el usuario");
   } catch (error: any) {
     console.log(`Error en /users/points ${error.message}`);
     return res.status(400).send(error.message);
   }
 });
 
-router.get("/rankingGaveAdoption", async(req, res) => {
+router.get("/rankingGaveAdoption", async (req, res) => {
   console.log(`Estoy en /users/rankingGaveAdoption.`);
   try {
-  let allTheUsers = await getAllUsers();
-    
-  const ranking = allTheUsers.sort(function(a: any, b:any) { return b.gaveUpForAdoption - a.gaveUpForAdoption })
-  
-  const topTen = ranking.slice(0, 9);
-  
-  res.status(200).send(topTen)
+    let allTheUsers = await getAllUsers();
 
+    const ranking = allTheUsers.sort(function (a: any, b: any) {
+      return b.gaveUpForAdoption - a.gaveUpForAdoption;
+    });
+
+    const topTen = ranking.slice(0, 9);
+
+    res.status(200).send(topTen);
   } catch (error: any) {
     console.log(`Error en /users/rankingGaveAdoption. ${error.message}`);
     return res.status(400).send(error.message);
   }
-})
+});
 
-router.post("/buyProducts", async(req, res) => {
+router.post("/buyProducts", async (req, res) => {
   console.log(`Estoy en /users/buyProducts.`);
   try {
     const { userID, name, items, totalPoints, mail, direccion } = req.body;
 
-    const user = await db.User.findOne({ where: { id: userID }})
-    if(user){
-      console.log(user, totalPoints, items)
+    const user = await db.User.findOne({ where: { id: userID } });
+    if (user) {
+      console.log(user, totalPoints, items);
       user.points = user.points - totalPoints;
       await user.save();
 
-    const nodemailer = require("nodemailer");
-    console.log(GMAIL_PASS, GMAIL_USER);
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: GMAIL_USER,
-        pass: GMAIL_PASS,
-      },
-    });
+      const nodemailer = require("nodemailer");
+      console.log(GMAIL_PASS, GMAIL_USER);
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: GMAIL_USER,
+          pass: GMAIL_PASS,
+        },
+      });
 
-    const msgMail = `Hola ${name} estamos preparando tu compra para enviarla a ${direccion}. Te daremos aviso cuando el producto esté en camino.`;
-    
-    const mailOptions = {
-      from: "service.mascotapp@gmail.com",
-      to: mail,
-      subject: "Tu compra está siendo preparada",
-      html: `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => { return i.title})}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
-    };
+      const msgMail = `Hola ${name} estamos preparando tu compra para enviarla a ${direccion}. Te daremos aviso cuando el producto esté en camino.`;
 
-    transporter.sendMail(mailOptions, function (error: any, info: any) {
-      if (error) console.log(error);
-      else console.log("Email enviado: " + info.response);
-    });
-    
-    return res.status(200).send('compra realizada exitosamente')
-  }
-  return res.send('el usuario no existe')
+      const mailOptions = {
+        from: "service.mascotapp@gmail.com",
+        to: mail,
+        subject: "Tu compra está siendo preparada",
+        html: `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => {
+          return i.title;
+        })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
+      };
+
+      transporter.sendMail(mailOptions, function (error: any, info: any) {
+        if (error) console.log(error);
+        else console.log("Email enviado: " + info.response);
+      });
+
+      return res.status(200).send("compra realizada exitosamente");
+    }
+    return res.send("el usuario no existe");
   } catch (error: any) {
     console.log(`Error en /users/buyProducts. ${error.message}`);
     return res.status(400).send(error.message);
   }
-})
+});
 
-router.post("/donatePoints", async(req, res) => {
+router.post("/donatePoints", async (req, res) => {
   console.log(`Estoy en /users/donatePoints.`);
   try {
     const { id, idToDonate, pointsToDonate } = req.body;
-    const user = await db.User.findOne({ where: {id: id}});
-    const userToDonate = await db.User.findOne({ where: {id: idToDonate}});
-    
-    if(user && userToDonate && user.points >= pointsToDonate){
+    const user = await db.User.findOne({ where: { id: id } });
+    const userToDonate = await db.User.findOne({ where: { id: idToDonate } });
 
+    if (user && userToDonate && user.points >= pointsToDonate) {
       user.points = user.points - parseInt(pointsToDonate);
       await user.save();
-      
+
       userToDonate.points = userToDonate.points + parseInt(pointsToDonate);
       await userToDonate.save();
-      
-      console.log('se donó')
-      return res.status(200).send("puntos donados correctamente")
-    }
-    console.log('no se donó algo falló')
-    return res.status(200).send("algo salió mal")
 
+      console.log("se donó");
+      return res.status(200).send("puntos donados correctamente");
+    }
+    console.log("no se donó algo falló");
+    return res.status(200).send("algo salió mal");
   } catch (error: any) {
     console.log(`Error en /users/donatePoints. ${error.message}`);
     return res.status(400).send(error.message);
   }
-})
+});
 
 export default router;
