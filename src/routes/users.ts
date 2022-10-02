@@ -580,7 +580,7 @@ router.post("/donatePoints", async(req, res) => {
       user.points = user.points - pointsToDonate;
       await user.save();
       
-      userToDonate.points = user.points + pointsToDonate;
+      userToDonate.points = userToDonate.points + pointsToDonate;
       await userToDonate.save();
       
       console.log('se donó')
