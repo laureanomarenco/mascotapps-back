@@ -572,17 +572,22 @@ router.post("/donatePoints", async(req, res) => {
   try {
     const { id, idToDonate, pointsToDonate } = req.body;
 
-    const user = db.User.findOne({ where: {id: id}});
-    const userToDonate = db.User.findOne({ where: {id: idToDonate}});
+    const user = await db.User.findOne({ where: {id: id}});
+    const userToDonate = await db.User.findOne({ where: {id: idToDonate}});
 
-    user.points = user.points - pointsToDonate;
-    await user.save();
+    if(user && userToDonate && user.points >= pointsToDonate){
 
-    userToDonate.points = user.points + pointsToDonate;
-    await userToDonate.save();
-
-    console.log('se donó')
-    return res.status(200).send("puntos donados correctamente")
+      user.points = user.points - pointsToDonate;
+      await user.save();
+      
+      userToDonate.points = user.points + pointsToDonate;
+      await userToDonate.save();
+      
+      console.log('se donó')
+      return res.status(200).send("puntos donados correctamente")
+    }
+    console.log('no se donó algo falló')
+    return res.status(200).send("algo salió mal")
 
   } catch (error: any) {
     console.log(`Error en /users/donatePoints. ${error.message}`);
