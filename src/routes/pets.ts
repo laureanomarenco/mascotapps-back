@@ -545,7 +545,7 @@ router.post("/notify", async (req, res) => {
       const cityUsers = await allUsers.filter((e:any) => e.city == city)
 
       const endpointsArray = await cityUsers.map((e:any) => e.endpoints)
-      const endpointsPurgados = await endpointsArray.filter((e:any) => e !== null || e !== undefined)
+      const endpointsPurgados = await endpointsArray.filter((e:any) => e !== null)
       console.log("soy array de endpoint",endpointsArray),
       console.log("soy endpoint purificado", endpointsPurgados)
 
