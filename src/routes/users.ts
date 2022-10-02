@@ -301,18 +301,19 @@ router.get("/contactinfo/:petid", async (req, res) => {
 });
 
 // GET(post) ALL PETS OF USER ID:
-router.get("/getallpetsofuser", async (req: any, res) => {
+router.post("/getallpetsofuser", async (req: any, res) => {
   console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
   // console.log(req.body);
 
   try {
     console.log(`user ID = ${req.body?.id}`);
-    console.log(`req.oidc.user.sub = ${req.oidc.user.sub}`);
-    console.log(`req.oidc.user =`);
-    console.log(req.oidc.user);
+    let userId = req.body.id;
+    // console.log(`req.oidc.user.sub = ${req.oidc.user.sub}`);
+    // console.log(`req.oidc.user =`);
+    // console.log(req.oidc.user);
 
-    let idFromOIDC = req?.oidc?.user.sub;
-    if (!idFromOIDC) {
+    // let idFromOIDC = req?.oidc?.user.sub;
+    if (!userId) {
       console.log(
         `Error en /users/getallpetsofuser. El req.oidc.sub es falso/undefined`
       );
@@ -323,7 +324,7 @@ router.get("/getallpetsofuser", async (req: any, res) => {
     // let id = req.body.id;
     let petsPostedByUser: Pet[] = await db.Animal.findAll({
       where: {
-        UserId: idFromOIDC,
+        UserId: userId,
       },
     });
 
