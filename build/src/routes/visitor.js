@@ -43,27 +43,32 @@ route.get("/numbervisitors", (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 }));
 route.post('/mailAdmin', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, comment } = req.body;
-    const nodemailer = require('nodemailer');
-    console.log(GMAIL_PASS, GMAIL_USER);
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: GMAIL_USER,
-            pass: GMAIL_PASS
-        }
-    });
-    const mailOptions = {
-        from: email,
-        to: 'service.mascotapp@gmail.com',
-        subject: 'Consulta sobre la página',
-        html: comment
-    };
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error)
-            console.log(error);
-        else
-            console.log('Email enviado: ' + info.response);
-    });
+    try {
+        const { email, comment } = req.body;
+        const nodemailer = require('nodemailer');
+        console.log(GMAIL_PASS, GMAIL_USER);
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: GMAIL_USER,
+                pass: GMAIL_PASS
+            }
+        });
+        const mailOptions = {
+            from: 'service.mascotapp@gmail.com',
+            to: 'service.mascotapp@gmail.com',
+            subject: 'Consulta sobre la página',
+            html: `Llegó la siguiente consulta desde el mail ${email}: <div>${comment}</div>`
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error)
+                console.log(error);
+            else
+                console.log('Email enviado: ' + info.response);
+        });
+    }
+    catch (error) {
+        res.status(404).send(error);
+    }
 }));
 exports.default = route;

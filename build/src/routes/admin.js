@@ -188,6 +188,25 @@ router.post("/deletePetsWithNoUserId", (req, res) => __awaiter(void 0, void 0, v
         console.log(`Error en /admin/deletePetsWithNoUserId. ${error.message}`);
     }
 }));
+router.post("/deletePet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`En ruta /admin/deletePet`);
+    try {
+        let passwordFromReq = req.body.password;
+        if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+            return res.status(403).send(`La password de administrador no es válida`);
+        }
+        const { petID } = req.body;
+        const pet = yield index_1.default.Animal.findOne({ where: { id: petID } });
+        if (pet) {
+            yield pet.destroy();
+            return res.status(200).send('la publicación fue eliminada');
+        }
+        return res.status(200).send('la publicación no existe');
+    }
+    catch (error) {
+        console.log(`Error en /admin/deletePets ${error.message}`);
+    }
+}));
 // ----   RUTAS MULTIPLICADORAS:  -----------
 router.get("/createMultiplier", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

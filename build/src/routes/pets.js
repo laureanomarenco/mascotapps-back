@@ -500,62 +500,55 @@ router.get("/successFound", (req, res) => __awaiter(void 0, void 0, void 0, func
         return res.status(404).send(error.message);
     }
 }));
+router.post("/subscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { subscription, id } = req.body;
+        console.log("entre a subscribe");
+        const string = JSON.stringify(subscription);
+        yield index_1.default.User.update({ endpoints: string }, { where: { id: id } });
+        return res.status(200).send("suscripción creada correctamente");
+    }
+    catch (error) {
+        console.log(`Error en /pets/subscribe. ${error.message}`);
+        return res.status(400).send(error.message);
+    }
+}));
+router.post("/desubscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.body;
+        const usuario = yield index_1.default.User.update({ endpoints: null }, { where: { id: id } });
+        res.status(200).send(`subscripcion borrada exitosamente ${usuario}`);
+    }
+    catch (error) {
+        console.log(`Error en pets/desubscribe. ${error.message}`);
+        return res.status(400).send(error.message);
+    }
+}));
+router.post("/notify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { name, city } = req.body;
+        console.log("entre a notify", req.body);
+        const payload = {
+            title: name,
+            text: "Está perdido por tu zona,¿lo has visto?",
+        };
+        const string = JSON.stringify(payload);
+        const allUsers = yield index_1.default.User.findAll();
+        const cityUsers = yield allUsers.filter((e) => e.city == city);
+        const endpointsArray = yield cityUsers.map((e) => e.endpoints);
+        console.log("soy allUser", allUsers),
+            console.log("soy array de endpoint", endpointsArray),
+            endpointsArray.map((s) => web_push_1.default.sendNotification(s, string));
+        res.status(200).json();
+    }
+    catch (error) {
+        console.log(error);
+    }
+}));
 //GET BY ID:
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _e;
     console.log(`Entré al GET pets/:id con params.id = ${(_e = req === null || req === void 0 ? void 0 : req.params) === null || _e === void 0 ? void 0 : _e.id}`);
-    try {
-        let paramsID = req.params.id;
-        let petFoundById = yield getPetById(paramsID);
-        return res.status(200).send(petFoundById);
-    }
-    catch (error) {
-        console.log(`retornando error en GET pets/:id: ${error.message}`);
-        return res.status(404).send(error.message);
-    }
-}));
-let identificator = [];
-let pushSubscription = [];
-router.post("/subscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { subscription } = req.body;
-    identificator = req.body;
-    console.log("entre a subscribe");
-    pushSubscription = yield [...pushSubscription, subscription];
-    console.log(pushSubscription);
-    return res.status(200).send('suscripción creada correctamente');
-}));
-router.post("/desubscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.body;
-    const usuario = yield identificator.filter((e) => e.id == id);
-    const endpoint = usuario.subscription.endpoint;
-    pushSubscription = yield pushSubscription.filter((e) => e.endpoint !== endpoint);
-    res.status(200).send("endpoint borrado");
-}));
-router.post("/notify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (pushSubscription.length == 0) {
-        res.send("no hay nadie subscripto a las notificaciones");
-    }
-    else {
-        try {
-            const { name } = req.body;
-            console.log("entre a notify", req.body);
-            const payload = {
-                title: name,
-                text: "Está perdido por tu zona,¿lo has visto?",
-            };
-            const string = JSON.stringify(payload);
-            pushSubscription.map((s) => web_push_1.default.sendNotification(s, string));
-            res.status(200).json();
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }
-}));
-//GET BY ID:
-router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f;
-    console.log(`Entré al GET pets/:id con params.id = ${(_f = req === null || req === void 0 ? void 0 : req.params) === null || _f === void 0 ? void 0 : _f.id}`);
     try {
         let paramsID = req.params.id;
         let petFoundById = yield getPetById(paramsID);
