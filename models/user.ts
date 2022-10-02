@@ -33,7 +33,12 @@ module.exports = (sequelize: any, DataTypes: any) => {
     foundAPet: number | undefined;
     gotAPetBack: number | undefined;
     points: number | undefined;
+<<<<<<< HEAD
     endpoints!: string;
+=======
+    linkToDonate: string | undefined;
+
+>>>>>>> 4cc23b9d44371026c71b539fdae67ef4da05251b
     static associate(models: any) {
       // define association here
       User.hasMany(models.Animal);
@@ -100,10 +105,17 @@ module.exports = (sequelize: any, DataTypes: any) => {
         defaultValue: 0,
         allowNull: false,
       },
+<<<<<<< HEAD
       endpoints: {
         type: DataTypes.STRING,
         allowNull: true
       }
+=======
+      linkToDonate: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+>>>>>>> 4cc23b9d44371026c71b539fdae67ef4da05251b
     },
     {
       sequelize,
