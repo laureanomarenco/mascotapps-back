@@ -11,11 +11,8 @@ export interface UserAttributes {
   foundAPet: number | undefined;
   gotAPetBack: number | undefined;
   points: number | undefined;
-<<<<<<< HEAD
   endpoints: string;
-=======
   linkToDonate: string | undefined;
->>>>>>> 4cc23b9d44371026c71b539fdae67ef4da05251b
 }
 
 export interface ISomeUserInfo {
