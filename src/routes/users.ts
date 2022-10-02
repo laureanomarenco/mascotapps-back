@@ -376,7 +376,7 @@ router.post("/deletePet", async (req: any, res) => {
 
 router.post("/newuser", async (req, res) => {
   console.log(`Entré en /user/newUser`);
-  const { email, name, city, contact, image, id } = req.body;
+  const { email, name, city, contact, image, id, linkToDonate } = req.body;
   try {
     let emailExisteEnLaDB = await emailExistsInDB(email);
     if (emailExisteEnLaDB) {
@@ -393,6 +393,7 @@ router.post("/newuser", async (req, res) => {
         city,
         contact,
         image,
+        linkToDonate,
       },
     });
     if (!created) {
@@ -434,7 +435,7 @@ router.put("/update", async (req, res) => {
   console.log(`Me llegó por body: `);
   console.log(req.body);
   try {
-    const { image, contact, city, email, name, id } = req.body;
+    const { image, contact, city, email, name, id, linkToDonate } = req.body;
     const newProfile = await db.User.update(
       {
         image: image,
@@ -442,6 +443,7 @@ router.put("/update", async (req, res) => {
         city: city,
         email: email,
         name: name,
+        linkToDonate: linkToDonate,
       },
       {
         where: {
