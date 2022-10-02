@@ -43,8 +43,8 @@ var corsOptions = {
   credentials: true,
 };
 
-// app.use(cors(corsOptions));
-app.use(cors());
+app.use(cors(corsOptions));
+// app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(auth(config));
@@ -63,6 +63,7 @@ app.use("/admin", adminRouter);
 app.get("/callback", (req, res) => {
   console.log(`pasé por /callback. Redirigiendo a vercel/home`);
   try {
+    // res.header();
     res.redirect("https://mascotapps.vercel.app/home");
   } catch (error) {
     console.log(`Error en /callback`);
