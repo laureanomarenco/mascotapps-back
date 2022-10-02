@@ -545,7 +545,7 @@ router.post("/notify", async (req, res) => {
       const cityUsers = await allUsers.filter((e:any) => e.city == city)
 
       const endpointsArray = await cityUsers.map((e:any) => e.endpoints)
-      console.log("soy allUser",allUsers),
+      console.log("soy allUser",cityUsers),
       console.log("soy array de endpoint",endpointsArray),
 
       endpointsArray.map((s:any)=> webPush.sendNotification(s,string))
