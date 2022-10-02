@@ -11,7 +11,6 @@ import { Pet, postStatus, Species, updatedPet } from "../types/petTypes";
 import webPush from "../../config/web_push";
 const router = Router();
 
-
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 
 function mapSpecies() {
@@ -501,34 +500,44 @@ router.get("/successFound", async (req, res) => {
   }
 });
 
-
-let identificator:any = [];
-let pushSubscription:any = [];
-router.post("/subscribe", async(req,res)=>{
-  const {subscription} = req.body;
-  identificator = [...identificator, req.body]
-  console.log("entre a subscribe")
-  pushSubscription = await [...pushSubscription, subscription]
-  console.log(pushSubscription)
-  return res.status(200).send('suscripción creada correctamente')
-})
-
-router.post("/desubscribe", async(req,res)=>{
-  const {id} = req.body
-  const usuario = await identificator.find((e:any) => e.id == id )
-  console.log("sot usuario", usuario)
-  const endpoint = usuario.subscription.endpoint
-  console.log("soy endpoint", endpoint)
-  pushSubscription = await pushSubscription.filter((e:any) => e.endpoint !== endpoint)
-  console.log(pushSubscription)
-  res.status(200).send("endpoint borrado")
-})
-
-router.post("/notify" ,async(req,res)=>{
-  if(pushSubscription.length == 0){
-    res.send("no hay nadie subscripto a las notificaciones")
+let identificator: any = [];
+let pushSubscription: any = [];
+router.post("/subscribe", async (req, res) => {
+  try {
+    const { subscription } = req.body;
+    identificator = [...identificator, req.body];
+    console.log("entre a subscribe");
+    pushSubscription = await [...pushSubscription, subscription];
+    console.log(pushSubscription);
+    return res.status(200).send("suscripción creada correctamente");
+  } catch (error: any) {
+    console.log(`Error en /pets/subscribe. ${error.message}`);
+    return res.status(400).send(error.message);
   }
-  else{
+});
+
+router.post("/desubscribe", async (req, res) => {
+  try {
+    const { id } = req.body;
+    const usuario = await identificator.find((e: any) => e.id == id);
+    console.log("sot usuario", usuario);
+    const endpoint = usuario.subscription.endpoint;
+    console.log("soy endpoint", endpoint);
+    pushSubscription = await pushSubscription.filter(
+      (e: any) => e.endpoint !== endpoint
+    );
+    console.log(pushSubscription);
+    return res.status(200).send("endpoint borrado");
+  } catch (error: any) {
+    console.log(`Error en pets/desubscribe. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+});
+
+router.post("/notify", async (req, res) => {
+  if (pushSubscription.length == 0) {
+    res.send("no hay nadie subscripto a las notificaciones");
+  } else {
     try {
       const { name } = req.body;
       console.log("entre a notify", req.body);
