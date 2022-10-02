@@ -121,7 +121,9 @@ app.get("/testauth", jwtCheck, async (req: any, res) => {
   console.log(`entré a /TESTAUTH`);
   try {
     console.log("REQ : ");
-    console.log(req);
+    console.log(req.user);
+    console.log(req.auth);
+    console.log(req.auth?.sub);
 
     // let userInDB = await db.User.findByPk(req.oidc.user.sub);
     // if (!userInDB) {
