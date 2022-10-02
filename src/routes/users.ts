@@ -241,18 +241,18 @@ const authCheck = (req: any, res: any, next: any) => {
 
 //GET ALL USERS FROM DB:  //! Hay que dejarla comentada ( o borrarla) porque no es seguro poder tener toda la data de los users registrados:
 
-router.get("/", async (req, res) => {
-  console.log("entré al get de Users!");
+// router.get("/", async (req, res) => {
+//   console.log("entré al get de Users!");
 
-  try {
-    let allTheUsers = await getAllUsers();
-    // console.log(allTheUsers);
+//   try {
+//     let allTheUsers = await getAllUsers();
+//     // console.log(allTheUsers);
 
-    return res.status(200).send(allTheUsers);
-  } catch (error: any) {
-    return res.status(404).send(error.message);
-  }
-});
+//     return res.status(200).send(allTheUsers);
+//   } catch (error: any) {
+//     return res.status(404).send(error.message);
+//   }
+// });
 
 // GET NUMBER OF USERS IN DB:
 router.get("/numberOfUsersInDB", async (req, res) => {
