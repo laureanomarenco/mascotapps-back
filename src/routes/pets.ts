@@ -545,10 +545,11 @@ router.post("/notify", async (req, res) => {
       const cityUsers = await allUsers.filter((e:any) => e.city == city)
 
       const endpointsArray = await cityUsers.map((e:any) => e.endpoints)
-      console.log("soy allUser",cityUsers),
+      const endpointsPurgados = await endpointsArray.filter((e:any) => e !== null || e !== undefined)
       console.log("soy array de endpoint",endpointsArray),
+      console.log("soy endpoint purificado", endpointsPurgados)
 
-      endpointsArray.map((s:any)=> webPush.sendNotification(s,string))
+      endpointsPurgados.map((s:any)=> webPush.sendNotification(s,string))
 
       res.status(200).json();
     } catch (error) {
