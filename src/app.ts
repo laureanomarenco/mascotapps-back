@@ -57,7 +57,17 @@ app.use("/transactions", transactionsRouter);
 app.use("/comments", commentRouter);
 app.use("/admin", adminRouter);
 
-//! ruta de prueba:
+//! rutas de prueba:
+
+app.get("/callback", (req, res) => {
+  console.log(`pasé por /callback. Redirigiendo a vercel/home`);
+  try {
+    res.redirect("https://mascotapps.vercel.app/home");
+  } catch (error) {
+    console.log(`Error en /callback`);
+  }
+});
+
 app.get("/testauth", requiresAuth(), async (req: any, res) => {
   console.log(`entré a auth/getuserinfo`);
   try {
