@@ -33,6 +33,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     foundAPet: number | undefined;
     gotAPetBack: number | undefined;
     points: number | undefined;
+    endpoints!: string;
     static associate(models: any) {
       // define association here
       User.hasMany(models.Animal);
@@ -99,6 +100,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         defaultValue: 0,
         allowNull: false,
       },
+      endpoints: {
+        type: DataTypes.STRING,
+        allowNull: true
+      }
     },
     {
       sequelize,
