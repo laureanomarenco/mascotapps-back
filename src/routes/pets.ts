@@ -507,8 +507,8 @@ router.post("/subscribe", async (req, res) => {
 
     console.log("entre a subscribe");
     const string = JSON.stringify(subscription)
-    await db.User.update({endpoints: string}, {where:{id:id}})
-
+    const update = await db.User.update({endpoints: string}, {where:{id:id}})
+    console.log(`soy lista de endpoints update ${update}`)
     return res.status(200).send("suscripción creada correctamente");
   } 
   catch (error: any) {
@@ -521,7 +521,7 @@ router.post("/desubscribe", async (req, res) => {
   try {
     const { id } = req.body;
     const usuario = await db.User.update({endpoints: undefined},{where:{id:id}})
-
+    console.log(`estoy en desubcribe ${usuario}`)
     res.status(200).send(`subscripcion borrada exitosamente ${usuario}`)
 
   } catch (error: any) {
