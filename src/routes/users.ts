@@ -585,6 +585,8 @@ router.post("/donatePoints", async(req, res) => {
       console.log('se donó')
       return res.status(200).send("puntos donados correctamente")
     }
+    console.log('falló')
+    
     return res.status(200).send("hubo un error en la donación")
   } catch (error: any) {
     console.log(`Error en /users/donatePoints. ${error.message}`);
