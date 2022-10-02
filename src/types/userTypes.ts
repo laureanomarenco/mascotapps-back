@@ -11,7 +11,7 @@ export interface UserAttributes {
   foundAPet: number | undefined;
   gotAPetBack: number | undefined;
   points: number | undefined;
-  endpoints: string;
+  endpoints: Text;
   linkToDonate: string | undefined;
 }
 

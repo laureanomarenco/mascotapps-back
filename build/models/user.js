@@ -78,6 +78,14 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 0,
             allowNull: false,
         },
+        endpoints: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        linkToDonate: {
+            type: DataTypes.STRING(2000),
+            allowNull: true,
+        },
     }, {
         sequelize,
         modelName: "User",
