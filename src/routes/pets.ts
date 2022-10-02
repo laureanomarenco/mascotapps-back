@@ -520,7 +520,7 @@ router.post("/subscribe", async (req, res) => {
 router.post("/desubscribe", async (req, res) => {
   try {
     const { id } = req.body;
-    const usuario = await db.User.update({endpoints: null},{where:{id:id}})
+    const usuario = await db.User.update({endpoints: undefined},{where:{id:id}})
 
     res.status(200).send(`subscripcion borrada exitosamente ${usuario}`)
 
