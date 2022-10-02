@@ -11,6 +11,8 @@ import { IReview } from "../types/reviewTypes";
 import { requiresAuth } from "express-openid-connect";
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 
+import { jwtCheck } from "../app";
+
 const router = Router();
 const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
@@ -302,18 +304,14 @@ router.get("/contactinfo/:petid", async (req, res) => {
 });
 
 // GET(post) ALL PETS OF USER ID:
-router.post("/getallpetsofuser", async (req: any, res) => {
-  console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
+router.get("/getallpetsofuser", jwtCheck, async (req: any, res) => {
+  console.log(`Entré a la ruta "/users/getallpetsofuser".`);
   // console.log(req.body);
 
   try {
-    console.log(`user ID = ${req.body?.userId}`);
-    let userId = req.body.userId;
-    // console.log(`req.oidc.user.sub = ${req.oidc.user.sub}`);
-    // console.log(`req.oidc.user =`);
-    // console.log(req.oidc.user);
+    let userId = req.auth?.sub;
+    console.log(`user ID por auth.sub = ${userId}`);
 
-    // let idFromOIDC = req?.oidc?.user.sub;
     if (!userId) {
       console.log(
         `Error en /users/getallpetsofuser. El req.body.id es falso/undefined`
