@@ -301,14 +301,16 @@ router.get("/contactinfo/:petid", async (req, res) => {
 });
 
 // GET(post) ALL PETS OF USER ID:
-router.get("/getallpetsofuser", requiresAuth(), async (req: any, res) => {
+router.get("/getallpetsofuser", async (req: any, res) => {
   console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
   // console.log(req.body);
-  console.log(`user ID = ${req.body?.id}`);
-  console.log(`req.oidc.user =`);
-  console.log(req.oidc.user);
 
   try {
+    console.log(`user ID = ${req.body?.id}`);
+    console.log(`req.oidc.user.sub = ${req.oidc.user.sub}`);
+    console.log(`req.oidc.user =`);
+    console.log(req.oidc.user);
+
     let idFromOIDC = req?.oidc?.user.sub;
     if (!idFromOIDC) {
       console.log(
