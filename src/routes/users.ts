@@ -306,8 +306,8 @@ router.post("/getallpetsofuser", async (req: any, res) => {
   // console.log(req.body);
 
   try {
-    console.log(`user ID = ${req.body?.id}`);
-    let userId = req.body.id;
+    console.log(`user ID = ${req.body?.userId}`);
+    let userId = req.body.userId;
     // console.log(`req.oidc.user.sub = ${req.oidc.user.sub}`);
     // console.log(`req.oidc.user =`);
     // console.log(req.oidc.user);
@@ -315,7 +315,7 @@ router.post("/getallpetsofuser", async (req: any, res) => {
     // let idFromOIDC = req?.oidc?.user.sub;
     if (!userId) {
       console.log(
-        `Error en /users/getallpetsofuser. El req.oidc.sub es falso/undefined`
+        `Error en /users/getallpetsofuser. El req.body.id es falso/undefined`
       );
       throw new Error(
         `Error en /users/getallpetsofuser. El req.oidc.sub es falso/undefined`
