@@ -561,6 +561,7 @@ router.post("/notify", async (req, res) => {
     );
     endpointsParsed.map((s: any) => webPush.sendNotification(s, string));
     res.status(200).json();
+    console.log(endpointsParsed)
   } catch (error) {
     console.log(`Error: ${error}`);
   }
