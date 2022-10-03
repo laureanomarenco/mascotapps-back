@@ -12,19 +12,7 @@ import webPush from "../../config/web_push";
 import jwtCheck from "../../config/jwtMiddleware";
 import { couldStartTrivia } from "typescript";
 
-// const { expressjwt: jwt } = require("express-jwt");
-// var jwks = require("jwks-rsa");
-// const jwtCheck = jwt({
-//   secret: jwks.expressJwtSecret({
-//     cache: true,
-//     rateLimit: true,
-//     jwksRequestsPerMinute: 5,
-//     jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
-//   }),
-//   audience: "https://juka-production.up.railway.app/",
-//   issuer: "https://dev-nxuk8wmn.us.auth0.com/",
-//   algorithms: ["RS256"],
-// });
+
 const router = Router();
 
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------

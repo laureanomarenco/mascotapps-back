@@ -1,9 +1,7 @@
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
-
 import { Router } from "express";
-
 import db from "../../models";
 const Stripe = require("stripe");
 const router = Router();
@@ -11,6 +9,7 @@ const router = Router();
 let stripe: any;
 stripe = new Stripe(STRIPE_KEY);
 
+// ---------- FUNCIONES AUXILIARES PARA LAS RUTAS: ------------
 const getAllDonations = async () => {
   console.log("en function getAllDonations");
   try {
@@ -21,6 +20,8 @@ const getAllDonations = async () => {
     return error;
   }
 };
+
+// ----------- RUTAS : --------------------------
 
 router.post("/", async (req, res) => {
   console.log("EN LA RUTA POST DE CHECKOUT");
