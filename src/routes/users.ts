@@ -387,7 +387,7 @@ router.delete("/deletePet", jwtCheck, async (req: any, res) => {
   }
 });
 
-router.post("/newuser", async (req: any, res) => {
+router.post("/newuser", jwtCheck, async (req: any, res) => {
   console.log(`Entré en /user/newUser`);
   try {
     const id = req.auth?.sub;
@@ -428,7 +428,7 @@ router.post("/newuser", async (req: any, res) => {
   }
 });
 
-router.get("/exists", async (req: any, res) => {
+router.get("/exists", jwtCheck, async (req: any, res) => {
   console.log(`Entré al GET users/exists`);
 
   try {
