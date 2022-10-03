@@ -2,6 +2,7 @@ import { Router } from "express";
 import db from "../../models/index";
 import { IReview } from "../types/reviewTypes";
 import { validateNewReview } from "../auxiliary/ReviewValidators";
+import jwtCheck from "../../config/jwtMiddleware";
 
 const router = Router();
 
@@ -31,15 +32,9 @@ router.get("/allReviews", async (req, res) => {
   }
 });
 
-router.post("/newReview", async (req, res) => {
+router.post("/newReview", jwtCheck, async (req, res) => {
   console.log(`Entré a la ruta POST /reviews/newReview`);
   try {
-    // REQ.BODY:
-    // transaction_id!: string;
-    // reviewer_id!: string;
-    // reviewed_id!: string;
-    // comments: string | undefined;
-    // stars!: number | string
     console.log(`req.body = ${req.body}`);
 
     let { reviewed_id, reviewer_id, transaction_id } = req.body;

@@ -9,20 +9,21 @@ import {
 import { Pet, postStatus, Species, updatedPet } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 import webPush from "../../config/web_push";
+import jwtCheck from "../../config/jwtMiddleware";
 
-const { expressjwt: jwt } = require("express-jwt");
-var jwks = require("jwks-rsa");
-const jwtCheck = jwt({
-  secret: jwks.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
-  }),
-  audience: "https://juka-production.up.railway.app/",
-  issuer: "https://dev-nxuk8wmn.us.auth0.com/",
-  algorithms: ["RS256"],
-});
+// const { expressjwt: jwt } = require("express-jwt");
+// var jwks = require("jwks-rsa");
+// const jwtCheck = jwt({
+//   secret: jwks.expressJwtSecret({
+//     cache: true,
+//     rateLimit: true,
+//     jwksRequestsPerMinute: 5,
+//     jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
+//   }),
+//   audience: "https://juka-production.up.railway.app/",
+//   issuer: "https://dev-nxuk8wmn.us.auth0.com/",
+//   algorithms: ["RS256"],
+// });
 const router = Router();
 
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
@@ -318,12 +319,12 @@ router.post("/postNewPet", jwtCheck, async (req: any, res) => {
 });
 
 //PUT Update detalles de la mascota
-router.put("/update", async (req, res) => {
+router.put("/update", jwtCheck, async (req: any, res) => {
   console.log(`Entré a pets/update`);
   console.log(`req.body = ${req.body}`);
 
   try {
-    const { userId } = req.body.user;
+    const userId = req.auth?.sub;
     const { id } = req.body.pet;
 
     console.log(`req.body.pet.image = ${req.body?.pet?.image}`);
@@ -335,19 +336,17 @@ router.put("/update", async (req, res) => {
       },
     });
     console.log(`Animal UPDATED. Datos de la mascota actualizada.`);
-    console.log("new profile = ");
-    console.log(newProfile);
 
     return res.status(200).send(newProfile);
   } catch (error: any) {
-    console.log(`Error en la ruta "/pets/update"`);
+    console.log(`Error en la ruta "/pets/update". ${error.message}`);
     return res.status(400).send(error.message);
   }
 });
 
 // GET NUMBER OF PETS IN DB:
-router.get("/numberofpetsindb", async (req, res) => {
-  console.log("En route pets/numberofpets");
+router.get("/numberOfPetsInDB", async (req, res) => {
+  console.log("En route pets/numberOfPetsInDB");
   try {
     let numberOfPetsInDB = await getNumberOfPetsInDB();
     let numberOfPetsInDBtoString = `${numberOfPetsInDB}`;

@@ -256,7 +256,7 @@ const authCheck = (req: any, res: any, next: any) => {
 
 //GET ALL USERS FROM DB:  //! Hay que dejarla comentada ( o borrarla) porque no es seguro poder tener toda la data de los users registrados:
 
-router.get("/", async (req, res) => {
+router.get("/", jwtCheck, async (req, res) => {
   console.log("entré al get de Users!");
 
   try {
@@ -356,24 +356,23 @@ router.get("/getallpetsofuser", jwtCheck, async (req: any, res) => {
   }
 });
 
-router.post("/deletePet", async (req: any, res) => {
+router.post("/deletePet", jwtCheck, async (req: any, res) => {
   console.log(`En la ruta users/deletePet.`);
   console.log(`petId = ${req.body?.petId}`);
   console.log(req.body);
-  console.log(`req.body.id = ${req.body?.id}`);
+  console.log(`req.auth.sub = ${req.auth?.sub}`);
   try {
     let petId = req.body.petId;
-    let userId = req.body.id;
+    let userId = req.auth.sub;
     //buscar instancia de mascota en DB:
     let petToDeleteInDB = await db.Animal.findByPk(petId);
     if (petToDeleteInDB.UserId == userId) {
       //borrar instancia de la DB:
-      // await petToDeleteInDB.destroy();
-      let deletedPet = await petToDeleteInDB.destroy();
-      console.log(`pet with id ${req.body.id} ...  soft-destroyed`);
+      await petToDeleteInDB.destroy();
+      console.log(`pet with id ${petId} ...  soft-destroyed`);
       return res.status(200).send({ msg: "Mascota borrada" });
     } else {
-      //retornar que no coincide el petToDelete.UserId con el req.user.id
+      //retornar que no coincide el petToDelete.UserId con el req.auth.sub
       return res
         .status(400)
         .send(`El ID del cliente no coincide con el UserId de la mascota.`);
@@ -465,12 +464,12 @@ router.put("/update", async (req, res) => {
   }
 });
 
-router.post("/getMultipleUserInfo", async (req, res) => {
+router.get("/getMultipleUserInfo", jwtCheck, async (req: any, res) => {
   console.log(`Entré a la ruta /users/getMultipleUserInfo`);
-  console.log(`req.body.id = ${req.body.id}`);
+  console.log(`req.auth.sub = ${req.auth?.sub}`);
   try {
-    if (req.body.id) {
-      let userId = req.body.id;
+    if (req.auth?.sub) {
+      let userId = req.auth.sub;
       let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId); //obj con props
       let userReviewsRecived = await getAllReviewsRecived(userId); //arreglo de objs
       let userTransactions = await getAllTransactions(userId); //arreglo de objs
@@ -485,7 +484,7 @@ router.post("/getMultipleUserInfo", async (req, res) => {
       };
       return res.status(200).send(multipleUserInfo);
     } else {
-      throw new Error(`El id '${req.body.id}' es falso.`);
+      throw new Error(`El id '${req.auth.sub}' es falso.`);
     }
   } catch (error: any) {
     console.log(`Error en /users/getMultipleUserInfo. ${error.message}`);
@@ -544,11 +543,11 @@ router.get("/rankingGaveAdoption", async (req, res) => {
   }
 });
 
-router.post("/buyProducts", async (req, res) => {
+router.post("/buyProducts", jwtCheck, async (req: any, res) => {
   console.log(`Estoy en /users/buyProducts.`);
   try {
-    const { userID, name, items, totalPoints, mail, direccion } = req.body;
-
+    const { name, items, totalPoints, mail, direccion } = req.body;
+    let userID = req.auth?.sub;
     const user = await db.User.findOne({ where: { id: userID } });
     if (user) {
       console.log(user, totalPoints, items);
@@ -583,17 +582,23 @@ router.post("/buyProducts", async (req, res) => {
 
       return res.status(200).send("compra realizada exitosamente");
     }
-    return res.send("el usuario no existe");
+    console.log(`El usuario con id "${userID} no existe"`);
+
+    return res.status(404).send("el usuario no existe");
   } catch (error: any) {
     console.log(`Error en /users/buyProducts. ${error.message}`);
     return res.status(400).send(error.message);
   }
 });
 
-router.post("/donatePoints", async (req, res) => {
+router.post("/donatePoints", jwtCheck, async (req: any, res) => {
   console.log(`Estoy en /users/donatePoints.`);
   try {
-    const { id, idToDonate, pointsToDonate } = req.body;
+    const id = req.auth?.sub;
+    if (!id) {
+      throw new Error(`El req.auth.sub es falso`);
+    }
+    const { idToDonate, pointsToDonate } = req.body;
     const user = await db.User.findOne({ where: { id: id } });
     const userToDonate = await db.User.findOne({ where: { id: idToDonate } });
 

@@ -16,6 +16,7 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
 const express_1 = require("express");
+const jwtMiddleware_1 = __importDefault(require("../../config/jwtMiddleware"));
 const models_1 = __importDefault(require("../../models"));
 const Stripe = require("stripe");
 const router = (0, express_1.Router)();
@@ -94,7 +95,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.json({ msg: err.raw.message });
     }
 }));
-router.get("/balance", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/balance", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("ENTRE A LA RUTA BALANCE");
     try {
         let allTheDonations = yield getAllDonations();

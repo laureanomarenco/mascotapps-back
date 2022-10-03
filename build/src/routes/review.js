@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
 const ReviewValidators_1 = require("../auxiliary/ReviewValidators");
+const jwtMiddleware_1 = __importDefault(require("../../config/jwtMiddleware"));
 const router = (0, express_1.Router)();
 //-----  FUNCIONES AUXILIARES: -------------------------------
 function getAllReviews() {
@@ -41,15 +42,9 @@ router.get("/allReviews", (req, res) => __awaiter(void 0, void 0, void 0, functi
         return res.status(404).send(error.message);
     }
 }));
-router.post("/newReview", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/newReview", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a la ruta POST /reviews/newReview`);
     try {
-        // REQ.BODY:
-        // transaction_id!: string;
-        // reviewer_id!: string;
-        // reviewed_id!: string;
-        // comments: string | undefined;
-        // stars!: number | string
         console.log(`req.body = ${req.body}`);
         let { reviewed_id, reviewer_id, transaction_id } = req.body;
         const transaction = yield index_1.default.Transaction.findOne({
