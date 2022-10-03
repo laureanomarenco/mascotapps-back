@@ -521,7 +521,7 @@ router.post("/subscribe", async (req, res) => {
       { endpoints: string },
       { where: { id: id } }
     );
-    return res.status(200).send("suscripción creada correctamente");
+    return res.status(200).send("Subscripción creada correctamente");
   } catch (error: any) {
     return res.status(400).send(error.message);
   }
@@ -534,7 +534,7 @@ router.post("/desubscribe", async (req, res) => {
       { endpoints: undefined },
       { where: { id: id } }
     );
-    res.status(200).send(`subscripcion borrada exitosamente ${usuario}`);
+    res.status(200).send(`Subscripción borrada exitosamente ${usuario}`);
   } catch (error: any) {
     return res.status(400).send(error.message);
   }
@@ -545,7 +545,7 @@ router.post("/notify", async (req, res) => {
     const { name, city } = req.body;
     const payload = {
       title: name,
-      text: "Está perdido por tu zona,¿lo has visto?",
+      text: "Animal perdido por tu zona,¿lo has visto?",
     };
     const string = JSON.stringify(payload);
     const allUsers = await db.User.findAll();
@@ -557,11 +557,10 @@ router.post("/notify", async (req, res) => {
     const endpointsParsed = await endpointsPurgados.map((e: any) =>
       JSON.parse(e)
     );
-
     endpointsParsed.map((s: any) => webPush.sendNotification(s, string));
     res.status(200).json();
   } catch (error) {
-    console.log(error);
+    console.log(`Error: ${error}`);
   }
 });
 
