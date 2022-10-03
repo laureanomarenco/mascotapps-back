@@ -77,6 +77,7 @@ async function getSomeUserInfo(userId: any) {
         gotAPetBack: userInfo.gotAPetBack,
         points: userInfo.points,
         linkToDonate: userInfo.linkToDonate,
+        endpoints: userInfo.endpoints
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;

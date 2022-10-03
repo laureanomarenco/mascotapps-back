@@ -27,6 +27,7 @@ export interface ISomeUserInfo {
   gotAPetBack: number | undefined;
   points: number | undefined;
   linkToDonate: string | undefined;
+  endpoints: Text;
 }
 
 export interface IContactInfoOfOwner {
