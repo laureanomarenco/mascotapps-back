@@ -19,6 +19,20 @@ const AnimalValidators_1 = require("../auxiliary/AnimalValidators");
 const petTypes_1 = require("../types/petTypes");
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 const web_push_1 = __importDefault(require("../../config/web_push"));
+const jwtMiddleware_1 = __importDefault(require("../../config/jwtMiddleware"));
+// const { expressjwt: jwt } = require("express-jwt");
+// var jwks = require("jwks-rsa");
+// const jwtCheck = jwt({
+//   secret: jwks.expressJwtSecret({
+//     cache: true,
+//     rateLimit: true,
+//     jwksRequestsPerMinute: 5,
+//     jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
+//   }),
+//   audience: "https://juka-production.up.railway.app/",
+//   issuer: "https://dev-nxuk8wmn.us.auth0.com/",
+//   algorithms: ["RS256"],
+// });
 const router = (0, express_1.Router)();
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 function mapSpecies() {
@@ -273,11 +287,11 @@ function idExistsInDataBase(id) {
 // ----- ------ ------- RUTAS :  ------ ------- -------
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
-router.post("/postNewPet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/postNewPet", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     console.log(`Entré a users/postnewpet`);
     try {
-        const id = (_b = (_a = req.body) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b.id;
+        const id = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.sub;
         if (!id) {
             throw new Error(`El Id de usuario es inválido/falso`);
         }
@@ -305,19 +319,19 @@ router.post("/postNewPet", (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
     catch (error) {
         console.log(`Error en /postnewpet. ${error.message}`);
-        console.log(`req.body.id de la request = '${req.body.id}'`);
+        console.log(`req.auth.sub de la request = '${(_b = req.auth) === null || _b === void 0 ? void 0 : _b.sub}'`);
         return res.status(404).send(error.message);
     }
 }));
 //PUT Update detalles de la mascota
-router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d;
+router.put("/update", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c, _d, _e;
     console.log(`Entré a pets/update`);
     console.log(`req.body = ${req.body}`);
     try {
-        const { userId } = req.body.user;
+        const userId = (_c = req.auth) === null || _c === void 0 ? void 0 : _c.sub;
         const { id } = req.body.pet;
-        console.log(`req.body.pet.image = ${(_d = (_c = req.body) === null || _c === void 0 ? void 0 : _c.pet) === null || _d === void 0 ? void 0 : _d.image}`);
+        console.log(`req.body.pet.image = ${(_e = (_d = req.body) === null || _d === void 0 ? void 0 : _d.pet) === null || _e === void 0 ? void 0 : _e.image}`);
         let validatedPetFromReq = (0, AnimalValidators_1.validateUpdatedPet)(req.body.pet);
         const newProfile = yield index_1.default.Animal.update(validatedPetFromReq, {
             where: {
@@ -326,18 +340,16 @@ router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* 
             },
         });
         console.log(`Animal UPDATED. Datos de la mascota actualizada.`);
-        console.log("new profile = ");
-        console.log(newProfile);
         return res.status(200).send(newProfile);
     }
     catch (error) {
-        console.log(`Error en la ruta "/pets/update"`);
+        console.log(`Error en la ruta "/pets/update". ${error.message}`);
         return res.status(400).send(error.message);
     }
 }));
 // GET NUMBER OF PETS IN DB:
-router.get("/numberofpetsindb", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("En route pets/numberofpets");
+router.get("/numberOfPetsInDB", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("En route pets/numberOfPetsInDB");
     try {
         let numberOfPetsInDB = yield getNumberOfPetsInDB();
         let numberOfPetsInDBtoString = `${numberOfPetsInDB}`;
@@ -500,12 +512,14 @@ router.get("/successFound", (req, res) => __awaiter(void 0, void 0, void 0, func
         return res.status(404).send(error.message);
     }
 }));
+
 router.post("/subscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { subscription, id } = req.body;
         console.log("entre a subscribe");
         const string = JSON.stringify(subscription);
         yield index_1.default.User.update({ endpoints: string }, { where: { id: id } });
+
         return res.status(200).send("suscripción creada correctamente");
     }
     catch (error) {
@@ -516,8 +530,10 @@ router.post("/subscribe", (req, res) => __awaiter(void 0, void 0, void 0, functi
 router.post("/desubscribe", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.body;
+
         const usuario = yield index_1.default.User.update({ endpoints: null }, { where: { id: id } });
         res.status(200).send(`subscripcion borrada exitosamente ${usuario}`);
+
     }
     catch (error) {
         console.log(`Error en pets/desubscribe. ${error.message}`);

@@ -30,32 +30,42 @@ const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-const { auth } = require("express-openid-connect");
-const config = {
-    authRequired: false,
-    auth0Logout: true,
-    secret: process.env.SECRET_AUTH,
-    baseURL: process.env.BASE_URL_AUTH,
-    clientID: process.env.CLIENT_ID_AUTH,
-    issuerBaseURL: process.env.ISSUER_AUTH,
-};
+
+// var jwt = require("express-jwt");
+const { expressjwt: jwt } = require("express-jwt");
+var jwks = require("jwks-rsa");
+const jwtCheck = jwt({
+    secret: jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
+    }),
+    audience: "https://juka-production.up.railway.app/",
+    issuer: "https://dev-nxuk8wmn.us.auth0.com/",
+    algorithms: ["RS256"],
+});
+// app.use(jwtCheck);
+
 var corsOptions = {
     origin: [
         "https://mascotapps.vercel.app",
         "http://localhost:3000",
+
+        "http://localhost:3000/home",
         "https://checkout.stripe.com",
         "https://dev-nxuk8wmn.us.auth0.com",
+        "http://localhost:3001",
+
     ],
     headers: "*",
     methods: "*",
     credentials: true,
 };
 app.use((0, cors_1.default)(corsOptions));
-// app.use(cors());
+
 app.use(express_1.default.urlencoded({ extended: true }));
-// auth router attaches /login, /logout, and /callback routes to the baseURL
-app.use(auth(config));
-// RUTAS:
+
 app.use("/users", users_1.default);
 app.use("/pets", pets_1.default);
 app.use("/checkout", checkout_1.default);
@@ -65,39 +75,16 @@ app.use("/transactions", transaction_1.default);
 app.use("/comments", comment_1.default);
 app.use("/admin", admin_1.default);
 //! rutas de prueba:
-app.get("/callback", (req, res) => {
-    console.log(`pasé por /callback. Redirigiendo a vercel/home`);
+
+app.get("/testauth", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    console.log(`entré a /TESTAUTH`);
     try {
-        // res.header();
-        res.redirect("https://mascotapps.vercel.app/home");
-    }
-    catch (error) {
-        console.log(`Error en /callback`);
-    }
-});
-app.get("/testauth", (0, express_openid_connect_1.requiresAuth)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(`entré a auth/getuserinfo`);
-    try {
-        console.log(req.oidc);
-        console.log("REQ.OIDC.USER : ");
-        console.log(req.oidc.user);
-        let userInDB = yield index_1.default.User.findByPk(req.oidc.user.sub);
-        if (!userInDB) {
-            let reqUser = req.oidc.user;
-            let newUser = yield index_1.default.User.create({
-                email: reqUser.email,
-                id: reqUser.sub,
-                name: reqUser.name,
-                image: reqUser.picture,
-            });
-            console.log("NEW USER: ");
-            console.log(newUser);
-            return res.status(200).send(newUser);
-        }
-        else {
-            console.log("Usuario encontrado en la DB! :");
-            return res.status(200).send(userInDB);
-        }
+        console.log("REQ : ");
+        console.log(req.user);
+        console.log(req.auth);
+        console.log((_a = req.auth) === null || _a === void 0 ? void 0 : _a.sub);
+        return res.status(200).send("RECIBIDOO!!");
     }
     catch (error) {
         console.log(`error! ${error.message}`);

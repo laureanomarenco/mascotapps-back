@@ -3,7 +3,7 @@ import db from "../../models/index";
 import { transactionStatus } from "../types/transactionTypes";
 import dotenv from "dotenv";
 import { Op } from "sequelize";
-
+import jwtCheck from "../../config/jwtMiddleware";
 dotenv.config();
 
 const router = Router();
@@ -48,7 +48,7 @@ async function getPostsOfUser(id: any) {
 
 //---------------------- RUTAS: -----------------------------
 
-router.post("/deleteUser", async (req, res) => {
+router.post("/deleteUser", jwtCheck, async (req, res) => {
   console.log(`Entré a /admin/deleteUser`);
   try {
     let idFromReq: string = req.body.id;
@@ -84,7 +84,7 @@ router.post("/deleteUser", async (req, res) => {
   }
 });
 
-router.post("/cleanPostsOfUserId", async (req, res) => {
+router.post("/cleanPostsOfUserId", jwtCheck, async (req, res) => {
   console.log(`Entré a la ruta /admin/clean`);
   try {
     let passwordFromReq = req.body.password;
@@ -120,7 +120,7 @@ router.post("/cleanPostsOfUserId", async (req, res) => {
   }
 });
 
-router.post("/cleanReviewsToUser", async (req, res) => {
+router.post("/cleanReviewsToUser", jwtCheck, async (req, res) => {
   console.log(`En ruta /admin/cleanReviewsToUser`);
   try {
     let passwordFromReq = req.body.password;
@@ -157,7 +157,7 @@ router.post("/cleanReviewsToUser", async (req, res) => {
 });
 
 // DELETE PETS WITH NO UserId
-router.post("/deletePetsWithNoUserId", async (req, res) => {
+router.post("/deletePetsWithNoUserId", jwtCheck, async (req, res) => {
   //como no puedo hacer una búsqueda pasando un parámetro nulo, voy a buscar todas las pets y filtrar las que tienen UserId == false.
   console.log(`En ruta /admin/deletePetsWithNoUserId`);
   try {
@@ -190,7 +190,7 @@ router.post("/deletePetsWithNoUserId", async (req, res) => {
   }
 });
 
-router.post("/deletePet", async (req, res) => {
+router.post("/deletePet", jwtCheck, async (req, res) => {
   console.log(`En ruta /admin/deletePet`);
   try {
     let passwordFromReq = req.body.password;
@@ -198,20 +198,19 @@ router.post("/deletePet", async (req, res) => {
       return res.status(403).send(`La password de administrador no es válida`);
     }
     const { petID } = req.body;
-    const pet = await db.Animal.findOne({ where: { id: petID }})
-    if(pet){
+    const pet = await db.Animal.findOne({ where: { id: petID } });
+    if (pet) {
       await pet.destroy();
-      return res.status(200).send('la publicación fue eliminada')
+      return res.status(200).send("la publicación fue eliminada");
     }
-    return res.status(200).send('la publicación no existe')
+    return res.status(200).send("la publicación no existe");
   } catch (error: any) {
     console.log(`Error en /admin/deletePets ${error.message}`);
   }
 });
 
-
 // ----   RUTAS MULTIPLICADORAS:  -----------
-router.get("/createMultiplier", async (req, res) => {
+router.get("/createMultiplier", jwtCheck, async (req, res) => {
   try {
     const multiplier = await db.Multiplier.findAll();
     if (multiplier.length === 0) {
@@ -225,7 +224,7 @@ router.get("/createMultiplier", async (req, res) => {
   }
 });
 
-router.post("/changeMultiplier", async (req, res) => {
+router.post("/changeMultiplier", jwtCheck, async (req, res) => {
   console.log(`Entré a /admin/changeMultiplier`);
   try {
     let passwordFromReq = req.body.password;
@@ -247,7 +246,7 @@ router.post("/changeMultiplier", async (req, res) => {
 
 // --- RUTAS DEPRECADAS O YA SIN SENTIDO :
 
-router.post("/mutateActiveToActivo", async (req, res) => {
+router.post("/mutateActiveToActivo", jwtCheck, async (req, res) => {
   console.log(`Entré a /admin/mutateActiveToActivo`);
   let password = req.body.password;
 

@@ -17,6 +17,7 @@ const index_1 = __importDefault(require("../../models/index"));
 const transactionTypes_1 = require("../types/transactionTypes");
 const dotenv_1 = __importDefault(require("dotenv"));
 const sequelize_1 = require("sequelize");
+const jwtMiddleware_1 = __importDefault(require("../../config/jwtMiddleware"));
 dotenv_1.default.config();
 const router = (0, express_1.Router)();
 // ----- FUNCIONES AUXILIARES: ------
@@ -59,7 +60,7 @@ function getPostsOfUser(id) {
     });
 }
 //---------------------- RUTAS: -----------------------------
-router.post("/deleteUser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/deleteUser", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a /admin/deleteUser`);
     try {
         let idFromReq = req.body.id;
@@ -90,7 +91,7 @@ router.post("/deleteUser", (req, res) => __awaiter(void 0, void 0, void 0, funct
         return res.status(404).send(error.message);
     }
 }));
-router.post("/cleanPostsOfUserId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/cleanPostsOfUserId", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a la ruta /admin/clean`);
     try {
         let passwordFromReq = req.body.password;
@@ -123,7 +124,7 @@ router.post("/cleanPostsOfUserId", (req, res) => __awaiter(void 0, void 0, void 
         return res.status(404).send(error.message);
     }
 }));
-router.post("/cleanReviewsToUser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/cleanReviewsToUser", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`En ruta /admin/cleanReviewsToUser`);
     try {
         let passwordFromReq = req.body.password;
@@ -157,7 +158,7 @@ router.post("/cleanReviewsToUser", (req, res) => __awaiter(void 0, void 0, void 
     }
 }));
 // DELETE PETS WITH NO UserId
-router.post("/deletePetsWithNoUserId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/deletePetsWithNoUserId", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //como no puedo hacer una búsqueda pasando un parámetro nulo, voy a buscar todas las pets y filtrar las que tienen UserId == false.
     console.log(`En ruta /admin/deletePetsWithNoUserId`);
     try {
@@ -188,7 +189,9 @@ router.post("/deletePetsWithNoUserId", (req, res) => __awaiter(void 0, void 0, v
         console.log(`Error en /admin/deletePetsWithNoUserId. ${error.message}`);
     }
 }));
-router.post("/deletePet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+
+router.post("/deletePet", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+
     console.log(`En ruta /admin/deletePet`);
     try {
         let passwordFromReq = req.body.password;
@@ -199,16 +202,18 @@ router.post("/deletePet", (req, res) => __awaiter(void 0, void 0, void 0, functi
         const pet = yield index_1.default.Animal.findOne({ where: { id: petID } });
         if (pet) {
             yield pet.destroy();
-            return res.status(200).send('la publicación fue eliminada');
+
+            return res.status(200).send("la publicación fue eliminada");
         }
-        return res.status(200).send('la publicación no existe');
+        return res.status(200).send("la publicación no existe");
+
     }
     catch (error) {
         console.log(`Error en /admin/deletePets ${error.message}`);
     }
 }));
 // ----   RUTAS MULTIPLICADORAS:  -----------
-router.get("/createMultiplier", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/createMultiplier", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const multiplier = yield index_1.default.Multiplier.findAll();
         if (multiplier.length === 0) {
@@ -222,7 +227,7 @@ router.get("/createMultiplier", (req, res) => __awaiter(void 0, void 0, void 0, 
         return res.status(404).send(error.message);
     }
 }));
-router.post("/changeMultiplier", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/changeMultiplier", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a /admin/changeMultiplier`);
     try {
         let passwordFromReq = req.body.password;
@@ -242,7 +247,7 @@ router.post("/changeMultiplier", (req, res) => __awaiter(void 0, void 0, void 0,
     }
 }));
 // --- RUTAS DEPRECADAS O YA SIN SENTIDO :
-router.post("/mutateActiveToActivo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/mutateActiveToActivo", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a /admin/mutateActiveToActivo`);
     let password = req.body.password;
     try {

@@ -3,6 +3,7 @@ const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
 
 import { Router } from "express";
+import jwtCheck from "../../config/jwtMiddleware";
 import db from "../../models";
 const Stripe = require("stripe");
 const router = Router();
@@ -88,7 +89,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/balance", async (req, res) => {
+router.get("/balance", jwtCheck, async (req, res) => {
   console.log("ENTRE A LA RUTA BALANCE");
   try {
     let allTheDonations = await getAllDonations();
@@ -100,6 +101,4 @@ router.get("/balance", async (req, res) => {
   }
 });
 
-
 export default router;
-

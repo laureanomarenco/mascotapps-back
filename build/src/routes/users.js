@@ -16,9 +16,24 @@ const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
 const sequelize_1 = require("sequelize");
 const { GMAIL_PASS, GMAIL_USER } = process.env;
+// import { jwtCheck } from "../app";
 const router = (0, express_1.Router)();
 const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
+const { expressjwt: jwt } = require("express-jwt");
+var jwks = require("jwks-rsa");
+const jwtCheck = jwt({
+    secret: jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
+    }),
+    audience: "https://juka-production.up.railway.app/",
+    issuer: "https://dev-nxuk8wmn.us.auth0.com/",
+    algorithms: ["RS256"],
+});
+//!------------
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const allUsers = yield index_1.default.User.findAll();
@@ -77,7 +92,9 @@ function getSomeUserInfo(userId) {
                     foundAPet: userInfo.foundAPet,
                     gotAPetBack: userInfo.gotAPetBack,
                     points: userInfo.points,
+
                     linkToDonate: userInfo.linkToDonate
+
                 };
                 console.log(`retornando someUserInfo: ${someUserInfo}`);
                 return someUserInfo;
@@ -254,7 +271,7 @@ const authCheck = (req, res, next) => {
 };
 // ----- ------ ------- RUTAS :  ------ ------- -------
 //GET ALL USERS FROM DB:  //! Hay que dejarla comentada ( o borrarla) porque no es seguro poder tener toda la data de los users registrados:
-router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("entré al get de Users!");
     try {
         let allTheUsers = yield getAllUsers();
@@ -310,17 +327,15 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
     }
 }));
 // GET(post) ALL PETS OF USER ID:
-router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/getallpetsofuser", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
+
+    console.log(`Entré a la ruta "/users/getallpetsofuser".`);
     // console.log(req.body);
     try {
-        console.log(`user ID = ${(_a = req.body) === null || _a === void 0 ? void 0 : _a.userId}`);
-        let userId = req.body.userId;
-        // console.log(`req.oidc.user.sub = ${req.oidc.user.sub}`);
-        // console.log(`req.oidc.user =`);
-        // console.log(req.oidc.user);
-        // let idFromOIDC = req?.oidc?.user.sub;
+        let userId = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.sub;
+        console.log(`user ID por auth.sub = ${userId}`);
+
         if (!userId) {
             console.log(`Error en /users/getallpetsofuser. El req.body.id es falso/undefined`);
             throw new Error(`Error en /users/getallpetsofuser. El req.oidc.sub es falso/undefined`);
@@ -346,26 +361,25 @@ router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0,
         return res.status(404).send(error.message);
     }
 }));
-router.post("/deletePet", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/deletePet", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b, _c;
     console.log(`En la ruta users/deletePet.`);
     console.log(`petId = ${(_b = req.body) === null || _b === void 0 ? void 0 : _b.petId}`);
     console.log(req.body);
-    console.log(`req.body.id = ${(_c = req.body) === null || _c === void 0 ? void 0 : _c.id}`);
+    console.log(`req.auth.sub = ${(_c = req.auth) === null || _c === void 0 ? void 0 : _c.sub}`);
     try {
         let petId = req.body.petId;
-        let userId = req.body.id;
+        let userId = req.auth.sub;
         //buscar instancia de mascota en DB:
         let petToDeleteInDB = yield index_1.default.Animal.findByPk(petId);
         if (petToDeleteInDB.UserId == userId) {
             //borrar instancia de la DB:
-            // await petToDeleteInDB.destroy();
-            let deletedPet = yield petToDeleteInDB.destroy();
-            console.log(`pet with id ${req.body.id} ...  soft-destroyed`);
+            yield petToDeleteInDB.destroy();
+            console.log(`pet with id ${petId} ...  soft-destroyed`);
             return res.status(200).send({ msg: "Mascota borrada" });
         }
         else {
-            //retornar que no coincide el petToDelete.UserId con el req.user.id
+            //retornar que no coincide el petToDelete.UserId con el req.auth.sub
             return res
                 .status(400)
                 .send(`El ID del cliente no coincide con el UserId de la mascota.`);
@@ -456,12 +470,13 @@ router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(400).send(error);
     }
 }));
-router.post("/getMultipleUserInfo", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/getMultipleUserInfo", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _d, _e;
     console.log(`Entré a la ruta /users/getMultipleUserInfo`);
-    console.log(`req.body.id = ${req.body.id}`);
+    console.log(`req.auth.sub = ${(_d = req.auth) === null || _d === void 0 ? void 0 : _d.sub}`);
     try {
-        if (req.body.id) {
-            let userId = req.body.id;
+        if ((_e = req.auth) === null || _e === void 0 ? void 0 : _e.sub) {
+            let userId = req.auth.sub;
             let someUserInfo = yield getSomeUserInfo(userId); //obj con props
             let userReviewsRecived = yield getAllReviewsRecived(userId); //arreglo de objs
             let userTransactions = yield getAllTransactions(userId); //arreglo de objs
@@ -477,7 +492,7 @@ router.post("/getMultipleUserInfo", (req, res) => __awaiter(void 0, void 0, void
             return res.status(200).send(multipleUserInfo);
         }
         else {
-            throw new Error(`El id '${req.body.id}' es falso.`);
+            throw new Error(`El id '${req.auth.sub}' es falso.`);
         }
     }
     catch (error) {
@@ -530,10 +545,12 @@ router.get("/rankingGaveAdoption", (req, res) => __awaiter(void 0, void 0, void 
         return res.status(400).send(error.message);
     }
 }));
-router.post("/buyProducts", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/buyProducts", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _f;
     console.log(`Estoy en /users/buyProducts.`);
     try {
-        const { userID, name, items, totalPoints, mail, direccion } = req.body;
+        const { name, items, totalPoints, mail, direccion } = req.body;
+        let userID = (_f = req.auth) === null || _f === void 0 ? void 0 : _f.sub;
         const user = yield index_1.default.User.findOne({ where: { id: userID } });
         if (user) {
             console.log(user, totalPoints, items);
@@ -565,17 +582,27 @@ router.post("/buyProducts", (req, res) => __awaiter(void 0, void 0, void 0, func
             });
             return res.status(200).send("compra realizada exitosamente");
         }
-        return res.send("el usuario no existe");
+
+        console.log(`El usuario con id "${userID} no existe"`);
+        return res.status(404).send("el usuario no existe");
+
     }
     catch (error) {
         console.log(`Error en /users/buyProducts. ${error.message}`);
         return res.status(400).send(error.message);
     }
 }));
-router.post("/donatePoints", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+
+router.post("/donatePoints", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _g;
     console.log(`Estoy en /users/donatePoints.`);
     try {
-        const { id, idToDonate, pointsToDonate } = req.body;
+        const id = (_g = req.auth) === null || _g === void 0 ? void 0 : _g.sub;
+        if (!id) {
+            throw new Error(`El req.auth.sub es falso`);
+        }
+        const { idToDonate, pointsToDonate } = req.body;
+
         const user = yield index_1.default.User.findOne({ where: { id: id } });
         const userToDonate = yield index_1.default.User.findOne({ where: { id: idToDonate } });
         if (user && userToDonate && user.points >= pointsToDonate) {
