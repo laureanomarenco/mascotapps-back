@@ -530,7 +530,6 @@ router.post("/subscribe", async (req, res) => {
 
 router.post("/desubscribe", async (req, res) => {
   try {
-    console.log(req.body)
     const { id } = req.body;
     const usuario = await db.User.update(
       { endpoints: null },
@@ -549,6 +548,7 @@ router.post("/notify", async (req, res) => {
       title: name,
       text: "Animal perdido por tu zona,¿lo has visto?",
     };
+    console.log(req.body)
     const string = JSON.stringify(payload);
     const allUsers = await db.User.findAll();
     const cityUsers = await allUsers.filter((e: any) => e.city == city);
