@@ -5,6 +5,9 @@ const { GMAIL_PASS, GMAIL_USER } = process.env;
 
 const route = Router();
 
+// -------- FUNCIONES AUXULIARES : -------------
+
+// -------- RUTAS : ----------------------------------
 route.get("/addVisitor", async (req: any, res) => {
   console.log(`Entré a /visitor`);
   try {
@@ -31,34 +34,33 @@ route.get("/numbervisitors", async (req: any, res: any) => {
   }
 });
 
-route.post('/mailAdmin', async (req, res) => {
+route.post("/mailAdmin", async (req, res) => {
   try {
     const { email, comment } = req.body;
 
-    const nodemailer = require('nodemailer')
-    console.log(GMAIL_PASS, GMAIL_USER)
+    const nodemailer = require("nodemailer");
+    console.log(GMAIL_PASS, GMAIL_USER);
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
         user: GMAIL_USER,
-        pass: GMAIL_PASS
-      }
-    })
+        pass: GMAIL_PASS,
+      },
+    });
 
     const mailOptions = {
-      from: 'service.mascotapp@gmail.com',
-      to: 'service.mascotapp@gmail.com',
-      subject: 'Consulta sobre la página',
-      html: `Llegó la siguiente consulta desde el mail ${email}: <div>${comment}</div>`
-    }
+      from: "service.mascotapp@gmail.com",
+      to: "service.mascotapp@gmail.com",
+      subject: "Consulta sobre la página",
+      html: `Llegó la siguiente consulta desde el mail ${email}: <div>${comment}</div>`,
+    };
 
     transporter.sendMail(mailOptions, function (error: any, info: any) {
-      if (error) console.log(error)
-      else console.log('Email enviado: ' + info.response)
-    })
+      if (error) console.log(error);
+      else console.log("Email enviado: " + info.response);
+    });
   } catch (error) {
     res.status(404).send(error);
   }
-
-})
+});
 export default route;

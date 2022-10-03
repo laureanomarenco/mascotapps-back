@@ -67,7 +67,9 @@ async function mailer(userOffering: any, userDemanding: any, offeringPet: any) {
     else console.log("Email enviado: " + info.response);
   });
 }
-//------  RUTAS: -----------------------------------------------
+
+//------------- RUTAS: ---------------------------------------
+
 router.get("/allTransactions", async (req, res) => {
   console.log(`Entré a la ruta /transactions/allTransactions`);
   try {

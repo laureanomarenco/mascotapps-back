@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { Op } from "sequelize";
-
 import db from "../../models/index";
 import {
   validateNewPet,
@@ -10,21 +9,7 @@ import { Pet, postStatus, Species, updatedPet } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 import webPush from "../../config/web_push";
 import jwtCheck from "../../config/jwtMiddleware";
-import { couldStartTrivia } from "typescript";
 
-// const { expressjwt: jwt } = require("express-jwt");
-// var jwks = require("jwks-rsa");
-// const jwtCheck = jwt({
-//   secret: jwks.expressJwtSecret({
-//     cache: true,
-//     rateLimit: true,
-//     jwksRequestsPerMinute: 5,
-//     jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
-//   }),
-//   audience: "https://juka-production.up.railway.app/",
-//   issuer: "https://dev-nxuk8wmn.us.auth0.com/",
-//   algorithms: ["RS256"],
-// });
 const router = Router();
 
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
@@ -515,6 +500,7 @@ router.get("/successFound", async (req, res) => {
 });
 
 router.post("/subscribe", async (req, res) => {
+  console.log(`Entré a pets/subscribe`);
   try {
     const { subscription, id } = req.body;
     const string = JSON.stringify(subscription);
@@ -522,8 +508,10 @@ router.post("/subscribe", async (req, res) => {
       { endpoints: string },
       { where: { id: id } }
     );
+    console.log(`Retornando mensaje de Subscripción creada correctamente.`);
     return res.status(200).send("Subscripción creada correctamente");
   } catch (error: any) {
+    console.log(`Error en pets/subscribe. ${error.message}`);
     return res.status(400).send(error.message);
   }
 });
