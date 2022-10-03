@@ -56,10 +56,11 @@ router.post("/newComment", (req, res) => __awaiter(void 0, void 0, void 0, funct
         return res.status(404).send(`${error.message}`);
     }
 }));
-router.post("/getComments", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/getComments", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a /comments/getComments`);
     try {
-        let petId = req.body.petId;
+        let petId = req.query.petId;
+        // let petId = req.body.petId;
         console.log(`req.body.petId = ${petId}`);
         let allTheComments = yield index_1.default.Comment.findAll({
             where: {

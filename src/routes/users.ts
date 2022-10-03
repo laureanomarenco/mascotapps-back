@@ -356,14 +356,17 @@ router.get("/getallpetsofuser", jwtCheck, async (req: any, res) => {
   }
 });
 
-router.post("/deletePet", jwtCheck, async (req: any, res) => {
+router.delete("/deletePet", jwtCheck, async (req: any, res) => {
   console.log(`En la ruta users/deletePet.`);
-  console.log(`petId = ${req.body?.petId}`);
-  console.log(req.body);
+  console.log(`petId = ${req.query?.petId}`);
+  // console.log(req.body);
   console.log(`req.auth.sub = ${req.auth?.sub}`);
   try {
-    let petId = req.body.petId;
-    let userId = req.auth.sub;
+    let petId = req.query.petId;
+    let userId = req.auth?.sub;
+    if (!petId || !userId) {
+      throw new Error(`El petId y/o userId son falsos.`);
+    }
     //buscar instancia de mascota en DB:
     let petToDeleteInDB = await db.Animal.findByPk(petId);
     if (petToDeleteInDB.UserId == userId) {
@@ -510,14 +513,15 @@ router.get("/ranking", async (req, res) => {
   }
 });
 
-router.post("/points", async (req, res) => {
+router.get("/points", jwtCheck, async (req: any, res) => {
   console.log(`Estoy en /users/points.`);
   try {
-    const { id } = req.body;
+    const id = req.auth?.sub;
     const user = await db.User.findOne({ where: { id: id } });
     if (user) {
       return res.status(200).send({ points: user.points });
     }
+    console.log(`No se encontró al usuario por id`);
     return res.status(200).send("no existe el usuario");
   } catch (error: any) {
     console.log(`Error en /users/points ${error.message}`);
