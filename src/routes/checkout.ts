@@ -28,11 +28,13 @@ router.post("/", async (req, res) => {
   try {
     const { id, amount, email } = req.body;
 
-    const user = await db.User.findOne({ where: { email: email } });
+    let amountToDonate = amount / 100;
+
+    const user: any = await db.User.findOne({ where: { email: email } });
 
     const multiplierPoints = await db.Multiplier.findByPk(1);
     user.points = Math.ceil(
-      user.points + 10 * (amount / 100) * multiplierPoints.number
+      user.points + 10 * amountToDonate * multiplierPoints.number
     );
     await user.save();
     //DONACIÓN
@@ -46,7 +48,7 @@ router.post("/", async (req, res) => {
     console.log("payment: " + payment);
     const donation = await db.Donation.create({
       id,
-      amount,
+      amount: amountToDonate,
       email,
     });
     // MAILER
@@ -76,7 +78,9 @@ router.post("/", async (req, res) => {
     });
     //CHECK USER
     if (user) {
-      await donation.setUser(user.id);
+      await donation.setUser(user);
+      console.log(`Donación asociada al user con id "${user.id}".`);
+
       await db.User.update({ isDonator: "true" }, { where: { id: user.id } });
       return res.send({ msg: "Succesfull payment from", user });
     } else {
