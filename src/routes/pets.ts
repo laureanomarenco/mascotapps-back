@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { Op } from "sequelize";
-
 import db from "../../models/index";
 import {
   validateNewPet,
@@ -10,8 +9,6 @@ import { Pet, postStatus, Species, updatedPet } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 import webPush from "../../config/web_push";
 import jwtCheck from "../../config/jwtMiddleware";
-import { couldStartTrivia } from "typescript";
-
 
 const router = Router();
 
@@ -503,6 +500,7 @@ router.get("/successFound", async (req, res) => {
 });
 
 router.post("/subscribe", async (req, res) => {
+  console.log(`Entré a pets/subscribe`);
   try {
     const { subscription, id } = req.body;
     const string = JSON.stringify(subscription);
@@ -510,8 +508,10 @@ router.post("/subscribe", async (req, res) => {
       { endpoints: string },
       { where: { id: id } }
     );
+    console.log(`Retornando mensaje de Subscripción creada correctamente.`);
     return res.status(200).send("Subscripción creada correctamente");
   } catch (error: any) {
+    console.log(`Error en pets/subscribe. ${error.message}`);
     return res.status(400).send(error.message);
   }
 });
