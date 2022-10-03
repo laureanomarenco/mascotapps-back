@@ -534,7 +534,7 @@ router.post("/desubscribe", async (req, res) => {
       { endpoints: undefined },
       { where: { id: id } }
     );
-    res.status(200).send(`subscripcion borrada exitosamente ${usuario}`);
+    res.status(200).send(`Subscripción borrada exitosamente ${usuario}`);
   } catch (error: any) {
     return res.status(400).send(error.message);
   }
