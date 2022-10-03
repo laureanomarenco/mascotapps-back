@@ -18,6 +18,7 @@ const index_1 = __importDefault(require("../../models/index"));
 const TransactionValidators_1 = require("../auxiliary/TransactionValidators");
 const transactionTypes_1 = require("../types/transactionTypes");
 const petTypes_1 = require("../types/petTypes");
+const jwtMiddleware_1 = __importDefault(require("../../config/jwtMiddleware"));
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 const router = (0, express_1.Router)();
 //-----  FUNCIONES AUXILIARES: -------------------------------
@@ -121,7 +122,9 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
             throw new Error(`el pet, usserOffering o userDemanding es falso.`);
         }
         if (pet.UserId === id) {
-            const multiplierPoints = yield index_1.default.Multiplier.findOne({ where: { id: 1 } });
+            const multiplierPoints = yield index_1.default.Multiplier.findOne({
+                where: { id: 1 },
+            });
             if (pet.status === petTypes_1.Status.enAdopcion) {
                 pet.withNewOwner = "true";
                 pet.postStatus = petTypes_1.postStatus.Success;
@@ -260,10 +263,12 @@ router.post("/getUserTransactions", (req, res) => __awaiter(void 0, void 0, void
         return res.status(404).send(error.message);
     }
 }));
-router.post("/newTransaction", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/newTransaction", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     console.log(`Entré a la ruta /Transactions/newTransaction`);
     try {
-        const { id } = req.body;
+        const id = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.sub;
+        // const { id } = req.body;
         const { petId } = req.query;
         if (!id || !petId) {
             console.log(`req.body.id  o  req.query.petId  es falso/undefined.`);
@@ -315,11 +320,13 @@ router.post("/newTransaction", (req, res) => __awaiter(void 0, void 0, void 0, f
         return res.status(404).send(error.message);
     }
 }));
-router.put("/transactionCheck", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/transactionCheck", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
     console.log("en la ruta /Transactions/transactionCheck");
     try {
         const { transactionId } = req.query;
-        const { id } = req.body;
+        const id = (_b = req.auth) === null || _b === void 0 ? void 0 : _b.sub;
+        // const { id } = req.body;
         const transaction = yield index_1.default.Transaction.findOne({
             where: { id: transactionId },
         });

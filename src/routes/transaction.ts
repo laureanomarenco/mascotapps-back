@@ -4,6 +4,7 @@ import db from "../../models/index";
 import { validateNewTransaction } from "../auxiliary/TransactionValidators";
 import { ITransaction, transactionStatus } from "../types/transactionTypes";
 import { postStatus, Status } from "../types/petTypes";
+import jwtCheck from "../../config/jwtMiddleware";
 
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 
@@ -115,13 +116,15 @@ router.post("/postSuccess", async (req, res) => {
     }
 
     if (pet.UserId === id) {
-      const multiplierPoints = await db.Multiplier.findOne({ where: { id: 1 }});
+      const multiplierPoints = await db.Multiplier.findOne({
+        where: { id: 1 },
+      });
       if (pet.status === Status.enAdopcion) {
         pet.withNewOwner = "true";
         pet.postStatus = postStatus.Success;
         await pet.save();
 
-        console.log(multiplierPoints)
+        console.log(multiplierPoints);
         userDemanding.isAdopter = userDemanding.isAdopter + 1;
         userDemanding.points = Math.ceil(
           userDemanding.points + 100 * multiplierPoints.number
@@ -139,7 +142,6 @@ router.post("/postSuccess", async (req, res) => {
         pet.backWithItsOwner = "true";
         pet.postStatus = postStatus.Success;
         await pet.save();
-
 
         if (pet.status === "encontrado") {
           userDemanding.gotAPetBack = userDemanding.gotAPetBack + 1;
@@ -290,10 +292,11 @@ router.post("/getUserTransactions", async (req, res) => {
   }
 });
 
-router.post("/newTransaction", async (req, res) => {
+router.post("/newTransaction", jwtCheck, async (req: any, res) => {
   console.log(`Entré a la ruta /Transactions/newTransaction`);
   try {
-    const { id } = req.body;
+    const id = req.auth?.sub;
+    // const { id } = req.body;
     const { petId } = req.query;
     if (!id || !petId) {
       console.log(`req.body.id  o  req.query.petId  es falso/undefined.`);
@@ -360,11 +363,12 @@ router.post("/newTransaction", async (req, res) => {
   }
 });
 
-router.put("/transactionCheck", async (req, res) => {
+router.put("/transactionCheck", jwtCheck, async (req: any, res) => {
   console.log("en la ruta /Transactions/transactionCheck");
   try {
     const { transactionId } = req.query;
-    const { id } = req.body;
+    const id = req.auth?.sub;
+    // const { id } = req.body;
 
     const transaction = await db.Transaction.findOne({
       where: { id: transactionId },

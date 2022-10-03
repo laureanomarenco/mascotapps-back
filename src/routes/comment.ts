@@ -53,10 +53,11 @@ router.post("/newComment", async (req, res) => {
   }
 });
 
-router.post("/getComments", async (req, res) => {
+router.get("/getComments", async (req, res) => {
   console.log(`Entré a /comments/getComments`);
   try {
-    let petId = req.body.petId;
+    let petId = req.query.petId;
+    // let petId = req.body.petId;
     console.log(`req.body.petId = ${petId}`);
     let allTheComments: ICommentResponse[] = await db.Comment.findAll({
       where: {
