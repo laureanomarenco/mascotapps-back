@@ -189,7 +189,9 @@ router.post("/deletePetsWithNoUserId", jwtMiddleware_1.default, (req, res) => __
         console.log(`Error en /admin/deletePetsWithNoUserId. ${error.message}`);
     }
 }));
+
 router.post("/deletePet", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+
     console.log(`En ruta /admin/deletePet`);
     try {
         let passwordFromReq = req.body.password;
@@ -200,9 +202,11 @@ router.post("/deletePet", jwtMiddleware_1.default, (req, res) => __awaiter(void 
         const pet = yield index_1.default.Animal.findOne({ where: { id: petID } });
         if (pet) {
             yield pet.destroy();
+
             return res.status(200).send("la publicación fue eliminada");
         }
         return res.status(200).send("la publicación no existe");
+
     }
     catch (error) {
         console.log(`Error en /admin/deletePets ${error.message}`);

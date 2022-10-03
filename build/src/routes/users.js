@@ -92,6 +92,9 @@ function getSomeUserInfo(userId) {
                     foundAPet: userInfo.foundAPet,
                     gotAPetBack: userInfo.gotAPetBack,
                     points: userInfo.points,
+
+                    linkToDonate: userInfo.linkToDonate
+
                 };
                 console.log(`retornando someUserInfo: ${someUserInfo}`);
                 return someUserInfo;
@@ -326,11 +329,13 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
 // GET(post) ALL PETS OF USER ID:
 router.get("/getallpetsofuser", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
+
     console.log(`Entré a la ruta "/users/getallpetsofuser".`);
     // console.log(req.body);
     try {
         let userId = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.sub;
         console.log(`user ID por auth.sub = ${userId}`);
+
         if (!userId) {
             console.log(`Error en /users/getallpetsofuser. El req.body.id es falso/undefined`);
             throw new Error(`Error en /users/getallpetsofuser. El req.oidc.sub es falso/undefined`);
@@ -387,7 +392,7 @@ router.post("/deletePet", jwtCheck, (req, res) => __awaiter(void 0, void 0, void
 }));
 router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré en /user/newUser`);
-    const { email, name, city, contact, image, id } = req.body;
+    const { email, name, city, contact, image, id, linkToDonate } = req.body;
     try {
         let emailExisteEnLaDB = yield emailExistsInDB(email);
         if (emailExisteEnLaDB) {
@@ -402,6 +407,7 @@ router.post("/newuser", (req, res) => __awaiter(void 0, void 0, void 0, function
                 city,
                 contact,
                 image,
+                linkToDonate,
             },
         });
         if (!created) {
@@ -445,13 +451,14 @@ router.put("/update", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     console.log(`Me llegó por body: `);
     console.log(req.body);
     try {
-        const { image, contact, city, email, name, id } = req.body;
+        const { image, contact, city, email, name, id, linkToDonate } = req.body;
         const newProfile = yield index_1.default.User.update({
             image: image,
             contact: contact,
             city: city,
             email: email,
             name: name,
+            linkToDonate: linkToDonate,
         }, {
             where: {
                 id: id,
@@ -575,14 +582,17 @@ router.post("/buyProducts", jwtCheck, (req, res) => __awaiter(void 0, void 0, vo
             });
             return res.status(200).send("compra realizada exitosamente");
         }
+
         console.log(`El usuario con id "${userID} no existe"`);
         return res.status(404).send("el usuario no existe");
+
     }
     catch (error) {
         console.log(`Error en /users/buyProducts. ${error.message}`);
         return res.status(400).send(error.message);
     }
 }));
+
 router.post("/donatePoints", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _g;
     console.log(`Estoy en /users/donatePoints.`);
@@ -592,6 +602,7 @@ router.post("/donatePoints", jwtCheck, (req, res) => __awaiter(void 0, void 0, v
             throw new Error(`El req.auth.sub es falso`);
         }
         const { idToDonate, pointsToDonate } = req.body;
+
         const user = yield index_1.default.User.findOne({ where: { id: id } });
         const userToDonate = yield index_1.default.User.findOne({ where: { id: idToDonate } });
         if (user && userToDonate && user.points >= pointsToDonate) {
