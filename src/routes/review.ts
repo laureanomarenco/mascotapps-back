@@ -63,7 +63,8 @@ router.post("/newReview", jwtCheck, async (req: any, res) => {
       if (reviewer_id === transaction.user_offering_id) {
         if (transaction.user_offering_check === "finalizado") {
           let newReview = await db.Review.create(validatedReview);
-          await newReview.setUser(reviewed_id);
+          let reviewedUser = await db.User.findByPk(reviewed_id);
+          await newReview.setUser(reviewedUser);
           console.log(newReview);
           console.log(`Review creada y asociada al user ${reviewed_id}`);
 
@@ -75,7 +76,8 @@ router.post("/newReview", jwtCheck, async (req: any, res) => {
       if (reviewer_id === transaction.user_demanding_id) {
         if (transaction.user_demanding_check === "finalizado") {
           let newReview = await db.Review.create(validatedReview);
-          await newReview.setUser(reviewed_id);
+          let reviewedUser = await db.User.findByPk(reviewed_id);
+          await newReview.setUser(reviewedUser);
           console.log(`Review creada y asociada al user ${reviewed_id}`);
           transaction.user_demanding_check = "calificado";
           await transaction.save();
