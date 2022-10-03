@@ -87,7 +87,7 @@ async function getSomeUserInfo(userId: any) {
         foundAPet: userInfo.foundAPet,
         gotAPetBack: userInfo.gotAPetBack,
         points: userInfo.points,
-        linkToDonate: userInfo.linkToDonate
+        linkToDonate: userInfo.linkToDonate,
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
@@ -387,16 +387,23 @@ router.delete("/deletePet", jwtCheck, async (req: any, res) => {
   }
 });
 
-router.post("/newuser", async (req, res) => {
+router.post("/newuser", async (req: any, res) => {
   console.log(`Entré en /user/newUser`);
-  const { email, name, city, contact, image, id, linkToDonate } = req.body;
   try {
+    const id = req.auth?.sub;
+    if (!id) {
+      throw new Error(`El id por token "${id}" es falso`);
+    }
+
+    const { email, name, city, contact, image, linkToDonate } = req.body;
+
     let emailExisteEnLaDB = await emailExistsInDB(email);
     if (emailExisteEnLaDB) {
       throw new Error(
         `El email ${email} ya está registrado. Por favor, use otro email para el registro.`
       );
     }
+
     console.log("new user..", name);
     let [newUser, created] = await db.User.findOrCreate({
       where: {
@@ -421,34 +428,33 @@ router.post("/newuser", async (req, res) => {
   }
 });
 
-router.post("/exists", async (req, res) => {
-  const { id } = req.body;
+router.get("/exists", async (req: any, res) => {
+  console.log(`Entré al GET users/exists`);
+
   try {
+    const id = req.auth?.sub;
     console.log(`Buscando si existe el usuario con id ${id}`);
-    let user = await db.User.findOne({
-      where: {
-        id: id,
-      },
-    });
-    if (user === null) {
+    let user = await db.User.findByPk(id);
+    if (!user) {
       console.log(`Usuario con id: ${id} no encontrado`);
-      res.send({ msg: false });
+      return res.send({ msg: false });
     } else {
       console.log(`Usuario con id: ${id} encontrado.`);
-      res.send({ msg: true });
+      return res.send({ msg: true });
     }
-  } catch (error) {
-    console.log(error);
-    res.status(404).send(error);
+  } catch (error: any) {
+    console.log(`Error en users/exists. ${error.message}`);
+    return res.status(404).send(error);
   }
 });
 
-router.put("/update", async (req, res) => {
+router.put("/update", jwtCheck, async (req: any, res) => {
   console.log(`Entré a users/update`);
   console.log(`Me llegó por body: `);
   console.log(req.body);
   try {
-    const { image, contact, city, email, name, id, linkToDonate } = req.body;
+    const id = req.auth?.sub;
+    const { image, contact, city, email, name, linkToDonate } = req.body;
     const newProfile = await db.User.update(
       {
         image: image,

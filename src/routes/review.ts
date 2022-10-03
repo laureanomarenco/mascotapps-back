@@ -32,13 +32,17 @@ router.get("/allReviews", async (req, res) => {
   }
 });
 
-router.post("/newReview", jwtCheck, async (req, res) => {
+router.post("/newReview", jwtCheck, async (req: any, res) => {
   console.log(`Entré a la ruta POST /reviews/newReview`);
   try {
     console.log(`req.body = ${req.body}`);
-
+    const idOfToken = req.auth?.sub;
     let { reviewed_id, reviewer_id, transaction_id } = req.body;
-
+    if (idOfToken !== reviewer_id) {
+      throw new Error(
+        `El id del reviewer es distinto al id del reviewer_id del body`
+      );
+    }
     const transaction = await db.Transaction.findOne({
       where: { id: transaction_id },
     });
