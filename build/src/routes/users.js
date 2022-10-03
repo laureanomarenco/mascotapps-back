@@ -16,9 +16,24 @@ const express_1 = require("express");
 const index_1 = __importDefault(require("../../models/index"));
 const sequelize_1 = require("sequelize");
 const { GMAIL_PASS, GMAIL_USER } = process.env;
+// import { jwtCheck } from "../app";
 const router = (0, express_1.Router)();
 const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
+const { expressjwt: jwt } = require("express-jwt");
+var jwks = require("jwks-rsa");
+const jwtCheck = jwt({
+    secret: jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
+    }),
+    audience: "https://juka-production.up.railway.app/",
+    issuer: "https://dev-nxuk8wmn.us.auth0.com/",
+    algorithms: ["RS256"],
+});
+//!------------
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const allUsers = yield index_1.default.User.findAll();
@@ -76,7 +91,7 @@ function getSomeUserInfo(userId) {
                     gaveUpForAdoption: userInfo.gaveUpForAdoption,
                     foundAPet: userInfo.foundAPet,
                     gotAPetBack: userInfo.gotAPetBack,
-                    points: userInfo.points
+                    points: userInfo.points,
                 };
                 console.log(`retornando someUserInfo: ${someUserInfo}`);
                 return someUserInfo;
@@ -309,20 +324,21 @@ router.get("/contactinfo/:petid", (req, res) => __awaiter(void 0, void 0, void 0
     }
 }));
 // GET(post) ALL PETS OF USER ID:
-router.post("/getallpetsofuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/getallpetsofuser", jwtCheck, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
-    console.log(req.body);
-    console.log(`user ID = ${(_a = req.body) === null || _a === void 0 ? void 0 : _a.id}`);
+    console.log(`Entré a la ruta "/users/getallpetsofuser".`);
+    // console.log(req.body);
     try {
-        if (!req.body.id) {
+        let userId = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.sub;
+        console.log(`user ID por auth.sub = ${userId}`);
+        if (!userId) {
             console.log(`Error en /users/getallpetsofuser. El req.body.id es falso/undefined`);
-            throw new Error(`Error en /users/getallpetsofuser. El req.body.id es falso/undefined`);
+            throw new Error(`Error en /users/getallpetsofuser. El req.oidc.sub es falso/undefined`);
         }
-        let id = req.body.id;
+        // let id = req.body.id;
         let petsPostedByUser = yield index_1.default.Animal.findAll({
             where: {
-                UserId: id,
+                UserId: userId,
             },
         });
         if ((petsPostedByUser === null || petsPostedByUser === void 0 ? void 0 : petsPostedByUser.length) > 0) {
@@ -481,7 +497,9 @@ router.get("/ranking", (req, res) => __awaiter(void 0, void 0, void 0, function*
     console.log(`Estoy en /users/ranking.`);
     try {
         let allTheUsers = yield getAllUsers();
-        const ranking = allTheUsers.sort(function (a, b) { return b.points - a.points; });
+        const ranking = allTheUsers.sort(function (a, b) {
+            return b.points - a.points;
+        });
         const topTen = ranking.slice(0, 9);
         res.status(200).send(topTen);
     }
@@ -498,7 +516,7 @@ router.post("/points", (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (user) {
             return res.status(200).send({ points: user.points });
         }
-        return res.status(200).send('no existe el usuario');
+        return res.status(200).send("no existe el usuario");
     }
     catch (error) {
         console.log(`Error en /users/points ${error.message}`);
@@ -509,7 +527,9 @@ router.get("/rankingGaveAdoption", (req, res) => __awaiter(void 0, void 0, void 
     console.log(`Estoy en /users/rankingGaveAdoption.`);
     try {
         let allTheUsers = yield getAllUsers();
-        const ranking = allTheUsers.sort(function (a, b) { return b.gaveUpForAdoption - a.gaveUpForAdoption; });
+        const ranking = allTheUsers.sort(function (a, b) {
+            return b.gaveUpForAdoption - a.gaveUpForAdoption;
+        });
         const topTen = ranking.slice(0, 9);
         res.status(200).send(topTen);
     }
@@ -541,7 +561,9 @@ router.post("/buyProducts", (req, res) => __awaiter(void 0, void 0, void 0, func
                 from: "service.mascotapp@gmail.com",
                 to: mail,
                 subject: "Tu compra está siendo preparada",
-                html: `<div>${msgMail}</div><div>Productos: ${items.map((i) => { return i.title; })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
+                html: `<div>${msgMail}</div><div>Productos: ${items.map((i) => {
+                    return i.title;
+                })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
             };
             transporter.sendMail(mailOptions, function (error, info) {
                 if (error)
@@ -549,12 +571,34 @@ router.post("/buyProducts", (req, res) => __awaiter(void 0, void 0, void 0, func
                 else
                     console.log("Email enviado: " + info.response);
             });
-            return res.status(200).send('compra realizada exitosamente');
+            return res.status(200).send("compra realizada exitosamente");
         }
-        return res.send('el usuario no existe');
+        return res.send("el usuario no existe");
     }
     catch (error) {
         console.log(`Error en /users/buyProducts. ${error.message}`);
+        return res.status(400).send(error.message);
+    }
+}));
+router.post("/donatePoints", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Estoy en /users/donatePoints.`);
+    try {
+        const { id, idToDonate, pointsToDonate } = req.body;
+        const user = yield index_1.default.User.findOne({ where: { id: id } });
+        const userToDonate = yield index_1.default.User.findOne({ where: { id: idToDonate } });
+        if (user && userToDonate && user.points >= pointsToDonate) {
+            user.points = user.points - parseInt(pointsToDonate);
+            yield user.save();
+            userToDonate.points = userToDonate.points + parseInt(pointsToDonate);
+            yield userToDonate.save();
+            console.log("se donó");
+            return res.status(200).send("puntos donados correctamente");
+        }
+        console.log("no se donó algo falló");
+        return res.status(200).send("algo salió mal");
+    }
+    catch (error) {
+        console.log(`Error en /users/donatePoints. ${error.message}`);
         return res.status(400).send(error.message);
     }
 }));
