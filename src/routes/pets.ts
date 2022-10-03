@@ -10,6 +10,7 @@ import { Pet, postStatus, Species, updatedPet } from "../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 import webPush from "../../config/web_push";
 import jwtCheck from "../../config/jwtMiddleware";
+import { couldStartTrivia } from "typescript";
 
 // const { expressjwt: jwt } = require("express-jwt");
 // var jwks = require("jwks-rsa");
@@ -531,7 +532,7 @@ router.post("/desubscribe", async (req, res) => {
   try {
     const { id } = req.body;
     const usuario = await db.User.update(
-      { endpoints: undefined },
+      { endpoints: null },
       { where: { id: id } }
     );
     res.status(200).send(`Subscripción borrada exitosamente ${usuario}`);
