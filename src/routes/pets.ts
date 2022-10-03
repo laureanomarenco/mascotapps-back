@@ -549,7 +549,6 @@ router.post("/desubscribe", async (req, res) => {
 router.post("/notify", async (req, res) => {
   try {
     const { name, city } = req.body;
-    console.log("entre a notify", req.body);
     const payload = {
       title: name,
       text: "Está perdido por tu zona,¿lo has visto?",
@@ -567,8 +566,6 @@ router.post("/notify", async (req, res) => {
     const endpointsParsed = await endpointsPurgados.map((e: any) =>
       JSON.parse(e)
     );
-    console.log("soy array de endpoint", endpointsArray),
-      console.log("soy endpoint purificado", endpointsPurgados);
 
     endpointsParsed.map((s: any) => webPush.sendNotification(s, string));
     res.status(200).json();
