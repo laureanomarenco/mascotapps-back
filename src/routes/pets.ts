@@ -513,17 +513,18 @@ router.get("/successFound", async (req, res) => {
   }
 });
 
-let identificator: any = [];
-let pushSubscription: any = [];
+
 router.post("/subscribe", async (req, res) => {
   try {
-    const { subscription } = req.body;
-    identificator = [...identificator, req.body];
+    const { subscription, id } = req.body;
+
     console.log("entre a subscribe");
-    pushSubscription = await [...pushSubscription, subscription];
-    console.log(pushSubscription);
+    const string = JSON.stringify(subscription)
+    const update = await db.User.update({endpoints: string}, {where:{id:id}})
+    console.log(`soy lista de endpoints update ${update}`)
     return res.status(200).send("suscripción creada correctamente");
-  } catch (error: any) {
+  } 
+  catch (error: any) {
     console.log(`Error en /pets/subscribe. ${error.message}`);
     return res.status(400).send(error.message);
   }
@@ -532,15 +533,10 @@ router.post("/subscribe", async (req, res) => {
 router.post("/desubscribe", async (req, res) => {
   try {
     const { id } = req.body;
-    const usuario = await identificator.find((e: any) => e.id == id);
-    console.log("sot usuario", usuario);
-    const endpoint = usuario.subscription.endpoint;
-    console.log("soy endpoint", endpoint);
-    pushSubscription = await pushSubscription.filter(
-      (e: any) => e.endpoint !== endpoint
-    );
-    console.log(pushSubscription);
-    return res.status(200).send("endpoint borrado");
+    const usuario = await db.User.update({endpoints: undefined},{where:{id:id}})
+    console.log(`estoy en desubcribe ${usuario}`)
+    res.status(200).send(`subscripcion borrada exitosamente ${usuario}`)
+
   } catch (error: any) {
     console.log(`Error en pets/desubscribe. ${error.message}`);
     return res.status(400).send(error.message);
@@ -548,23 +544,29 @@ router.post("/desubscribe", async (req, res) => {
 });
 
 router.post("/notify", async (req, res) => {
-  if (pushSubscription.length == 0) {
-    res.send("no hay nadie subscripto a las notificaciones");
-  } else {
     try {
-      const { name } = req.body;
+      const { name, city} = req.body;
       console.log("entre a notify", req.body);
       const payload = {
         title: name,
         text: "Está perdido por tu zona,¿lo has visto?",
       };
       const string = JSON.stringify(payload);
-      pushSubscription.map((s: any) => webPush.sendNotification(s, string));
 
+      const allUsers = await db.User.findAll()
+
+      const cityUsers = await allUsers.filter((e:any) => e.city == city)
+
+      const endpointsArray = await cityUsers.map((e:any) => e.endpoints)
+      const endpointsPurgados = await endpointsArray.filter((e:any) => e !== null)
+      const endpointsParsed = await endpointsPurgados.map((e:any) => JSON.parse(e))
+      console.log("soy array de endpoint",endpointsArray),
+      console.log("soy endpoint purificado", endpointsPurgados)
+
+      endpointsParsed.map((s:any)=> webPush.sendNotification(s,string))
       res.status(200).json();
     } catch (error) {
       console.log(error);
-    }
   }
 });
 
