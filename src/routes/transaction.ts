@@ -173,6 +173,11 @@ router.post("/postSuccess", jwtCheck, async (req: any, res) => {
 
         console.log("se acutalizo backWithItsOwner y postStatus de la mascota");
       }
+      console.log(`En ELSE Z de no-adopción`);
+
+      console.log(`user_demanding_id: ${id_demanding}`);
+      console.log(`user_offering_id: ${id}`);
+      console.log(`pet_id: ${petId}`);
 
       const transaction = await db.Transaction.findOne({
         where: {
@@ -183,6 +188,9 @@ router.post("/postSuccess", jwtCheck, async (req: any, res) => {
           ],
         },
       });
+      console.log("Transaction encontrada: ");
+      console.log(transaction);
+
       transaction.status = transactionStatus.Success;
       if (transaction.user_demanding_check !== "calificado") {
         transaction.user_demanding_check = "finalizado";
