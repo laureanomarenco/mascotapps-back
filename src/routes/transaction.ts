@@ -92,7 +92,7 @@ router.get("/transactionsCompleted", async (req, res) => {
   }
 });
 
-router.post("/postSuccess", async (req: any, res) => {
+router.post("/postSuccess", jwtCheck, async (req: any, res) => {
   console.log(`Entré a la ruta /transactions/postsuccess`);
   try {
     const id = req.auth?.sub;
