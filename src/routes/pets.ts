@@ -521,7 +521,7 @@ router.post("/subscribe", async (req, res) => {
       { endpoints: string },
       { where: { id: id } }
     );
-    return res.status(200).send("suscripción creada correctamente");
+    return res.status(200).send("Subscripción creada correctamente");
   } catch (error: any) {
     return res.status(400).send(error.message);
   }
@@ -557,7 +557,6 @@ router.post("/notify", async (req, res) => {
     const endpointsParsed = await endpointsPurgados.map((e: any) =>
       JSON.parse(e)
     );
-
     endpointsParsed.map((s: any) => webPush.sendNotification(s, string));
     res.status(200).json();
   } catch (error) {
