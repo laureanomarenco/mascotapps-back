@@ -1,14 +1,14 @@
 import { Router } from "express";
-import db from "../../models/index";
-import { transactionStatus } from "../types/transactionTypes";
 import dotenv from "dotenv";
 import { Op } from "sequelize";
+import db from "../../models/index";
+import { transactionStatus } from "../types/transactionTypes";
 import jwtCheck from "../../config/jwtMiddleware";
 dotenv.config();
 
 const router = Router();
 
-// ----- FUNCIONES AUXILIARES: ------
+// -------- FUNCIONES AUXILIARES : ---------
 
 // GET ALL REVIEWS TO USER by id
 async function getAllReviewsToUser(id: any) {
@@ -158,7 +158,6 @@ router.post("/cleanReviewsToUser", jwtCheck, async (req, res) => {
 
 // DELETE PETS WITH NO UserId
 router.post("/deletePetsWithNoUserId", jwtCheck, async (req, res) => {
-  //como no puedo hacer una búsqueda pasando un parámetro nulo, voy a buscar todas las pets y filtrar las que tienen UserId == false.
   console.log(`En ruta /admin/deletePetsWithNoUserId`);
   try {
     // CHEQUEAR SI EL REQ.AUTH.SUB EXISTE EN LA DB
@@ -246,7 +245,7 @@ router.post("/changeMultiplier", jwtCheck, async (req, res) => {
   }
 });
 
-// --- RUTAS DEPRECADAS O YA SIN SENTIDO :
+// ------ RUTAS DEPRECADAS O YA SIN SENTIDO : ------
 
 router.post("/mutateActiveToActivo", jwtCheck, async (req, res) => {
   console.log(`Entré a /admin/mutateActiveToActivo`);

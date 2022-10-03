@@ -1,5 +1,4 @@
 import { Router } from "express";
-import jwtCheck from "../../config/jwtMiddleware";
 import db from "../../models/index";
 import { validateNewComment } from "../auxiliary/CommentValidators";
 import { IComment, ICommentResponse } from "../types/commentTypes";
