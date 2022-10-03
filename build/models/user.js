@@ -53,6 +53,39 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
+        isAdopter: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false,
+        },
+        gaveUpForAdoption: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false,
+        },
+        foundAPet: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false,
+        },
+        gotAPetBack: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false,
+        },
+        points: {
+            type: DataTypes.FLOAT,
+            defaultValue: 0,
+            allowNull: false,
+        },
+        endpoints: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        linkToDonate: {
+            type: DataTypes.STRING(2000),
+            allowNull: true,
+        },
     }, {
         sequelize,
         modelName: "User",

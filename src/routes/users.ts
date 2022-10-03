@@ -8,10 +8,27 @@ import {
   UserAttributes,
 } from "../types/userTypes";
 import { IReview } from "../types/reviewTypes";
-
+import { requiresAuth } from "express-openid-connect";
+const { GMAIL_PASS, GMAIL_USER } = process.env;
+// import { jwtCheck } from "../app";
 const router = Router();
-
+const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
+const { expressjwt: jwt } = require("express-jwt");
+var jwks = require("jwks-rsa");
+const jwtCheck = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
+  }),
+  audience: "https://juka-production.up.railway.app/",
+  issuer: "https://dev-nxuk8wmn.us.auth0.com/",
+  algorithms: ["RS256"],
+});
+
+//!------------
 
 const getAllUsers = async () => {
   try {
@@ -65,6 +82,12 @@ async function getSomeUserInfo(userId: any) {
         image: userInfo.image,
         contact: userInfo.contact,
         isDonator: userInfo.isDonator,
+        isAdopter: userInfo.isAdopter,
+        gaveUpForAdoption: userInfo.gaveUpForAdoption,
+        foundAPet: userInfo.foundAPet,
+        gotAPetBack: userInfo.gotAPetBack,
+        points: userInfo.points,
+        linkToDonate: userInfo.linkToDonate
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
@@ -139,6 +162,33 @@ async function getParsedReviewsToOwner(id: string) {
   }
 }
 
+function parseReviewerName(reviewerName: any) {
+  console.log(`Parseando reviewer name`);
+  try {
+    if (!reviewerName) {
+      return "Anónimo";
+    } else {
+      return reviewerName;
+    }
+  } catch (error: any) {
+    console.log(`Error en el parseReviewerName. ${error.message}`);
+    return error.message;
+  }
+}
+
+function parseReviewerImage(reviewerImage: any) {
+  try {
+    if (!reviewerImage) {
+      return "https://www.utas.edu.au/__data/assets/image/0013/210811/varieties/profile_image.png";
+    } else {
+      return reviewerImage;
+    }
+  } catch (error: any) {
+    console.log(`Error en la function parseReviewerImage. ${error.message}`);
+    return error.message;
+  }
+}
+
 async function parseReviewsToOwner(arrayOfReviews: any) {
   console.log(`Parseando las reviews...`);
   // console.log(arrayOfReviews);
@@ -159,8 +209,8 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
           createdAt: review.dataValues.createdAt,
           updatedAt: review.dataValues.updatedAt,
           UserId: review.dataValues.UserId,
-          reviewer_name: reviewer.name,
-          reviewer_image: reviewer.image,
+          reviewer_name: parseReviewerName(reviewer?.name),
+          reviewer_image: parseReviewerImage(reviewer?.image),
         };
       })
     );
@@ -168,7 +218,7 @@ async function parseReviewsToOwner(arrayOfReviews: any) {
     // console.log(parsedReviews);
     return parsedReviews;
   } catch (error: any) {
-    console.log(`Error en el parseReviewsToOwner`);
+    console.log(`Error en el parseReviewsToOwner. ${error.message}`);
     return error.message;
   }
 }
@@ -207,7 +257,7 @@ const authCheck = (req: any, res: any, next: any) => {
 
 //GET ALL USERS FROM DB:  //! Hay que dejarla comentada ( o borrarla) porque no es seguro poder tener toda la data de los users registrados:
 
-router.get("/", async (req, res) => {
+router.get("/", jwtCheck, async (req, res) => {
   console.log("entré al get de Users!");
 
   try {
@@ -267,23 +317,26 @@ router.get("/contactinfo/:petid", async (req, res) => {
 });
 
 // GET(post) ALL PETS OF USER ID:
-router.post("/getallpetsofuser", async (req: any, res) => {
-  console.log(`Entré a la ruta "/users/getallpetsofuser". El req.body es =`);
-  console.log(req.body);
-  console.log(`user ID = ${req.body?.id}`);
+router.get("/getallpetsofuser", jwtCheck, async (req: any, res) => {
+  console.log(`Entré a la ruta "/users/getallpetsofuser".`);
+  // console.log(req.body);
+
   try {
-    if (!req.body.id) {
+    let userId = req.auth?.sub;
+    console.log(`user ID por auth.sub = ${userId}`);
+
+    if (!userId) {
       console.log(
         `Error en /users/getallpetsofuser. El req.body.id es falso/undefined`
       );
       throw new Error(
-        `Error en /users/getallpetsofuser. El req.body.id es falso/undefined`
+        `Error en /users/getallpetsofuser. El req.oidc.sub es falso/undefined`
       );
     }
-    let id = req.body.id;
+    // let id = req.body.id;
     let petsPostedByUser: Pet[] = await db.Animal.findAll({
       where: {
-        UserId: id,
+        UserId: userId,
       },
     });
 
@@ -304,24 +357,26 @@ router.post("/getallpetsofuser", async (req: any, res) => {
   }
 });
 
-router.post("/deletePet", async (req: any, res) => {
+router.delete("/deletePet", jwtCheck, async (req: any, res) => {
   console.log(`En la ruta users/deletePet.`);
-  console.log(`petId = ${req.body?.petId}`);
-  console.log(req.body);
-  console.log(`req.body.id = ${req.body?.id}`);
+  console.log(`petId = ${req.query?.petId}`);
+  // console.log(req.body);
+  console.log(`req.auth.sub = ${req.auth?.sub}`);
   try {
-    let petId = req.body.petId;
-    let userId = req.body.id;
+    let petId = req.query.petId;
+    let userId = req.auth?.sub;
+    if (!petId || !userId) {
+      throw new Error(`El petId y/o userId son falsos.`);
+    }
     //buscar instancia de mascota en DB:
     let petToDeleteInDB = await db.Animal.findByPk(petId);
     if (petToDeleteInDB.UserId == userId) {
       //borrar instancia de la DB:
-      // await petToDeleteInDB.destroy();
-      let deletedPet = await petToDeleteInDB.destroy();
-      console.log(`pet with id ${req.body.id} ...  soft-destroyed`);
+      await petToDeleteInDB.destroy();
+      console.log(`pet with id ${petId} ...  soft-destroyed`);
       return res.status(200).send({ msg: "Mascota borrada" });
     } else {
-      //retornar que no coincide el petToDelete.UserId con el req.user.id
+      //retornar que no coincide el petToDelete.UserId con el req.auth.sub
       return res
         .status(400)
         .send(`El ID del cliente no coincide con el UserId de la mascota.`);
@@ -334,7 +389,7 @@ router.post("/deletePet", async (req: any, res) => {
 
 router.post("/newuser", async (req, res) => {
   console.log(`Entré en /user/newUser`);
-  const { email, name, city, contact, image, id } = req.body;
+  const { email, name, city, contact, image, id, linkToDonate } = req.body;
   try {
     let emailExisteEnLaDB = await emailExistsInDB(email);
     if (emailExisteEnLaDB) {
@@ -351,6 +406,7 @@ router.post("/newuser", async (req, res) => {
         city,
         contact,
         image,
+        linkToDonate,
       },
     });
     if (!created) {
@@ -392,7 +448,7 @@ router.put("/update", async (req, res) => {
   console.log(`Me llegó por body: `);
   console.log(req.body);
   try {
-    const { image, contact, city, email, name, id } = req.body;
+    const { image, contact, city, email, name, id, linkToDonate } = req.body;
     const newProfile = await db.User.update(
       {
         image: image,
@@ -400,6 +456,7 @@ router.put("/update", async (req, res) => {
         city: city,
         email: email,
         name: name,
+        linkToDonate: linkToDonate,
       },
       {
         where: {
@@ -413,12 +470,12 @@ router.put("/update", async (req, res) => {
   }
 });
 
-router.post("/getMultipleUserInfo", async (req, res) => {
+router.get("/getMultipleUserInfo", jwtCheck, async (req: any, res) => {
   console.log(`Entré a la ruta /users/getMultipleUserInfo`);
-  console.log(`req.body.id = ${req.body.id}`);
+  console.log(`req.auth.sub = ${req.auth?.sub}`);
   try {
-    if (req.body.id) {
-      let userId = req.body.id;
+    if (req.auth?.sub) {
+      let userId = req.auth.sub;
       let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId); //obj con props
       let userReviewsRecived = await getAllReviewsRecived(userId); //arreglo de objs
       let userTransactions = await getAllTransactions(userId); //arreglo de objs
@@ -433,10 +490,139 @@ router.post("/getMultipleUserInfo", async (req, res) => {
       };
       return res.status(200).send(multipleUserInfo);
     } else {
-      throw new Error(`El id '${req.body.id}' es falso.`);
+      throw new Error(`El id '${req.auth.sub}' es falso.`);
     }
   } catch (error: any) {
     console.log(`Error en /users/getMultipleUserInfo. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+});
+
+router.get("/ranking", async (req, res) => {
+  console.log(`Estoy en /users/ranking.`);
+  try {
+    let allTheUsers = await getAllUsers();
+
+    const ranking = allTheUsers.sort(function (a: any, b: any) {
+      return b.points - a.points;
+    });
+
+    const topTen = ranking.slice(0, 9);
+
+    res.status(200).send(topTen);
+  } catch (error: any) {
+    console.log(`Error en /users/ranking. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+});
+
+router.get("/points", jwtCheck, async (req: any, res) => {
+  console.log(`Estoy en /users/points.`);
+  try {
+    const id = req.auth?.sub;
+    const user = await db.User.findOne({ where: { id: id } });
+    if (user) {
+      return res.status(200).send({ points: user.points });
+    }
+    console.log(`No se encontró al usuario por id`);
+    return res.status(200).send("no existe el usuario");
+  } catch (error: any) {
+    console.log(`Error en /users/points ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+});
+
+router.get("/rankingGaveAdoption", async (req, res) => {
+  console.log(`Estoy en /users/rankingGaveAdoption.`);
+  try {
+    let allTheUsers = await getAllUsers();
+
+    const ranking = allTheUsers.sort(function (a: any, b: any) {
+      return b.gaveUpForAdoption - a.gaveUpForAdoption;
+    });
+
+    const topTen = ranking.slice(0, 9);
+
+    res.status(200).send(topTen);
+  } catch (error: any) {
+    console.log(`Error en /users/rankingGaveAdoption. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+});
+
+router.post("/buyProducts", jwtCheck, async (req: any, res) => {
+  console.log(`Estoy en /users/buyProducts.`);
+  try {
+    const { name, items, totalPoints, mail, direccion } = req.body;
+    let userID = req.auth?.sub;
+    const user = await db.User.findOne({ where: { id: userID } });
+    if (user) {
+      console.log(user, totalPoints, items);
+      user.points = user.points - totalPoints;
+      await user.save();
+
+      const nodemailer = require("nodemailer");
+      console.log(GMAIL_PASS, GMAIL_USER);
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: GMAIL_USER,
+          pass: GMAIL_PASS,
+        },
+      });
+
+      const msgMail = `Hola ${name} estamos preparando tu compra para enviarla a ${direccion}. Te daremos aviso cuando el producto esté en camino.`;
+
+      const mailOptions = {
+        from: "service.mascotapp@gmail.com",
+        to: mail,
+        subject: "Tu compra está siendo preparada",
+        html: `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => {
+          return i.title;
+        })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
+      };
+
+      transporter.sendMail(mailOptions, function (error: any, info: any) {
+        if (error) console.log(error);
+        else console.log("Email enviado: " + info.response);
+      });
+
+      return res.status(200).send("compra realizada exitosamente");
+    }
+    console.log(`El usuario con id "${userID} no existe"`);
+
+    return res.status(404).send("el usuario no existe");
+  } catch (error: any) {
+    console.log(`Error en /users/buyProducts. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+});
+
+router.post("/donatePoints", jwtCheck, async (req: any, res) => {
+  console.log(`Estoy en /users/donatePoints.`);
+  try {
+    const id = req.auth?.sub;
+    if (!id) {
+      throw new Error(`El req.auth.sub es falso`);
+    }
+    const { idToDonate, pointsToDonate } = req.body;
+    const user = await db.User.findOne({ where: { id: id } });
+    const userToDonate = await db.User.findOne({ where: { id: idToDonate } });
+
+    if (user && userToDonate && user.points >= pointsToDonate) {
+      user.points = user.points - parseInt(pointsToDonate);
+      await user.save();
+
+      userToDonate.points = userToDonate.points + parseInt(pointsToDonate);
+      await userToDonate.save();
+
+      console.log("se donó");
+      return res.status(200).send("puntos donados correctamente");
+    }
+    console.log("no se donó algo falló");
+    return res.status(200).send("algo salió mal");
+  } catch (error: any) {
+    console.log(`Error en /users/donatePoints. ${error.message}`);
     return res.status(400).send(error.message);
   }
 });

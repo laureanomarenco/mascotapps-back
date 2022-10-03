@@ -6,6 +6,13 @@ export interface UserAttributes {
   contact: string | undefined;
   image: string | undefined;
   isDonator: string | undefined;
+  isAdopter: number | undefined;
+  gaveUpForAdoption: number | undefined;
+  foundAPet: number | undefined;
+  gotAPetBack: number | undefined;
+  points: number | undefined;
+  endpoints: Text;
+  linkToDonate: string | undefined;
 }
 
 export interface ISomeUserInfo {
@@ -14,6 +21,12 @@ export interface ISomeUserInfo {
   image: string | undefined;
   contact: string | undefined;
   isDonator: string | undefined;
+  isAdopter: number | undefined;
+  gaveUpForAdoption: number | undefined;
+  foundAPet: number | undefined;
+  gotAPetBack: number | undefined;
+  points: number | undefined;
+  linkToDonate: string | undefined;
 }
 
 export interface IContactInfoOfOwner {

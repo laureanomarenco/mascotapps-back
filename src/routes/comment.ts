@@ -1,4 +1,5 @@
 import { Router } from "express";
+import jwtCheck from "../../config/jwtMiddleware";
 import db from "../../models/index";
 import { validateNewComment } from "../auxiliary/CommentValidators";
 import { IComment, ICommentResponse } from "../types/commentTypes";
@@ -28,7 +29,8 @@ router.post("/newComment", async (req, res) => {
 
     let commentFromReq = validateNewComment(req.body);
     let newComment = await db.Comment.create(commentFromReq);
-    await newComment.setAnimal(petId);
+    let petAsociado = await db.Animal.findByPk(petId);
+    await newComment.setAnimal(petAsociado);
     console.log(`Nuevo comentario creado y asociado a la mascota ${petId}`);
     if (Array.isArray(fotos) && fotos.length > 0) {
       for (const foto of fotos) {
@@ -51,16 +53,17 @@ router.post("/newComment", async (req, res) => {
   }
 });
 
-router.post("/getComments", async (req, res) => {
+router.get("/getComments", async (req, res) => {
   console.log(`Entré a /comments/getComments`);
   try {
-    let petId = req.body.petId;
+    let petId = req.query.petId;
+    // let petId = req.body.petId;
     console.log(`req.body.petId = ${petId}`);
     let allTheComments: ICommentResponse[] = await db.Comment.findAll({
       where: {
         AnimalId: petId,
       },
-      include: { model: db.Image, as: "fotos" },
+      include: [{ model: db.Image }],
     });
     console.log(
       `Cantidad de comentarios encontrados: ${allTheComments?.length}`

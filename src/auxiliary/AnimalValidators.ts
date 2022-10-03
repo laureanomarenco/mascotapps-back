@@ -7,6 +7,7 @@ import {
   Species,
   Status,
   VaccinationStatus,
+  updatedPet,
 } from "../types/petTypes";
 import { isEmptyString } from "./ReviewValidators";
 
@@ -28,7 +29,7 @@ export function validateNewPet(reqBody: any): Pet {
       vaccinationSchemeStatus: checkVaccinationSchemeStatus(
         reqBody.vaccinationSchemeStatus
       ),
-      image: reqBody.image,
+      image: checkImageURL(reqBody.image),
       backWithItsOwner: undefined,
       withNewOwner: undefined,
       comments: checkComments(reqBody.comments),
@@ -40,7 +41,47 @@ export function validateNewPet(reqBody: any): Pet {
   }
 }
 
+export function validateUpdatedPet(petFromReq: any): updatedPet {
+  console.log(`Validando el pet por req para el update de la pet`);
+  try {
+    let updatedPet: updatedPet = {
+      name: checkName(petFromReq.name),
+      specie: checkSpecies(petFromReq.specie),
+      race: checkRace(petFromReq.race),
+      city: checkCity(petFromReq.city),
+      age: checkAge(petFromReq.age),
+      gender: checkGender(petFromReq.gender),
+      status: checkStatus(petFromReq.status),
+      vaccinationSchemeStatus: checkVaccinationSchemeStatus(
+        petFromReq.vaccinationSchemeStatus
+      ),
+      image: checkImageURL(petFromReq.image),
+      comments: checkComments(petFromReq.comments),
+    };
+
+    return updatedPet;
+  } catch (error: any) {
+    console.log(`Error en function validateUpdatedPet. ${error.message}`);
+    throw new Error(`${error.message}`);
+  }
+}
+
 //! FUNCIONES VALIDADORAS DE PROPIEDADES que usa la función validateNewPet:
+
+function checkCity(cityFromReq: any): string | undefined {
+  try {
+    if (isUndefinedOrNull(cityFromReq) || isEmptyString(cityFromReq)) {
+      return undefined;
+    }
+    if (isStringBetween1And101CharsLong(cityFromReq)) {
+      return cityFromReq;
+    }
+    throw new Error(`Error al validar la ciudad.`);
+  } catch (error: any) {
+    console.log(`Error en function checkCity. ${error.message}`);
+    throw new Error(`${error.message}`);
+  }
+}
 
 function isPostStatus(arg: any): boolean {
   return Object.values(postStatus).includes(arg);
@@ -147,7 +188,7 @@ export function isValidURL(argumento: any): boolean {
 }
 
 export function checkImageURL(imageFromReq: any): string | undefined {
-  if (isUndefinedOrNull(imageFromReq)) {
+  if (isUndefinedOrNull(imageFromReq) || isEmptyString(imageFromReq)) {
     return undefined;
   }
   if (isValidURL(imageFromReq)) {

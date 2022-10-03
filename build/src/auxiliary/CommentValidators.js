@@ -6,7 +6,7 @@ const ReviewValidators_1 = require("./ReviewValidators");
 function validateNewComment(reqBody) {
     try {
         let commentFromReqChecked = {
-            name: checkName(reqBody.name),
+            nombre: checkNombre(reqBody.nombre),
             provincia: checkProvincia(reqBody.provincia),
             localidad: checkLocalidad(reqBody.localidad),
             fecha: checkFecha(reqBody.fecha),
@@ -81,7 +81,7 @@ function isStringBetween1And50CharsLong(argumento) {
         return false;
     }
 }
-function checkName(nameFromReq) {
+function checkNombre(nameFromReq) {
     if ((0, ReviewValidators_1.isUndefinedOrNull)(nameFromReq) || (0, ReviewValidators_1.isEmptyString)(nameFromReq)) {
         return undefined;
     }

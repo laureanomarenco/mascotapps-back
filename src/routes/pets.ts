@@ -1,13 +1,29 @@
 import { Router } from "express";
-import { title } from "process";
 import { Op } from "sequelize";
-import { measureMemory } from "vm";
-const webPush = require("../../config/web_Push_setup")
-import db from "../../models/index";
-import { validateNewPet } from "../auxiliary/AnimalValidators";
-import { Pet, postStatus, Species } from "../types/petTypes";
-// import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 
+import db from "../../models/index";
+import {
+  validateNewPet,
+  validateUpdatedPet,
+} from "../auxiliary/AnimalValidators";
+import { Pet, postStatus, Species, updatedPet } from "../types/petTypes";
+// import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
+import webPush from "../../config/web_push";
+import jwtCheck from "../../config/jwtMiddleware";
+
+// const { expressjwt: jwt } = require("express-jwt");
+// var jwks = require("jwks-rsa");
+// const jwtCheck = jwt({
+//   secret: jwks.expressJwtSecret({
+//     cache: true,
+//     rateLimit: true,
+//     jwksRequestsPerMinute: 5,
+//     jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
+//   }),
+//   audience: "https://juka-production.up.railway.app/",
+//   issuer: "https://dev-nxuk8wmn.us.auth0.com/",
+//   algorithms: ["RS256"],
+// });
 const router = Router();
 
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
@@ -266,10 +282,10 @@ async function idExistsInDataBase(id: any): Promise<boolean> {
 
 // aca tiene que haber validador porque solo usuarios registrados pueden acceder a esta ruta
 //POST A PET:
-router.post("/postNewPet", async (req: any, res) => {
+router.post("/postNewPet", jwtCheck, async (req: any, res) => {
   console.log(`Entré a users/postnewpet`);
   try {
-    const id = req.body?.user?.id;
+    const id = req.auth?.sub;
     if (!id) {
       throw new Error(`El Id de usuario es inválido/falso`);
     }
@@ -297,59 +313,40 @@ router.post("/postNewPet", async (req: any, res) => {
     }
   } catch (error: any) {
     console.log(`Error en /postnewpet. ${error.message}`);
-    console.log(`req.body.id de la request = '${req.body.id}'`);
+    console.log(`req.auth.sub de la request = '${req.auth?.sub}'`);
     return res.status(404).send(error.message);
   }
 });
 
-router.put("/update", async (req, res) => {
+//PUT Update detalles de la mascota
+router.put("/update", jwtCheck, async (req: any, res) => {
   console.log(`Entré a pets/update`);
   console.log(`req.body = ${req.body}`);
 
   try {
-    const { userId } = req.body.user;
-    const {
-      id,
-      name,
-      specie,
-      race,
-      city,
-      age,
-      gender,
-      status,
-      vaccinationSchemeStatus,
-      image,
-      comments,
-    } = req.body.pet;
-    const newProfile = await db.Animal.update(
-      {
-        name,
-        specie,
-        race,
-        city,
-        age,
-        gender,
-        status,
-        vaccinationSchemeStatus,
-        image,
-        comments,
+    const userId = req.auth?.sub;
+    const { id } = req.body.pet;
+
+    console.log(`req.body.pet.image = ${req.body?.pet?.image}`);
+    let validatedPetFromReq: updatedPet = validateUpdatedPet(req.body.pet);
+    const newProfile = await db.Animal.update(validatedPetFromReq, {
+      where: {
+        id: id,
+        UserId: userId,
       },
-      {
-        where: {
-          id: id,
-          UserId: userId,
-        },
-      }
-    );
-    res.status(200).send(newProfile);
-  } catch (error) {
-    res.status(400).send(error);
+    });
+    console.log(`Animal UPDATED. Datos de la mascota actualizada.`);
+
+    return res.status(200).send(newProfile);
+  } catch (error: any) {
+    console.log(`Error en la ruta "/pets/update". ${error.message}`);
+    return res.status(400).send(error.message);
   }
 });
 
 // GET NUMBER OF PETS IN DB:
-router.get("/numberofpetsindb", async (req, res) => {
-  console.log("En route pets/numberofpets");
+router.get("/numberOfPetsInDB", async (req, res) => {
+  console.log("En route pets/numberOfPetsInDB");
   try {
     let numberOfPetsInDB = await getNumberOfPetsInDB();
     let numberOfPetsInDBtoString = `${numberOfPetsInDB}`;
@@ -477,38 +474,101 @@ router.get("/search", async (req, res) => {
   }
 });
 
-router.get("/success", async(req, res) => {
+router.get("/success", async (req, res) => {
   console.log(`Entré al GET pets/success`);
   try {
-    const pets = await db.Animal.findAll({ where : { postStatus: postStatus.Success }});
-    return res.send(pets)
+    const pets = await db.Animal.findAll({
+      where: { postStatus: postStatus.Success },
+    });
+    return res.send(pets);
   } catch (error: any) {
     console.log(`retornando error en GET pets/success ${error.message}`);
     return res.status(404).send(error.message);
   }
-})
+});
 
-router.get("/successAdoptions", async(req, res) => {
+router.get("/successAdoptions", async (req, res) => {
   console.log(`Entré al GET pets/successAdoptions`);
   try {
-    const pets = await db.Animal.findAll({ where : { withNewOwner: 'true' }});
-    res.send(pets)
+    const pets = await db.Animal.findAll({ where: { withNewOwner: "true" } });
+    res.send(pets);
   } catch (error: any) {
-    console.log(`retornando error en GET pets/successAdoptions ${error.message}`);
+    console.log(
+      `retornando error en GET pets/successAdoptions ${error.message}`
+    );
     return res.status(404).send(error.message);
   }
-})
+});
 
-router.get("/successFound", async(req, res) => {
+router.get("/successFound", async (req, res) => {
   console.log(`Entré al GET pets/successFound`);
   try {
-    const pets = await db.Animal.findAll({ where : { backWithItsOwner: 'true' }});
-    res.send(pets)
+    const pets = await db.Animal.findAll({
+      where: { backWithItsOwner: "true" },
+    });
+    res.send(pets);
   } catch (error: any) {
     console.log(`retornando error en GET pets/successFound ${error.message}`);
     return res.status(404).send(error.message);
   }
-})
+});
+
+
+router.post("/subscribe", async (req, res) => {
+  try {
+    const { subscription, id } = req.body;
+
+    console.log("entre a subscribe");
+    const string = JSON.stringify(subscription)
+    const update = await db.User.update({endpoints: string}, {where:{id:id}})
+    console.log(`soy lista de endpoints update ${update}`)
+    return res.status(200).send("suscripción creada correctamente");
+  } 
+  catch (error: any) {
+    console.log(`Error en /pets/subscribe. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+});
+
+router.post("/desubscribe", async (req, res) => {
+  try {
+    const { id } = req.body;
+    const usuario = await db.User.update({endpoints: undefined},{where:{id:id}})
+    console.log(`estoy en desubcribe ${usuario}`)
+    res.status(200).send(`subscripcion borrada exitosamente ${usuario}`)
+
+  } catch (error: any) {
+    console.log(`Error en pets/desubscribe. ${error.message}`);
+    return res.status(400).send(error.message);
+  }
+});
+
+router.post("/notify", async (req, res) => {
+    try {
+      const { name, city} = req.body;
+      console.log("entre a notify", req.body);
+      const payload = {
+        title: name,
+        text: "Está perdido por tu zona,¿lo has visto?",
+      };
+      const string = JSON.stringify(payload);
+
+      const allUsers = await db.User.findAll()
+
+      const cityUsers = await allUsers.filter((e:any) => e.city == city)
+
+      const endpointsArray = await cityUsers.map((e:any) => e.endpoints)
+      const endpointsPurgados = await endpointsArray.filter((e:any) => e !== null)
+      const endpointsParsed = await endpointsPurgados.map((e:any) => JSON.parse(e))
+      console.log("soy array de endpoint",endpointsArray),
+      console.log("soy endpoint purificado", endpointsPurgados)
+
+      endpointsParsed.map((s:any)=> webPush.sendNotification(s,string))
+      res.status(200).json();
+    } catch (error) {
+      console.log(error);
+  }
+});
 
 //GET BY ID:
 router.get("/:id", async (req, res) => {
@@ -522,28 +582,5 @@ router.get("/:id", async (req, res) => {
     return res.status(404).send(error.message);
   }
 });
-
-let pushSubscription:any = undefined;
-router.post("/subscribe", async(req,res)=>{
-  console.log("entre a subscribe")
-  console.log(req.body)
-  pushSubscription = req.body.subscription
-  console.log(pushSubscription)
-  res.status(200).json()
- 
-})
-
-router.post("/notify" ,async(req,res)=>{
-  const {name} = req.body
-  console.log("entre a notify", req.body)
-  const payload = {
-    title: name,
-    text: "Está perdido por tu zona,¿lo has visto?",
-  }
-  const string = JSON.stringify(payload)
-  webPush.sendNotification(pushSubscription, string)
-  res.status(200).json(payload)
-
-})
 
 export default router;
