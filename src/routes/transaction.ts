@@ -231,7 +231,7 @@ router.post("/postSuccess", async (req: any, res) => {
   }
 });
 
-router.post("/cancelPost", async (req: any, res) => {
+router.post("/cancelPost", jwtCheck, async (req: any, res) => {
   console.log(`Entré a la ruta /transactions/cancelPost`);
   try {
     const id = req.auth?.sub;
