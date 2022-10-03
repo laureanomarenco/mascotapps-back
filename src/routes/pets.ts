@@ -521,6 +521,7 @@ router.post("/subscribe", async (req, res) => {
       { endpoints: string },
       { where: { id: id } }
     );
+    console.log(update)
     return res.status(200).send("Subscripción creada correctamente");
   } catch (error: any) {
     return res.status(400).send(error.message);
