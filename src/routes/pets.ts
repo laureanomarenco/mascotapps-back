@@ -516,17 +516,13 @@ router.get("/successFound", async (req, res) => {
 router.post("/subscribe", async (req, res) => {
   try {
     const { subscription, id } = req.body;
-
-    console.log("entre a subscribe");
     const string = JSON.stringify(subscription);
     const update = await db.User.update(
       { endpoints: string },
       { where: { id: id } }
     );
-    console.log(`soy lista de endpoints update ${update}`);
     return res.status(200).send("suscripción creada correctamente");
   } catch (error: any) {
-    console.log(`Error en /pets/subscribe. ${error.message}`);
     return res.status(400).send(error.message);
   }
 });
@@ -538,10 +534,8 @@ router.post("/desubscribe", async (req, res) => {
       { endpoints: undefined },
       { where: { id: id } }
     );
-    console.log(`estoy en desubcribe ${usuario}`);
     res.status(200).send(`subscripcion borrada exitosamente ${usuario}`);
   } catch (error: any) {
-    console.log(`Error en pets/desubscribe. ${error.message}`);
     return res.status(400).send(error.message);
   }
 });
@@ -554,11 +548,8 @@ router.post("/notify", async (req, res) => {
       text: "Está perdido por tu zona,¿lo has visto?",
     };
     const string = JSON.stringify(payload);
-
     const allUsers = await db.User.findAll();
-
     const cityUsers = await allUsers.filter((e: any) => e.city == city);
-
     const endpointsArray = await cityUsers.map((e: any) => e.endpoints);
     const endpointsPurgados = await endpointsArray.filter(
       (e: any) => e !== null
