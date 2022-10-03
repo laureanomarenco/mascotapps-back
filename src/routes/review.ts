@@ -32,13 +32,17 @@ router.get("/allReviews", async (req, res) => {
   }
 });
 
-router.post("/newReview", jwtCheck, async (req, res) => {
+router.post("/newReview", jwtCheck, async (req: any, res) => {
   console.log(`Entré a la ruta POST /reviews/newReview`);
   try {
     console.log(`req.body = ${req.body}`);
-
+    const idOfToken = req.auth?.sub;
     let { reviewed_id, reviewer_id, transaction_id } = req.body;
-
+    if (idOfToken !== reviewer_id) {
+      throw new Error(
+        `El id del reviewer es distinto al id del reviewer_id del body`
+      );
+    }
     const transaction = await db.Transaction.findOne({
       where: { id: transaction_id },
     });
@@ -59,7 +63,8 @@ router.post("/newReview", jwtCheck, async (req, res) => {
       if (reviewer_id === transaction.user_offering_id) {
         if (transaction.user_offering_check === "finalizado") {
           let newReview = await db.Review.create(validatedReview);
-          await newReview.setUser(reviewed_id);
+          let reviewedUser = await db.User.findByPk(reviewed_id);
+          await newReview.setUser(reviewedUser);
           console.log(newReview);
           console.log(`Review creada y asociada al user ${reviewed_id}`);
 
@@ -71,7 +76,8 @@ router.post("/newReview", jwtCheck, async (req, res) => {
       if (reviewer_id === transaction.user_demanding_id) {
         if (transaction.user_demanding_check === "finalizado") {
           let newReview = await db.Review.create(validatedReview);
-          await newReview.setUser(reviewed_id);
+          let reviewedUser = await db.User.findByPk(reviewed_id);
+          await newReview.setUser(reviewedUser);
           console.log(`Review creada y asociada al user ${reviewed_id}`);
           transaction.user_demanding_check = "calificado";
           await transaction.save();

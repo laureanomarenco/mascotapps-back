@@ -325,10 +325,10 @@ router.put("/update", jwtCheck, async (req: any, res) => {
 
   try {
     const userId = req.auth?.sub;
-    const { id } = req.body.pet;
+    const { id } = req.body;
 
-    console.log(`req.body.pet.image = ${req.body?.pet?.image}`);
-    let validatedPetFromReq: updatedPet = validateUpdatedPet(req.body.pet);
+    console.log(`req.body.image = ${req.body?.image}`);
+    let validatedPetFromReq: updatedPet = validateUpdatedPet(req.body);
     const newProfile = await db.Animal.update(validatedPetFromReq, {
       where: {
         id: id,
@@ -513,18 +513,19 @@ router.get("/successFound", async (req, res) => {
   }
 });
 
-
 router.post("/subscribe", async (req, res) => {
   try {
     const { subscription, id } = req.body;
 
     console.log("entre a subscribe");
-    const string = JSON.stringify(subscription)
-    const update = await db.User.update({endpoints: string}, {where:{id:id}})
-    console.log(`soy lista de endpoints update ${update}`)
+    const string = JSON.stringify(subscription);
+    const update = await db.User.update(
+      { endpoints: string },
+      { where: { id: id } }
+    );
+    console.log(`soy lista de endpoints update ${update}`);
     return res.status(200).send("suscripción creada correctamente");
-  } 
-  catch (error: any) {
+  } catch (error: any) {
     console.log(`Error en /pets/subscribe. ${error.message}`);
     return res.status(400).send(error.message);
   }
@@ -533,10 +534,12 @@ router.post("/subscribe", async (req, res) => {
 router.post("/desubscribe", async (req, res) => {
   try {
     const { id } = req.body;
-    const usuario = await db.User.update({endpoints: undefined},{where:{id:id}})
-    console.log(`estoy en desubcribe ${usuario}`)
-    res.status(200).send(`subscripcion borrada exitosamente ${usuario}`)
-
+    const usuario = await db.User.update(
+      { endpoints: undefined },
+      { where: { id: id } }
+    );
+    console.log(`estoy en desubcribe ${usuario}`);
+    res.status(200).send(`subscripcion borrada exitosamente ${usuario}`);
   } catch (error: any) {
     console.log(`Error en pets/desubscribe. ${error.message}`);
     return res.status(400).send(error.message);
@@ -544,29 +547,33 @@ router.post("/desubscribe", async (req, res) => {
 });
 
 router.post("/notify", async (req, res) => {
-    try {
-      const { name, city} = req.body;
-      console.log("entre a notify", req.body);
-      const payload = {
-        title: name,
-        text: "Está perdido por tu zona,¿lo has visto?",
-      };
-      const string = JSON.stringify(payload);
+  try {
+    const { name, city } = req.body;
+    console.log("entre a notify", req.body);
+    const payload = {
+      title: name,
+      text: "Está perdido por tu zona,¿lo has visto?",
+    };
+    const string = JSON.stringify(payload);
 
-      const allUsers = await db.User.findAll()
+    const allUsers = await db.User.findAll();
 
-      const cityUsers = await allUsers.filter((e:any) => e.city == city)
+    const cityUsers = await allUsers.filter((e: any) => e.city == city);
 
-      const endpointsArray = await cityUsers.map((e:any) => e.endpoints)
-      const endpointsPurgados = await endpointsArray.filter((e:any) => e !== null)
-      const endpointsParsed = await endpointsPurgados.map((e:any) => JSON.parse(e))
-      console.log("soy array de endpoint",endpointsArray),
-      console.log("soy endpoint purificado", endpointsPurgados)
+    const endpointsArray = await cityUsers.map((e: any) => e.endpoints);
+    const endpointsPurgados = await endpointsArray.filter(
+      (e: any) => e !== null
+    );
+    const endpointsParsed = await endpointsPurgados.map((e: any) =>
+      JSON.parse(e)
+    );
+    console.log("soy array de endpoint", endpointsArray),
+      console.log("soy endpoint purificado", endpointsPurgados);
 
-      endpointsParsed.map((s:any)=> webPush.sendNotification(s,string))
-      res.status(200).json();
-    } catch (error) {
-      console.log(error);
+    endpointsParsed.map((s: any) => webPush.sendNotification(s, string));
+    res.status(200).json();
+  } catch (error) {
+    console.log(error);
   }
 });
 
