@@ -92,10 +92,11 @@ router.get("/transactionsCompleted", async (req, res) => {
   }
 });
 
-router.post("/postSuccess", async (req, res) => {
+router.post("/postSuccess", async (req: any, res) => {
   console.log(`Entré a la ruta /transactions/postsuccess`);
   try {
-    const { id } = req.body;
+    const id = req.auth?.sub;
+    // const { id } = req.body;
     const { petId } = req.body;
     const { id_demanding } = req.body; // el usuario selecciona al usuario con el que realizó existosamente la transacción
 
@@ -230,10 +231,11 @@ router.post("/postSuccess", async (req, res) => {
   }
 });
 
-router.post("/cancelPost", async (req, res) => {
+router.post("/cancelPost", async (req: any, res) => {
   console.log(`Entré a la ruta /transactions/cancelPost`);
   try {
-    const { id } = req.body;
+    const id = req.auth?.sub;
+    // const { id } = req.body;
     const { petId } = req.body;
 
     const pet = await db.Animal.findOne({ where: { id: petId } });
@@ -274,11 +276,12 @@ router.post("/cancelPost", async (req, res) => {
   }
 });
 
-router.post("/getUserTransactions", async (req, res) => {
+//! DEPRECATED
+router.post("/getUserTransactions", jwtCheck, async (req: any, res) => {
   console.log(`Entré a la ruta /Transactions/getUserTransactions`);
   try {
-    const { id } = req.body;
-
+    const id = req.auth?.sub;
+    // const { id } = req.body;
     const userTransactions = await db.Transaction.findAll({
       where: {
         [Op.or]: [{ user_offering_id: id }, { user_demanding_id: id }],

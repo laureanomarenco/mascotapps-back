@@ -161,6 +161,7 @@ router.post("/deletePetsWithNoUserId", jwtCheck, async (req, res) => {
   //como no puedo hacer una búsqueda pasando un parámetro nulo, voy a buscar todas las pets y filtrar las que tienen UserId == false.
   console.log(`En ruta /admin/deletePetsWithNoUserId`);
   try {
+    // CHEQUEAR SI EL REQ.AUTH.SUB EXISTE EN LA DB
     let passwordFromReq = req.body.password;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res.status(403).send(`La password de administrador no es válida`);
@@ -197,8 +198,8 @@ router.post("/deletePet", jwtCheck, async (req, res) => {
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res.status(403).send(`La password de administrador no es válida`);
     }
-    const { petID } = req.body;
-    const pet = await db.Animal.findOne({ where: { id: petID } });
+    const { petId } = req.body;
+    const pet = await db.Animal.findOne({ where: { id: petId } });
     if (pet) {
       await pet.destroy();
       return res.status(200).send("la publicación fue eliminada");
@@ -227,6 +228,7 @@ router.get("/createMultiplier", jwtCheck, async (req, res) => {
 router.post("/changeMultiplier", jwtCheck, async (req, res) => {
   console.log(`Entré a /admin/changeMultiplier`);
   try {
+    // Agregar chequeo de si existe el req.auth.sub en la DB
     let passwordFromReq = req.body.password;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res.status(403).send(`La password de administrador no es válida`);
