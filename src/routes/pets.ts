@@ -548,7 +548,6 @@ router.post("/notify", async (req, res) => {
       title: name,
       text: "Animal perdido por tu zona,¿lo has visto?",
     };
-    console.log(req.body)
     const string = JSON.stringify(payload);
     const allUsers = await db.User.findAll();
     const cityUsers = await allUsers.filter((e: any) => e.city == city);
@@ -561,7 +560,6 @@ router.post("/notify", async (req, res) => {
     );
     endpointsParsed.map((s: any) => webPush.sendNotification(s, string));
     res.status(200).json();
-    console.log(endpointsParsed)
   } catch (error) {
     console.log(`Error: ${error}`);
   }
