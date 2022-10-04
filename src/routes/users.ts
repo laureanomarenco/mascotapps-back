@@ -296,6 +296,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
       image: ownerInDB.image,
       contact: ownerInDB.contact,
       isDonator: ownerInDB.isDonator,
+      linkToDonate: ownerInDB.linkToDonate,
       reviews: [...reviewsToOwner],
     };
     console.log(`contactInfoOfOwner = ${contactInfoOfOwner}`);

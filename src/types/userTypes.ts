@@ -37,5 +37,6 @@ export interface IContactInfoOfOwner {
   image: string | undefined;
   contact: string | undefined;
   isDonator: string | undefined;
+  linkToDonate: string | undefined;
   reviews: any;
 }
