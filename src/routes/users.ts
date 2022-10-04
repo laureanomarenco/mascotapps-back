@@ -621,14 +621,20 @@ router.post("/donatePoints", jwtCheck, async (req: any, res) => {
       userToDonate.points = userToDonate.points + parseInt(pointsToDonate);
       await userToDonate.save();
 
-      console.log("se donó");
-      return res.status(200).send("puntos donados correctamente");
+      console.log(
+        `Se donaron ${pointsToDonate} puntos al usuario con name "${userToDonate.name}"`
+      );
+      return res.status(200).send({
+        msg: `¡${pointsToDonate} puntos donados correctamente! ¡Gracias por usar Mascotapp!`,
+      });
     }
-    console.log("no se donó algo falló");
-    return res.status(200).send("algo salió mal");
+    console.log("No se donó. Algo falló en el if anterior.");
+    return res.status(409).send({
+      msg: "Lo siento. Algo salió mal. Es posible que el usuario al que quiere donarle ya no exista más.",
+    });
   } catch (error: any) {
     console.log(`Error en /users/donatePoints. ${error.message}`);
-    return res.status(400).send(error.message);
+    return res.status(400).send({ msg: "Lo siento. Hubo un error." });
   }
 });
 
