@@ -29,14 +29,20 @@ route.get("/numbervisitors", async (req: any, res: any) => {
     let arrayVisitors = await db.Visitor.findAll();
     let numberOfVisitors = arrayVisitors.length;
     res.status(200).send(`${numberOfVisitors}`);
-  } catch (error) {
-    res.status(404).send(error);
+  } catch (error: any) {
+    console.log(`Error en visitors/numberVisitors. ${error.message}`);
+
+    res.status(404).send(error.message);
   }
 });
 
 route.post("/mailAdmin", async (req, res) => {
+  console.log(`Entré a visitor/mailAdmin`);
+
   try {
     const { email, comment } = req.body;
+    console.log(`req.body.email = ${email}`);
+    console.log(`req.body.comment = ${comment}`);
 
     const nodemailer = require("nodemailer");
     console.log(GMAIL_PASS, GMAIL_USER);
@@ -107,8 +113,9 @@ route.post("/mailAdmin", async (req, res) => {
       if (error) console.log(error);
       else console.log("Email enviado: " + info.response);
     });
-  } catch (error) {
-    res.status(404).send(error);
+  } catch (error: any) {
+    console.log(`Error en /mailAdmin. ${error.message}`);
+    return res.status(404).send(error);
   }
 });
 export default route;
