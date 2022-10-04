@@ -622,10 +622,10 @@ router.post("/donatePoints", jwtCheck, async (req: any, res) => {
       await userToDonate.save();
 
       console.log(
-        `Se donaron ${pointsToDonate} puntos al usuario con name "${userToDonate.name}"`
+        `Se donaron ${pointsToDonate} mascopoints al usuario con name "${userToDonate.name}"`
       );
       return res.status(200).send({
-        msg: `¡${pointsToDonate} puntos donados correctamente! ¡Gracias por usar Mascotapp!`,
+        msg: `¡${pointsToDonate} mascopoints donados correctamente! ¡Gracias por usar Mascotapp! 🐶`,
       });
     }
     console.log("No se donó. Algo falló en el if anterior.");
