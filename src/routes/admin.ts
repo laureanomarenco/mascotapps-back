@@ -290,14 +290,16 @@ router.post("/banUser", jwtCheck, async (req, res) => {
     const user = await db.User.findByPk(id);
     if(user){
       const ban = await db.Ban.create({ email: user.email });
-      user.isBanned === 'true';
+      user.isBanned = 'true';
       await user.save();
-
-      return res.send(`usuario baneado ${ban}`)
+      
+      console.log(`usuario baneado ${ban.email}`)
+      return res.send(`usuario baneado ${ban.email}`)
     }
-    return res.send('el usuario no existe')
+    return res.status(404).send('el usuario no existe')
   } catch (error: any) {
     console.log(`Error en /admin/banUser. ${error.message}`);
+    return res.status(404).send(error.message)
   }
 });
 

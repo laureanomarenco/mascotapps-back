@@ -388,8 +388,8 @@ router.post("/newuser", jwtCheck, async (req: any, res) => {
 
     const { email, name, city, contact, image, linkToDonate } = req.body;
 
-    const isBan = await db.Ban.findOne({ where: { email: email}})
-    if(isBan){
+    const isBanned = await db.Ban.findOne({ where: { email: email}})
+    if(isBanned){
       throw new Error(
         `El email ${email} esta registrado como baneado.`
       );
