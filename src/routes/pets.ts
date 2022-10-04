@@ -24,7 +24,7 @@ function mapSpecies() {
   }
 }
 
-const getAllPets = async () => {
+export const getAllPets = async () => {
   try {
     const allPets = await db.Animal.findAll();
     // console.log(allPets);
@@ -517,7 +517,7 @@ router.post("/subscribe", async (req, res) => {
 });
 
 router.post("/desubscribe", async (req, res) => {
-  console.log('estoy en /desubscribe')
+  console.log("estoy en /desubscribe");
   try {
     const { id } = req.body;
     const usuario = await db.User.update(
@@ -526,7 +526,7 @@ router.post("/desubscribe", async (req, res) => {
     );
     res.status(200).send(`Subscripción borrada exitosamente ${usuario}`);
   } catch (error: any) {
-  console.log('fallo /desubscribe')
+    console.log("fallo /desubscribe");
     return res.status(400).send(error.message);
   }
 });
