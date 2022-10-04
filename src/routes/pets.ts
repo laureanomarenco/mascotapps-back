@@ -534,7 +534,7 @@ router.post("/notify", async (req, res) => {
     const { name, city } = req.body;
     const payload = {
       title: name,
-      text: "Animal perdido por tu zona,¿lo has vist?",
+      text: "Se perdio por tu zona,¿lo has visto?",
     };
     const string = JSON.stringify(payload);
     const allUsers = await db.User.findAll();
