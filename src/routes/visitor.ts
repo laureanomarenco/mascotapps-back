@@ -52,7 +52,67 @@ route.post("/mailAdmin", async (req, res) => {
       from: "service.mascotapp@gmail.com",
       to: "service.mascotapp@gmail.com",
       subject: "Consulta sobre la página",
-      html: `Llegó la siguiente consulta desde el mail ${email}: <div>${comment}</div>`,
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        p, a, h1, h2, h3, h4, h5, h6 {font-family: 'Roboto', sans-serif !important;}
+        h1{ font-size: 30px !important;}
+        h2{ font-size: 25px !important;}
+        h3{ font-size: 18px !important;}
+        h4{ font-size: 16px !important;}
+        p, a{font-size: 15px !important;}
+        .imag{
+            width: 20px;
+            height: 20px;
+        }
+        .contA{
+            margin: 0px 5px 0 5px;
+        }
+        .afooter{
+            color: #FFC700 !important; 
+            text-decoration: none;
+            font-size: 13px !important;
+        }
+    </style>
+</head>
+<body>
+    <div style="width: 100%; background-color: #e3e3e3;">
+        <div style="padding: 20px 10px 20px 10px;">
+
+            <div style="background-color: #FFC700; padding: 10px 0px 10px 0px; width: 100%; text-align: center;">
+                <img src="cid:logo" alt="" style="width: 200px; height: 60px;">
+            </div>
+
+            <div style="background-color: #ffffff; padding: 20px 0px 5px 0px; width: 100%; text-align: center;">
+                <h1>Llegó la siguiente consulta desde el mail ${email}</h1>
+                <p>${comment}
+                </p>
+
+                <!-- Gracias -->
+                <p>Gracias por tu tiempo.</p>
+                <p style="margin-bottom: 50px;"><i>Atentamente:</i><br>Equipo Pretwor</p>
+
+                <!-- Botón -->
+                <a class="claseBoton" href="https://www.pretwor.com/">Pretwor</a>
+            </div>
+            <!-- Contenido principal -->
+
+            <!-- Footer -->
+            <div style="background-color: #282828; color: #ffffff; padding: 5px 0px 0px 0px; width: 100%; text-align: center;">
+                <!-- Redes sociales -->
+                <a href="https://www.facebook.com/pretwor" class="contA"><img src="/public/images/fb.png" class="imag" /></a>
+                <a href="https://www.instagram.com/pretwor/" class="contA"><img src="/public/images/ig.png" class="imag" /></a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`,
+        attachments: [{filename: 'perrito.png', path: '../../perrito.png', cid: 'logo'}]
     };
 
     transporter.sendMail(mailOptions, function (error: any, info: any) {
