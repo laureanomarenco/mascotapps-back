@@ -77,7 +77,8 @@ async function getSomeUserInfo(userId: any) {
         gotAPetBack: userInfo.gotAPetBack,
         points: userInfo.points,
         linkToDonate: userInfo.linkToDonate,
-        endpoints: userInfo.endpoints
+        endpoints: userInfo.endpoints,
+        isBanned: userInfo.isBanned
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
@@ -391,6 +392,13 @@ router.post("/newuser", jwtCheck, async (req: any, res) => {
     }
 
     const { email, name, city, contact, image, linkToDonate } = req.body;
+
+    const isBanned = await db.Ban.findOne({ where: { email: email}})
+    if(isBanned){
+      throw new Error(
+        `El email ${email} esta registrado como baneado.`
+      );
+    }
 
     let emailExisteEnLaDB = await emailExistsInDB(email);
     if (emailExisteEnLaDB) {
