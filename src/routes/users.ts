@@ -16,10 +16,9 @@ const router = Router();
 const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 
-
 //!------------
 
-const getAllUsers = async () => {
+export const getAllUsers = async () => {
   try {
     const allUsers = await db.User.findAll();
     // console.log(allUsers);
@@ -78,7 +77,7 @@ async function getSomeUserInfo(userId: any) {
         points: userInfo.points,
         linkToDonate: userInfo.linkToDonate,
         endpoints: userInfo.endpoints,
-        isBanned: userInfo.isBanned
+        isBanned: userInfo.isBanned,
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
@@ -361,12 +360,11 @@ router.delete("/deletePet", jwtCheck, async (req: any, res) => {
       throw new Error(`El petId y/o userId son falsos.`);
     }
     //buscar instancia de mascota en DB:
-    
+
     let petToDeleteInDB = await db.Animal.findByPk(petId);
     if (petToDeleteInDB.UserId == userId) {
       //borrar instancia de la DB:
-      await db.Transaction.destroy({ where: {pet_id: petId} })
-
+      await db.Transaction.destroy({ where: { pet_id: petId } });
 
       await petToDeleteInDB.destroy();
       console.log(`pet with id ${petId} ...  soft-destroyed`);
@@ -393,11 +391,9 @@ router.post("/newuser", jwtCheck, async (req: any, res) => {
 
     const { email, name, city, contact, image, linkToDonate } = req.body;
 
-    const isBanned = await db.Ban.findOne({ where: { email: email}})
-    if(isBanned){
-      throw new Error(
-        `El email ${email} esta registrado como baneado.`
-      );
+    const isBanned = await db.Ban.findOne({ where: { email: email } });
+    if (isBanned) {
+      throw new Error(`El email ${email} esta registrado como baneado.`);
     }
 
     let emailExisteEnLaDB = await emailExistsInDB(email);
