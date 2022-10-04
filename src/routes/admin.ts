@@ -4,6 +4,10 @@ import { Op } from "sequelize";
 import db from "../../models/index";
 import { transactionStatus } from "../types/transactionTypes";
 import jwtCheck from "../../config/jwtMiddleware";
+import { getAllPets } from "./pets";
+import { getAllUsers } from "./users";
+import { UserAttributes } from "../types/userTypes";
+import { Pet } from "../types/petTypes";
 dotenv.config();
 
 const router = Router();
@@ -206,6 +210,40 @@ router.post("/deletePet", jwtCheck, async (req, res) => {
     return res.status(200).send("la publicación no existe");
   } catch (error: any) {
     console.log(`Error en /admin/deletePets ${error.message}`);
+  }
+});
+
+//BORRAR PETS QUE TIENEN UN UserId de un User que no existe en la DB
+router.delete("purgePetsWithFalseUser", async (req, res) => {
+  console.log(`Entré a admin/purgePetsWithFalseUser`);
+  try {
+    const password = req.body.password;
+    if (!password) {
+      throw new Error(`La password enviada por body es "${password}"`);
+    }
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return res.status(401).send(`Password inválida.`);
+    }
+    let allThePets = await getAllPets();
+    let allTheUsers: UserAttributes[] = await getAllUsers();
+    let userIds = allTheUsers.map((user) => user.id);
+    console.log(`userIds = `);
+    console.log(userIds);
+    let numberOfPetsPurged = 0;
+    for (let i = 0; i < allThePets.length; i++) {
+      if (!userIds.includes(allThePets[i].UserId)) {
+        console.log(`Destruyendo Pet con id ${allThePets[i].id}`);
+        await allThePets[i].destroy();
+        numberOfPetsPurged++;
+      }
+    }
+    console.log(`Cantidad de mascotas purgadas: ${numberOfPetsPurged}`);
+    return res
+      .status(200)
+      .send(`Cantidad de mascotas destruidas: ${numberOfPetsPurged}`);
+  } catch (error: any) {
+    console.log(`Error en admin/purgePetsWithFalseUser. ${error.message}`);
+    return res.status(400).send(error.message);
   }
 });
 

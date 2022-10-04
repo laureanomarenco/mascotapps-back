@@ -24,7 +24,7 @@ function mapSpecies() {
   }
 }
 
-const getAllPets = async () => {
+export const getAllPets = async () => {
   try {
     const allPets = await db.Animal.findAll();
     // console.log(allPets);
