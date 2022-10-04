@@ -581,9 +581,59 @@ router.post("/buyProducts", jwtCheck, async (req: any, res) => {
         from: "service.mascotapp@gmail.com",
         to: mail,
         subject: "Tu compra está siendo preparada",
-        html: `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => {
-          return i.title;
-        })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
+        html: `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+          <style>
+              p, a, h1, h2, h3, h4, h5, h6 {font-family: 'Roboto', sans-serif !important;}
+              h1{ font-size: 30px !important;}
+              h2{ font-size: 25px !important;}
+              h3{ font-size: 18px !important;}
+              h4{ font-size: 16px !important;}
+              p, a{font-size: 15px !important;}
+              .imag{
+                  width: 20px;
+                  height: 20px;
+              }
+              .contA{
+                  margin: 0px 5px 0 5px;
+              }
+          </style>
+      </head>
+      <body>
+          <div style="width: 100%; background-color: #e3e3e3;">
+              <div style="padding: 20px 10px 20px 10px;">
+      
+                  <div style="background-color: #ffffff; padding: 20px 0px 5px 0px; width: 100%; text-align: center;">
+                      <h1>Registramos tu compra🙌🙌🙌</h1>
+                      <p>Hola ${name} estamos preparando tu compra para enviarla a ${direccion}. Te daremos aviso cuando el producto esté en camino.</p>
+      
+                      <div>Productos: ${items.map((i: any) => {
+                        return i.title;
+                        })}</div>
+                        <div>Puntos: ${totalPoints}</div>
+                      <!-- Gracias -->
+                      <p style="margin-bottom: 50px;"><i>Atentamente:</i><br>El equipo de Mascotapp❤️❤️❤️</p>
+                  </div>
+                  <!-- Contenido principal -->
+      
+                  <!-- Footer -->
+                  <div style="background-color: #282828; color: #ffffff; padding: 5px 0px 0px 0px; width: 100%; text-align: center;">
+                      <!-- Redes sociales -->
+                      <a href="https://github.com/laureanomarenco/mascotapps-front" class="contA">GitHub</a>
+                      <a href="https://mascotapps.vercel.app/" class="contA">Mascotapp</a>
+                  </div>
+              </div>
+          </div>
+      </body>
+      </html>`,
+      // `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => {
+      //   return i.title;
+      // })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`
       };
 
       transporter.sendMail(mailOptions, function (error: any, info: any) {

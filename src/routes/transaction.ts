@@ -38,7 +38,7 @@ async function mailer(userOffering: any, userDemanding: any, offeringPet: any) {
   let offeringMail = userOffering.email;
 
   console.log(userDemanding.email, userOffering.email);
-  const msgMailDemanding = `Registramos que ${userOffering.name} quiere contactarte por ${offeringPet.name}. Te deseamos suerte en tu busqueda y te facilitamos los siguientes datos para contactarte con ${userOffering.name}. Un saludo de parte del equipo de Mascotapp`;
+  //const msgMailDemanding = `Registramos que ${userOffering.name} quiere contactarte por ${offeringPet.name}. Te deseamos suerte en tu busqueda y te facilitamos los siguientes datos para contactarte con ${userOffering.name}. Un saludo de parte del equipo de Mascotapp`;
 
   const mailOptionsDemanding = {
     from: "service.mascotapp@gmail.com",
