@@ -53,9 +53,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
       name: {
         type: DataTypes.STRING,
         allowNull: true,
-        validate: {
-          len: [1, 50],
-        },
       },
       email: {
         type: DataTypes.STRING,
@@ -71,9 +68,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING,
         allowNull: true,
         unique: false,
-        validate: {
-          len: [6, 20],
-        },
       },
       image: {
         type: DataTypes.STRING,
@@ -110,7 +104,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       endpoints: {
         type: DataTypes.STRING(2000),
-        allowNull: true,
+        allowNull: true
       },
       linkToDonate: {
         type: DataTypes.STRING,
