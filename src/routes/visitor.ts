@@ -9,14 +9,14 @@ const route = Router();
 
 // -------- RUTAS : ----------------------------------
 route.get("/addVisitor", async (req: any, res) => {
-  console.log(`Entré a /visitor`);
+  // console.log(`Entré a /visitor`);
   try {
     let newVisitor: visitor = {
       id: undefined,
     };
     let newVisit = await db.Visitor.create(newVisitor);
-    console.log(`Visita registrada en la DB`);
-    res.send(newVisit + "juka puto");
+    // console.log(`Visita registrada en la DB`);
+    return res.sendStatus(201);
   } catch (error: any) {
     console.log(`Error en /visitor/`);
     return error.message;
@@ -100,7 +100,7 @@ route.post("/mailAdmin", async (req, res) => {
         </div>
     </div>
 </body>
-</html>`
+</html>`,
     };
 
     transporter.sendMail(mailOptions, function (error: any, info: any) {
