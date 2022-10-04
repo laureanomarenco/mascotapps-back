@@ -73,11 +73,6 @@ route.post("/mailAdmin", async (req, res) => {
         .contA{
             margin: 0px 5px 0 5px;
         }
-        .afooter{
-            color: #FFC700 !important; 
-            text-decoration: none;
-            font-size: 13px !important;
-        }
     </style>
 </head>
 <body>
@@ -91,18 +86,16 @@ route.post("/mailAdmin", async (req, res) => {
 
                 <!-- Gracias -->
                 <p>Gracias por tu tiempo.</p>
-                <p style="margin-bottom: 50px;"><i>Atentamente:</i><br>Equipo Pretwor</p>
+                <p style="margin-bottom: 50px;"><i>Atentamente:</i><br>El equipo de Mascotapp</p>
 
-                <!-- Botón -->
-                <a class="claseBoton" href="https://www.pretwor.com/">Pretwor</a>
             </div>
             <!-- Contenido principal -->
 
             <!-- Footer -->
             <div style="background-color: #282828; color: #ffffff; padding: 5px 0px 0px 0px; width: 100%; text-align: center;">
                 <!-- Redes sociales -->
-                <a href="https://www.facebook.com/pretwor" class="contA"><img src="/public/images/fb.png" class="imag" /></a>
-                <a href="https://www.instagram.com/pretwor/" class="contA"><img src="/public/images/ig.png" class="imag" /></a>
+                <a href="https://github.com/laureanomarenco/mascotapps-front" class="contA">GitHub</a>
+                <a href="https://mascotapps.vercel.app/" class="contA">Mascotapp</a>
             </div>
         </div>
     </div>

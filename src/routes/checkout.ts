@@ -62,15 +62,61 @@ router.post("/", async (req, res) => {
         pass: GMAIL_PASS,
       },
     });
-    const msgMail = `Te damos profundas gracias desde Mascotapp por colaborar. Nuestro proyecto necesita de las financiación de los usuarios por lo cual tu aporte es muy importante.`;
 
     const mailOptions = {
       from: "service.mascotapp@gmail.com",
       to: email,
       subject: "Donación recibida!",
-      html: `<div>${msgMail}</div><div>Monto donado: ${
-        amount / 100
-      } USD</div><div>ID de la transferencia: ${id}</div>`,
+      html: `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+          <style>
+              p, a, h1, h2, h3, h4, h5, h6 {font-family: 'Roboto', sans-serif !important;}
+              h1{ font-size: 30px !important;}
+              h2{ font-size: 25px !important;}
+              h3{ font-size: 18px !important;}
+              h4{ font-size: 16px !important;}
+              p, a{font-size: 15px !important;}
+              .imag{
+                  width: 20px;
+                  height: 20px;
+              }
+              .contA{
+                  margin: 0px 5px 0 5px;
+              }
+          </style>
+      </head>
+      <body>
+          <div style="width: 100%; background-color: #e3e3e3;">
+              <div style="padding: 20px 10px 20px 10px;">
+      
+                  <div style="background-color: #ffffff; padding: 20px 0px 5px 0px; width: 100%; text-align: center;">
+                      <h1>Gracias por tu donación!</h1>
+                      <p>Te damos profundas gracias desde Mascotapp por colaborar. Nuestro proyecto necesita de las financiación de los usuarios por lo cual tu aporte es muy importante.</p>
+      
+                      <div>Monto donado: ${amount / 100} USD</div><div>ID de la transferencia: ${id}</div>
+                      <!-- Gracias -->
+                      <p style="margin-bottom: 50px;"><i>Atentamente:</i><br>El equipo de Mascotapp</p>
+                  </div>
+                  <!-- Contenido principal -->
+      
+                  <!-- Footer -->
+                  <div style="background-color: #282828; color: #ffffff; padding: 5px 0px 0px 0px; width: 100%; text-align: center;">
+                      <!-- Redes sociales -->
+                      <a href="https://github.com/laureanomarenco/mascotapps-front" class="contA">GitHub</a>
+                      <a href="https://mascotapps.vercel.app/" class="contA">Mascotapp</a>
+                  </div>
+              </div>
+          </div>
+      </body>
+      </html>`
+      // `<div>${msgMail}</div><div>Monto donado: ${
+      //   amount / 100
+      // } USD</div><div>ID de la transferencia: ${id}</div>`,
     };
 
     transporter.sendMail(mailOptions, function (error: any, info: any) {
