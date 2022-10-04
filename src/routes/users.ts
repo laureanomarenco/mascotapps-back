@@ -16,10 +16,9 @@ const router = Router();
 const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 
-
 //!------------
 
-const getAllUsers = async () => {
+export const getAllUsers = async () => {
   try {
     const allUsers = await db.User.findAll();
     // console.log(allUsers);
