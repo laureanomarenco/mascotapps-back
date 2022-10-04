@@ -4,6 +4,9 @@ import { Op } from "sequelize";
 import db from "../../models/index";
 import { transactionStatus } from "../types/transactionTypes";
 import jwtCheck from "../../config/jwtMiddleware";
+import { UserAttributes } from "../types/userTypes";
+import { getAllUsers } from "./users";
+import { getAllPets } from "./pets";
 dotenv.config();
 
 const router = Router();
@@ -284,22 +287,57 @@ router.post("/banUser", jwtCheck, async (req, res) => {
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res.status(403).send(`La password de administrador no es válida`);
     }
-    
+
     const { id } = req.body;
 
     const user = await db.User.findByPk(id);
-    if(user){
+    if (user) {
       const ban = await db.Ban.create({ email: user.email });
-      user.isBanned = 'true';
+      user.isBanned = "true";
       await user.save();
-      
-      console.log(`usuario baneado ${ban.email}`)
-      return res.send(`usuario baneado ${ban.email}`)
+
+      console.log(`usuario baneado ${ban.email}`);
+      return res.send(`usuario baneado ${ban.email}`);
     }
-    return res.status(404).send('el usuario no existe')
+    return res.status(404).send("el usuario no existe");
   } catch (error: any) {
     console.log(`Error en /admin/banUser. ${error.message}`);
-    return res.status(404).send(error.message)
+    return res.status(404).send(error.message);
+  }
+});
+
+//BORRAR PETS QUE TIENEN UN UserId de un User que no existe en la DB
+router.delete("/purgePetsWithFalseUser", async (req, res) => {
+  console.log(`Entré a admin/purgePetsWithFalseUser`);
+  try {
+    const password = req.body.password;
+    if (!password) {
+      throw new Error(`La password enviada por body es "${password}"`);
+    }
+    if (password !== process.env.ADMIN_PASSWORD) {
+      console.log(`La password "${password}" es inválida`);
+      return res.status(401).send(`Password inválida.`);
+    }
+    let allThePets = await getAllPets();
+    let allTheUsers: UserAttributes[] = await getAllUsers();
+    let userIds = allTheUsers.map((user) => user.id);
+    console.log(`userIds = `);
+    console.log(userIds);
+    let numberOfPetsPurged = 0;
+    for (let i = 0; i < allThePets.length; i++) {
+      if (!userIds.includes(allThePets[i].UserId)) {
+        console.log(`Destruyendo Pet con id ${allThePets[i].id}`);
+        await allThePets[i].destroy();
+        numberOfPetsPurged++;
+      }
+    }
+    console.log(`Cantidad de mascotas purgadas: ${numberOfPetsPurged}`);
+    return res
+      .status(200)
+      .send(`Cantidad de mascotas destruidas: ${numberOfPetsPurged}`);
+  } catch (error: any) {
+    console.log(`Error en admin/purgePetsWithFalseUser. ${error.message}`);
+    return res.status(400).send(error.message);
   }
 });
 
