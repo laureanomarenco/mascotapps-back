@@ -84,10 +84,6 @@ route.post("/mailAdmin", async (req, res) => {
     <div style="width: 100%; background-color: #e3e3e3;">
         <div style="padding: 20px 10px 20px 10px;">
 
-            <div style="background-color: #FFC700; padding: 10px 0px 10px 0px; width: 100%; text-align: center;">
-                <img src="cid:logo" alt="" style="width: 200px; height: 60px;">
-            </div>
-
             <div style="background-color: #ffffff; padding: 20px 0px 5px 0px; width: 100%; text-align: center;">
                 <h1>Llegó la siguiente consulta desde el mail ${email}</h1>
                 <p>${comment}
@@ -111,8 +107,7 @@ route.post("/mailAdmin", async (req, res) => {
         </div>
     </div>
 </body>
-</html>`,
-        attachments: [{filename: 'perrito.png', path: '/perrito.png', cid: 'logo'}]
+</html>`
     };
 
     transporter.sendMail(mailOptions, function (error: any, info: any) {
