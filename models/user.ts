@@ -35,6 +35,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     points: number | undefined;
     endpoints!: Text;
     linkToDonate: string | undefined;
+    isBanned: string | undefined;
 
     static associate(models: any) {
       // define association here
@@ -107,6 +108,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         allowNull: true
       },
       linkToDonate: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      isBanned: {
         type: DataTypes.STRING,
         allowNull: true,
       },

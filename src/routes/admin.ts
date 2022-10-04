@@ -276,4 +276,29 @@ router.post("/mutateActiveToActivo", jwtCheck, async (req, res) => {
   }
 });
 
+router.post("/banUser", jwtCheck, async (req, res) => {
+  console.log(`En ruta /banUser`);
+  try {
+    // CHEQUEAR SI EL REQ.AUTH.SUB EXISTE EN LA DB
+    let passwordFromReq = req.body.password;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).send(`La password de administrador no es válida`);
+    }
+    
+    const { id } = req.body;
+
+    const user = await db.User.findByPk(id);
+    if(user){
+      const ban = await db.Ban.create({ email: user.email });
+      user.isBanned === 'true';
+      await user.save();
+
+      return res.send(`usuario baneado ${ban}`)
+    }
+    return res.send('el usuario no existe')
+  } catch (error: any) {
+    console.log(`Error en /admin/banUser. ${error.message}`);
+  }
+});
+
 export default router;

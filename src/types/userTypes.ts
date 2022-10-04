@@ -13,6 +13,7 @@ export interface UserAttributes {
   points: number | undefined;
   endpoints: Text;
   linkToDonate: string | undefined;
+  isBanned: string | undefined;
 }
 
 export interface ISomeUserInfo {
@@ -28,6 +29,7 @@ export interface ISomeUserInfo {
   points: number | undefined;
   linkToDonate: string | undefined;
   endpoints: Text;
+  isBanned: string | undefined;
 }
 
 export interface IContactInfoOfOwner {
