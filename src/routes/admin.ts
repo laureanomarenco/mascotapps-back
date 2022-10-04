@@ -292,7 +292,7 @@ router.post("/banUser", jwtCheck, async (req, res) => {
 
     const user = await db.User.findByPk(id);
     if (user) {
-      const ban = await db.Ban.create({ email: user.email });
+      const ban = await db.Ban.create({ id: id, email: user.email });
       user.isBanned = "true";
       await user.save();
 

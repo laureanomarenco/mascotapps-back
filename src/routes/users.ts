@@ -434,6 +434,12 @@ router.get("/exists", jwtCheck, async (req: any, res) => {
     const id = req.auth?.sub;
     console.log(`Buscando si existe el usuario con id ${id}`);
     let user = await db.User.findByPk(id);
+    //chequeo si está baneado:
+    let userBanned = await db.Ban.findByPk(id);
+    if (userBanned) {
+      console.log(`El usuario con id ${id} se encuentra baneado`);
+      return res.status(400).send({ msg: "banned" });
+    }
     if (!user) {
       console.log(`Usuario con id: ${id} no encontrado`);
       return res.send({ msg: false });
@@ -615,7 +621,7 @@ router.post("/buyProducts", jwtCheck, async (req: any, res) => {
       
                       <div>Productos: ${items.map((i: any) => {
                         return i.title;
-                        })}</div>
+                      })}</div>
                         <div>Puntos: ${totalPoints}</div>
                       <!-- Gracias -->
                       <p style="margin-bottom: 50px;"><i>Atentamente:</i><br>El equipo de Mascotapp❤️❤️❤️</p>
@@ -632,9 +638,9 @@ router.post("/buyProducts", jwtCheck, async (req: any, res) => {
           </div>
       </body>
       </html>`,
-      // `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => {
-      //   return i.title;
-      // })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`
+        // `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => {
+        //   return i.title;
+        // })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`
       };
 
       transporter.sendMail(mailOptions, function (error: any, info: any) {
