@@ -1,5 +1,4 @@
 export interface IBan {
-    id?: undefined | string;
-    email: string;
-  }
-  
+  id: string;
+  email: string;
+}

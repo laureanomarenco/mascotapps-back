@@ -4,7 +4,7 @@ import { UUIDV4, Model } from "sequelize";
 import { IBan } from "../src/types/banTypes";
 module.exports = (sequelize: any, DataTypes: any) => {
   class Ban extends Model<IBan> implements IBan {
-    id?: undefined | string;
+    id!: string;
     email!: string;
 
     /**
@@ -18,7 +18,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       id: {
         type: DataTypes.STRING,
         primaryKey: true,
-        defaultValue: UUIDV4,
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING,

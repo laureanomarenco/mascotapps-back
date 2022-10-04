@@ -438,7 +438,7 @@ router.get("/exists", jwtCheck, async (req: any, res) => {
     let userBanned = await db.Ban.findByPk(id);
     if (userBanned) {
       console.log(`El usuario con id ${id} se encuentra baneado`);
-      return res.status(400).send({ msg: "banned" });
+      return res.status(200).send({ msg: "banned" });
     }
     if (!user) {
       console.log(`Usuario con id: ${id} no encontrado`);
