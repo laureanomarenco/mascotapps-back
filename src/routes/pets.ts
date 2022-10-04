@@ -508,7 +508,7 @@ router.post("/subscribe", async (req, res) => {
       { endpoints: string },
       { where: { id: id } }
     );
-    console.log(`Retornando mensaje de Subscripción creada correctamente.`);
+    console.log("soy subscription y id ",subscription, id);
     return res.status(200).send("Subscripción creada correctamente");
   } catch (error: any) {
     console.log(`Error en pets/subscribe. ${error.message}`);
