@@ -112,7 +112,7 @@ route.post("/mailAdmin", async (req, res) => {
     </div>
 </body>
 </html>`,
-        attachments: [{filename: 'perrito.png', path: '../../perrito.png', cid: 'logo'}]
+        attachments: [{filename: 'perrito.png', path: '/perrito.png', cid: 'logo'}]
     };
 
     transporter.sendMail(mailOptions, function (error: any, info: any) {
