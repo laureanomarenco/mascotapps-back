@@ -214,7 +214,7 @@ router.post("/deletePet", jwtCheck, async (req, res) => {
 });
 
 //BORRAR PETS QUE TIENEN UN UserId de un User que no existe en la DB
-router.delete("purgePetsWithFalseUser", async (req, res) => {
+router.delete("/purgePetsWithFalseUser", async (req, res) => {
   console.log(`Entré a admin/purgePetsWithFalseUser`);
   try {
     const password = req.body.password;
