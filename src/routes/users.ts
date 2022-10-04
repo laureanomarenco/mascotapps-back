@@ -360,9 +360,13 @@ router.delete("/deletePet", jwtCheck, async (req: any, res) => {
       throw new Error(`El petId y/o userId son falsos.`);
     }
     //buscar instancia de mascota en DB:
+    
     let petToDeleteInDB = await db.Animal.findByPk(petId);
     if (petToDeleteInDB.UserId == userId) {
       //borrar instancia de la DB:
+      await db.Transaction.destroy({ where: {pet_id: petId} })
+
+
       await petToDeleteInDB.destroy();
       console.log(`pet with id ${petId} ...  soft-destroyed`);
       return res.status(200).send({ msg: "Mascota borrada" });
