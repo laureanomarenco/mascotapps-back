@@ -78,6 +78,7 @@ async function getSomeUserInfo(userId: any) {
         linkToDonate: userInfo.linkToDonate,
         endpoints: userInfo.endpoints,
         isBanned: userInfo.isBanned,
+        isAdmin: userInfo.isAdmin,
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
