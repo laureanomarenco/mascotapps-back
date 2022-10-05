@@ -16,10 +16,9 @@ const router = Router();
 const multiplierPoints = 1;
 // ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
 
-
 //!------------
 
-const getAllUsers = async () => {
+export const getAllUsers = async () => {
   try {
     const allUsers = await db.User.findAll();
     // console.log(allUsers);
@@ -77,7 +76,9 @@ async function getSomeUserInfo(userId: any) {
         gotAPetBack: userInfo.gotAPetBack,
         points: userInfo.points,
         linkToDonate: userInfo.linkToDonate,
-        endpoints: userInfo.endpoints
+        endpoints: userInfo.endpoints,
+        isBanned: userInfo.isBanned,
+        isAdmin: userInfo.isAdmin,
       };
       console.log(`retornando someUserInfo: ${someUserInfo}`);
       return someUserInfo;
@@ -360,9 +361,12 @@ router.delete("/deletePet", jwtCheck, async (req: any, res) => {
       throw new Error(`El petId y/o userId son falsos.`);
     }
     //buscar instancia de mascota en DB:
+
     let petToDeleteInDB = await db.Animal.findByPk(petId);
     if (petToDeleteInDB.UserId == userId) {
       //borrar instancia de la DB:
+      await db.Transaction.destroy({ where: { pet_id: petId } });
+
       await petToDeleteInDB.destroy();
       console.log(`pet with id ${petId} ...  soft-destroyed`);
       return res.status(200).send({ msg: "Mascota borrada" });
@@ -387,6 +391,11 @@ router.post("/newuser", jwtCheck, async (req: any, res) => {
     }
 
     const { email, name, city, contact, image, linkToDonate } = req.body;
+
+    const isBanned = await db.Ban.findOne({ where: { email: email } });
+    if (isBanned) {
+      throw new Error(`El email ${email} esta registrado como baneado.`);
+    }
 
     let emailExisteEnLaDB = await emailExistsInDB(email);
     if (emailExisteEnLaDB) {
@@ -426,6 +435,12 @@ router.get("/exists", jwtCheck, async (req: any, res) => {
     const id = req.auth?.sub;
     console.log(`Buscando si existe el usuario con id ${id}`);
     let user = await db.User.findByPk(id);
+    //chequeo si está baneado:
+    let userBanned = await db.Ban.findByPk(id);
+    if (userBanned) {
+      console.log(`El usuario con id ${id} se encuentra baneado`);
+      return res.status(200).send({ msg: "banned" });
+    }
     if (!user) {
       console.log(`Usuario con id: ${id} no encontrado`);
       return res.send({ msg: false });
@@ -574,9 +589,59 @@ router.post("/buyProducts", jwtCheck, async (req: any, res) => {
         from: "service.mascotapp@gmail.com",
         to: mail,
         subject: "Tu compra está siendo preparada",
-        html: `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => {
-          return i.title;
-        })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`,
+        html: `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+          <style>
+              p, a, h1, h2, h3, h4, h5, h6 {font-family: 'Roboto', sans-serif !important;}
+              h1{ font-size: 30px !important;}
+              h2{ font-size: 25px !important;}
+              h3{ font-size: 18px !important;}
+              h4{ font-size: 16px !important;}
+              p, a{font-size: 15px !important;}
+              .imag{
+                  width: 20px;
+                  height: 20px;
+              }
+              .contA{
+                  margin: 0px 5px 0 5px;
+              }
+          </style>
+      </head>
+      <body>
+          <div style="width: 100%; background-color: #e3e3e3;">
+              <div style="padding: 20px 10px 20px 10px;">
+      
+                  <div style="background-color: #ffffff; padding: 20px 0px 5px 0px; width: 100%; text-align: center;">
+                      <h1>Registramos tu compra🙌🙌🙌</h1>
+                      <p>Hola ${name} estamos preparando tu compra para enviarla a ${direccion}. Te daremos aviso cuando el producto esté en camino.</p>
+      
+                      <div>Productos: ${items.map((i: any) => {
+                        return i.title;
+                      })}</div>
+                        <div>Puntos: ${totalPoints}</div>
+                      <!-- Gracias -->
+                      <p style="margin-bottom: 50px;"><i>Atentamente:</i><br>El equipo de Mascotapp❤️❤️❤️</p>
+                  </div>
+                  <!-- Contenido principal -->
+      
+                  <!-- Footer -->
+                  <div style="background-color: #282828; color: #ffffff; padding: 5px 0px 0px 0px; width: 100%; text-align: center;">
+                      <!-- Redes sociales -->
+                      <a href="https://github.com/laureanomarenco/mascotapps-front" class="contA">GitHub</a>
+                      <a href="https://mascotapps.vercel.app/" class="contA">Mascotapp</a>
+                  </div>
+              </div>
+          </div>
+      </body>
+      </html>`,
+        // `<div>${msgMail}</div><div>Productos: ${items.map((i: any) => {
+        //   return i.title;
+        // })}</div><div>Puntos: ${totalPoints}</div><div>Muchas gracias de parte del equipo de mascotapp.</div>`
       };
 
       transporter.sendMail(mailOptions, function (error: any, info: any) {
@@ -595,6 +660,7 @@ router.post("/buyProducts", jwtCheck, async (req: any, res) => {
   }
 });
 
+// DONATE POINTS:
 router.post("/donatePoints", jwtCheck, async (req: any, res) => {
   console.log(`Estoy en /users/donatePoints.`);
   try {
@@ -613,14 +679,20 @@ router.post("/donatePoints", jwtCheck, async (req: any, res) => {
       userToDonate.points = userToDonate.points + parseInt(pointsToDonate);
       await userToDonate.save();
 
-      console.log("se donó");
-      return res.status(200).send("puntos donados correctamente");
+      console.log(
+        `Se donaron ${pointsToDonate} mascopoints al usuario con name "${userToDonate.name}"`
+      );
+      return res.status(200).send({
+        msg: `¡Has donado ${pointsToDonate} mascopoints a ${userToDonate.name}! Gracias por usar Mascotapp 🐶`,
+      });
     }
-    console.log("no se donó algo falló");
-    return res.status(200).send("algo salió mal");
+    console.log("No se donó. Algo falló en el if anterior.");
+    return res.status(409).send({
+      msg: "Lo siento. Algo salió mal. Es posible que el usuario al que quiere donarle ya no exista más.",
+    });
   } catch (error: any) {
     console.log(`Error en /users/donatePoints. ${error.message}`);
-    return res.status(400).send(error.message);
+    return res.status(400).send({ msg: "Lo siento. Hubo un error." });
   }
 });
 

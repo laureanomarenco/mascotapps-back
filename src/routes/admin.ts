@@ -4,6 +4,9 @@ import { Op } from "sequelize";
 import db from "../../models/index";
 import { transactionStatus } from "../types/transactionTypes";
 import jwtCheck from "../../config/jwtMiddleware";
+import { UserAttributes } from "../types/userTypes";
+import { getAllUsers } from "./users";
+import { getAllPets } from "./pets";
 dotenv.config();
 
 const router = Router();
@@ -209,6 +212,66 @@ router.post("/deletePet", jwtCheck, async (req, res) => {
   }
 });
 
+async function checkIfJWTisAdmin(jwtId: string): Promise<boolean> {
+  console.log(`Chequeando si el sub del JWT es un Admin`);
+  try {
+    let userAsAdmin = await db.User.findByPk(jwtId);
+    if (userAsAdmin.isAdmin === true) {
+      console.log(`isAdmin === true`);
+      return true;
+    } else {
+      console.log(`isAdmin !== true. El id ${jwtId} NO ES ADMIN`);
+      return false;
+    }
+  } catch (error) {
+    throw new Error("Error al chequear si el JWT sub es un admin");
+  }
+}
+
+// SET isAdmin a TRUE o FALSE
+router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
+  console.log(`Entré a "admin/setIsAdmin"`);
+  try {
+    const jwtId = req.auth.sub;
+    const passwordFromReq = req.body.password;
+    const idOfUserToSetIsAdminProp = req.body.newAdminId;
+    const newIsAdminValue = req.body.newAdminValue;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res
+        .status(403)
+        .send({ msg: `La password de administrador ingresada no es válida` });
+    }
+    const reqUserIsAdmin = await checkIfJWTisAdmin(jwtId);
+    if (!reqUserIsAdmin) {
+      return res.status(401).send({
+        error: `Se debe tener rol de Admin para realizar esta acción.`,
+      });
+    }
+    const userToSetAsAdmin = await db.User.findByPk(idOfUserToSetIsAdminProp);
+    if (!userToSetAsAdmin) {
+      throw new Error(
+        `No se encontró en la Data Base al usuario con el id ${idOfUserToSetIsAdminProp}`
+      );
+    }
+    if (newIsAdminValue !== true && newIsAdminValue !== false) {
+      throw new Error(
+        `El valor de newIsAdminValue debe ser true o false (booleanos). Ustedes ingresó ${newIsAdminValue}, el cual no es correcto.`
+      );
+    }
+    userToSetAsAdmin.isAdmin = newIsAdminValue;
+    await userToSetAsAdmin.save();
+    console.log(
+      `Usuario con id ${idOfUserToSetIsAdminProp} fue seteado a isAdmin = ${newIsAdminValue}.`
+    );
+    return res.status(200).send({
+      msg: `Usuario con id ${idOfUserToSetIsAdminProp} fue seteado a isAdmin = ${newIsAdminValue}.`,
+    });
+  } catch (error: any) {
+    console.log(`Error en ruta admin/setIsAdmin. ${error.message}`);
+    return res.status(400).send({ error: `${error.message}` });
+  }
+});
+
 // ----   RUTAS MULTIPLICADORAS:  -----------
 router.get("/createMultiplier", jwtCheck, async (req, res) => {
   try {
@@ -273,6 +336,68 @@ router.post("/mutateActiveToActivo", jwtCheck, async (req, res) => {
   } catch (error: any) {
     console.log(`Error en el /admin/mutateActiveToActivo`);
     return res.status(404).send(error.message);
+  }
+});
+
+router.post("/banUser", jwtCheck, async (req, res) => {
+  console.log(`En ruta /banUser`);
+  try {
+    // CHEQUEAR SI EL REQ.AUTH.SUB EXISTE EN LA DB
+    let passwordFromReq = req.body.password;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).send(`La password de administrador no es válida`);
+    }
+
+    const { id } = req.body;
+
+    const user = await db.User.findByPk(id);
+    if (user) {
+      const ban = await db.Ban.create({ id: id, email: user.email });
+      user.isBanned = "true";
+      await user.save();
+
+      console.log(`usuario baneado ${ban.email}`);
+      return res.send(`usuario baneado ${ban.email}`);
+    }
+    return res.status(404).send("el usuario no existe");
+  } catch (error: any) {
+    console.log(`Error en /admin/banUser. ${error.message}`);
+    return res.status(404).send(error.message);
+  }
+});
+
+//BORRAR PETS QUE TIENEN UN UserId de un User que no existe en la DB
+router.delete("/purgePetsWithFalseUser", async (req, res) => {
+  console.log(`Entré a admin/purgePetsWithFalseUser`);
+  try {
+    const password = req.body.password;
+    if (!password) {
+      throw new Error(`La password enviada por body es "${password}"`);
+    }
+    if (password !== process.env.ADMIN_PASSWORD) {
+      console.log(`La password "${password}" es inválida`);
+      return res.status(401).send(`Password inválida.`);
+    }
+    let allThePets = await getAllPets();
+    let allTheUsers: UserAttributes[] = await getAllUsers();
+    let userIds = allTheUsers.map((user) => user.id);
+    console.log(`userIds = `);
+    console.log(userIds);
+    let numberOfPetsPurged = 0;
+    for (let i = 0; i < allThePets.length; i++) {
+      if (!userIds.includes(allThePets[i].UserId)) {
+        console.log(`Destruyendo Pet con id ${allThePets[i].id}`);
+        await allThePets[i].destroy();
+        numberOfPetsPurged++;
+      }
+    }
+    console.log(`Cantidad de mascotas purgadas: ${numberOfPetsPurged}`);
+    return res
+      .status(200)
+      .send(`Cantidad de mascotas destruidas: ${numberOfPetsPurged}`);
+  } catch (error: any) {
+    console.log(`Error en admin/purgePetsWithFalseUser. ${error.message}`);
+    return res.status(400).send(error.message);
   }
 });
 

@@ -24,7 +24,7 @@ function mapSpecies() {
   }
 }
 
-const getAllPets = async () => {
+export const getAllPets = async () => {
   try {
     const allPets = await db.Animal.findAll();
     // console.log(allPets);
@@ -517,25 +517,39 @@ router.post("/subscribe", async (req, res) => {
 });
 
 router.post("/desubscribe", async (req, res) => {
+  console.log("estoy en /desubscribe");
   try {
     const { id } = req.body;
     const usuario = await db.User.update(
       { endpoints: null },
       { where: { id: id } }
     );
+    console.log(`El endpoint del usuario con id ${id} ha sido seteado a null.`);
     res.status(200).send(`Subscripción borrada exitosamente ${usuario}`);
   } catch (error: any) {
+    console.log("fallo /desubscribe");
     return res.status(400).send(error.message);
   }
 });
 
 router.post("/notify", async (req, res) => {
+  console.log(`Entré en "/pets/notify"`);
   try {
+    console.log(`req.body.name = ${req.body.name}`);
+    console.log(`req.body.city = ${req.body.city}`);
+
     const { name, city } = req.body;
+    
+     const animal = await db.Animal.findOne({where:{name:name}})
+    
+     let id = await animal.id
+
     const payload = {
       title: name,
-      text: "Se perdio por tu zona,¿lo has visto?",
+      text: "Animal perdido por tu zona, ¿lo has visto?",
+      id:id
     };
+
     const string = JSON.stringify(payload);
     const allUsers = await db.User.findAll();
     const cityUsers = await allUsers.filter((e: any) => e.city == city);
@@ -547,9 +561,10 @@ router.post("/notify", async (req, res) => {
       JSON.parse(e)
     );
     endpointsParsed.map((s: any) => webPush.sendNotification(s, string));
+    console.log(`al final de /notify...`);
     res.status(200).json();
-  } catch (error) {
-    console.log(`Error: ${error}`);
+  } catch (error: any) {
+    console.log(`Error en users/notify. ${error.message}`);
   }
 });
 
