@@ -660,6 +660,7 @@ router.post("/buyProducts", jwtCheck, async (req: any, res) => {
   }
 });
 
+// DONATE POINTS:
 router.post("/donatePoints", jwtCheck, async (req: any, res) => {
   console.log(`Estoy en /users/donatePoints.`);
   try {
@@ -682,7 +683,7 @@ router.post("/donatePoints", jwtCheck, async (req: any, res) => {
         `Se donaron ${pointsToDonate} mascopoints al usuario con name "${userToDonate.name}"`
       );
       return res.status(200).send({
-        msg: `¡${pointsToDonate} mascopoints donados correctamente! ¡Gracias por usar Mascotapp! 🐶`,
+        msg: `¡Has donado ${pointsToDonate} mascopoints a ${userToDonate.name}! Gracias por usar Mascotapp 🐶`,
       });
     }
     console.log("No se donó. Algo falló en el if anterior.");
