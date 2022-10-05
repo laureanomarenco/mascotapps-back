@@ -14,6 +14,7 @@ export interface UserAttributes {
   endpoints: Text;
   linkToDonate: string | undefined;
   isBanned: string | undefined;
+  isAdmin: boolean | undefined;
 }
 
 export interface ISomeUserInfo {
@@ -30,6 +31,7 @@ export interface ISomeUserInfo {
   linkToDonate: string | undefined;
   endpoints: Text;
   isBanned: string | undefined;
+  isAdmin: boolean | undefined;
 }
 
 export interface IContactInfoOfOwner {
