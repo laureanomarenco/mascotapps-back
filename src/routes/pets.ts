@@ -539,15 +539,9 @@ router.post("/notify", async (req, res) => {
     console.log(`req.body.city = ${req.body.city}`);
 
     const { name, city } = req.body;
-    
-     const animal = await db.Animal.findOne({where:{name:name}})
-    
-     let id = await animal.id
-
     const payload = {
       title: name,
       text: "Animal perdido por tu zona, ¿lo has visto?",
-      id:id
     };
 
     const string = JSON.stringify(payload);
