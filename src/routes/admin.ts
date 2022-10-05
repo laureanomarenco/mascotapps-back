@@ -193,14 +193,24 @@ router.post("/deletePetsWithNoUserId", jwtCheck, async (req, res) => {
   }
 });
 
-router.post("/deletePet", jwtCheck, async (req, res) => {
+router.post("/deletePet", jwtCheck, async (req: any, res) => {
   console.log(`En ruta /admin/deletePet`);
   try {
-    let passwordFromReq = req.body.password;
+    const passwordFromReq = req.body.password;
+    const reqUserId = req.auth.sub;
+    const { petId } = req.body;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res.status(403).send(`La password de administrador no es válida`);
     }
-    const { petId } = req.body;
+    const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
+    if (reqUserIsAdmin !== true) {
+      return res
+        .status(401)
+        .send(
+          `No es posible realizar esta acción porque usted no es un admin.`
+        );
+    }
+
     const pet = await db.Animal.findOne({ where: { id: petId } });
     if (pet) {
       await pet.destroy();
@@ -247,13 +257,32 @@ async function checkIfJWTisSuperAdmin(jwtId: string): Promise<boolean> {
   }
 }
 
+async function checkIfJWTisAdminOrSuperAdmin(jwtId: string): Promise<boolean> {
+  console.log(`Chequeando si el user id "${jwtId}" es admin o super admin.`);
+  try {
+    const userInDB: UserAttributes = await db.User.findByPk(jwtId);
+    if (!userInDB) {
+      throw new Error(`El usuario con id ${jwtId} no existe en la Data Base.`);
+    }
+    if (userInDB.isAdmin === true || userInDB.isSuperAdmin === true) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error: any) {
+    throw new Error(
+      `Error en function checkIfJWTisAdminOrSuperAdmin. ${error.message}`
+    );
+  }
+}
+
 // SET isAdmin a TRUE o FALSE. Sólo la puede usar el SUPER ADMIN.
 router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
   console.log(`Entré a "admin/setIsAdmin"`);
   try {
     const jwtId = req.auth.sub;
     const passwordFromReq = req.body.password;
-    const idOfUserToSetIsAdminProp = req.body.newAdminId;
+    const idOfUserToSetIsAdminProp = req.body.userToAffect_id;
     const newIsAdminValue = req.body.newIsAdminValue;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res
@@ -297,8 +326,8 @@ router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
   try {
     const jwtId = req.auth.sub;
     const passwordFromReq = req.body.password;
-    const idOfUserToSetIsSuperAdminProp = req.body.newSuperAdminId;
-    const newIsSuperAdminValue = req.body.newIsAdminValue;
+    const idOfUserToSetIsSuperAdminProp = req.body.userToAffect_id;
+    const newIsSuperAdminValue = req.body.newIsSuperAdminValue;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res
         .status(403)
@@ -338,18 +367,19 @@ router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
 });
 
 // CHEQUEAR SI USER LOGUEADO CON JWT ES ADMIN O NO
-router.get("/isThisUserAnAdmin", jwtCheck, async (req: any, res) => {
+router.get("/hasAdminPowers", jwtCheck, async (req: any, res) => {
   console.log(`Entré a "admin/isAdmin".`);
   try {
     const jwtId: string = req.auth.sub;
     const passwordFromReq: string = req.body.password;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res.status(403).send({
-        msg: `La password de administrador ingresada no es válida`,
+        error: `La password de administrador ingresada no es válida`,
+        msg: false,
       });
     }
-    const reqUserIsAdmin = await checkIfJWTisAdmin(jwtId);
-    if (!reqUserIsAdmin) {
+    const reqUserIsAdmin: boolean = await checkIfJWTisAdminOrSuperAdmin(jwtId);
+    if (reqUserIsAdmin !== true) {
       return res.status(401).send({
         error: `Se debe tener rol de Admin para realizar esta acción.`,
         msg: false,
@@ -360,7 +390,7 @@ router.get("/isThisUserAnAdmin", jwtCheck, async (req: any, res) => {
     }
   } catch (error: any) {
     console.log(`Error en "admin/isAdmin". ${error.message}`);
-    return res.status(400).send({ error: `${error.message}` });
+    return res.status(400).send({ error: `${error.message}`, msg: false });
   }
 });
 
