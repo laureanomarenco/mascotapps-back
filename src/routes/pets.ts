@@ -508,7 +508,7 @@ router.post("/subscribe", async (req, res) => {
       { endpoints: string },
       { where: { id: id } }
     );
-    console.log(`Retornando mensaje de Subscripción creada correctamente.`);
+    console.log("soy subscription y id ",subscription, id);
     return res.status(200).send("Subscripción creada correctamente");
   } catch (error: any) {
     console.log(`Error en pets/subscribe. ${error.message}`);
@@ -539,10 +539,17 @@ router.post("/notify", async (req, res) => {
     console.log(`req.body.city = ${req.body.city}`);
 
     const { name, city } = req.body;
+    
+     const animal = await db.Animal.findOne({where:{name:name}})
+    
+     let id = await animal.id
+
     const payload = {
       title: name,
       text: "Animal perdido por tu zona, ¿lo has visto?",
+      id:id
     };
+
     const string = JSON.stringify(payload);
     const allUsers = await db.User.findAll();
     const cityUsers = await allUsers.filter((e: any) => e.city == city);
