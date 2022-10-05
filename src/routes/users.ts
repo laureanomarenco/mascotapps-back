@@ -660,6 +660,7 @@ router.post("/buyProducts", jwtCheck, async (req: any, res) => {
   }
 });
 
+// DONATE POINTS:
 router.post("/donatePoints", jwtCheck, async (req: any, res) => {
   console.log(`Estoy en /users/donatePoints.`);
   try {
