@@ -15,6 +15,7 @@ export interface UserAttributes {
   linkToDonate: string | undefined;
   isBanned: string | undefined;
   isAdmin?: boolean;
+  isSuperAdmin?: boolean;
 }
 
 export interface ISomeUserInfo {

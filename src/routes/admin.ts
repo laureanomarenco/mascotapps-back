@@ -193,14 +193,24 @@ router.post("/deletePetsWithNoUserId", jwtCheck, async (req, res) => {
   }
 });
 
-router.post("/deletePet", jwtCheck, async (req, res) => {
+router.post("/deletePet", jwtCheck, async (req: any, res) => {
   console.log(`En ruta /admin/deletePet`);
   try {
-    let passwordFromReq = req.body.password;
+    const passwordFromReq = req.body.password;
+    const reqUserId = req.auth.sub;
+    const { petId } = req.body;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res.status(403).send(`La password de administrador no es válida`);
     }
-    const { petId } = req.body;
+    const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
+    if (reqUserIsAdmin !== true) {
+      return res
+        .status(401)
+        .send(
+          `No es posible realizar esta acción porque usted no es un admin.`
+        );
+    }
+
     const pet = await db.Animal.findOne({ where: { id: petId } });
     if (pet) {
       await pet.destroy();
@@ -212,6 +222,7 @@ router.post("/deletePet", jwtCheck, async (req, res) => {
   }
 });
 
+// AUX FN: CHECK IF LOGGED USER IS ADMIN
 async function checkIfJWTisAdmin(jwtId: string): Promise<boolean> {
   console.log(`Chequeando si el sub del JWT es un Admin`);
   try {
@@ -228,38 +239,75 @@ async function checkIfJWTisAdmin(jwtId: string): Promise<boolean> {
   }
 }
 
-// SET isAdmin a TRUE o FALSE
+// AUX FN: CHECK IF USER IS SUPER ADMIN
+async function checkIfJWTisSuperAdmin(jwtId: string): Promise<boolean> {
+  console.log(`Chequeando si user id ${jwtId} es SUPER ADMIN`);
+  try {
+    const userInDB: UserAttributes = await db.User.findByPk(jwtId);
+    if (userInDB.isSuperAdmin === true) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error: any) {
+    console.log(`Error en function checkIfJWTisSuperAdmin`);
+    throw new Error(
+      `Error en function checkIfJWTisSuperAdmin. ${error.message}`
+    );
+  }
+}
+
+async function checkIfJWTisAdminOrSuperAdmin(jwtId: string): Promise<boolean> {
+  console.log(`Chequeando si el user id "${jwtId}" es admin o super admin.`);
+  try {
+    const userInDB: UserAttributes = await db.User.findByPk(jwtId);
+    if (!userInDB) {
+      throw new Error(`El usuario con id ${jwtId} no existe en la Data Base.`);
+    }
+    if (userInDB.isAdmin === true || userInDB.isSuperAdmin === true) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error: any) {
+    throw new Error(
+      `Error en function checkIfJWTisAdminOrSuperAdmin. ${error.message}`
+    );
+  }
+}
+
+// SET isAdmin a TRUE o FALSE. Sólo la puede usar el SUPER ADMIN.
 router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
   console.log(`Entré a "admin/setIsAdmin"`);
   try {
     const jwtId = req.auth.sub;
     const passwordFromReq = req.body.password;
-    const idOfUserToSetIsAdminProp = req.body.newAdminId;
-    const newIsAdminValue = req.body.newAdminValue;
+    const idOfUserToSetIsAdminProp = req.body.userToAffect_id;
+    const newIsAdminValue = req.body.newIsAdminValue;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res
         .status(403)
         .send({ msg: `La password de administrador ingresada no es válida` });
     }
-    const reqUserIsAdmin = await checkIfJWTisAdmin(jwtId);
-    if (!reqUserIsAdmin) {
+    const reqUserIsSuperAdmin: boolean = await checkIfJWTisSuperAdmin(jwtId);
+    if (!reqUserIsSuperAdmin) {
       return res.status(401).send({
-        error: `Se debe tener rol de Admin para realizar esta acción.`,
+        error: `Se debe tener rol de Super Admin para realizar esta acción.`,
       });
     }
-    const userToSetAsAdmin = await db.User.findByPk(idOfUserToSetIsAdminProp);
-    if (!userToSetAsAdmin) {
+    const userToSetIsAdmin = await db.User.findByPk(idOfUserToSetIsAdminProp);
+    if (!userToSetIsAdmin) {
       throw new Error(
         `No se encontró en la Data Base al usuario con el id ${idOfUserToSetIsAdminProp}`
       );
     }
     if (newIsAdminValue !== true && newIsAdminValue !== false) {
       throw new Error(
-        `El valor de newIsAdminValue debe ser true o false (booleanos). Ustedes ingresó ${newIsAdminValue}, el cual no es correcto.`
+        `El valor de newIsAdminValue debe ser true o false (booleanos). Usted ingresó ${newIsAdminValue}, el cual no es correcto.`
       );
     }
-    userToSetAsAdmin.isAdmin = newIsAdminValue;
-    await userToSetAsAdmin.save();
+    userToSetIsAdmin.isAdmin = newIsAdminValue;
+    await userToSetIsAdmin.save();
     console.log(
       `Usuario con id ${idOfUserToSetIsAdminProp} fue seteado a isAdmin = ${newIsAdminValue}.`
     );
@@ -269,6 +317,80 @@ router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
   } catch (error: any) {
     console.log(`Error en ruta admin/setIsAdmin. ${error.message}`);
     return res.status(400).send({ error: `${error.message}` });
+  }
+});
+
+// SET IS SUPER ADMIN
+router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
+  console.log(`Entré a "admin/setIsAdmin"`);
+  try {
+    const jwtId = req.auth.sub;
+    const passwordFromReq = req.body.password;
+    const idOfUserToSetIsSuperAdminProp = req.body.userToAffect_id;
+    const newIsSuperAdminValue = req.body.newIsSuperAdminValue;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res
+        .status(403)
+        .send({ msg: `La password de administrador ingresada no es válida` });
+    }
+    const reqUserIsSuperAdmin: boolean = await checkIfJWTisSuperAdmin(jwtId);
+    if (!reqUserIsSuperAdmin) {
+      return res.status(401).send({
+        error: `Se debe tener rol de Super Admin para realizar esta acción.`,
+      });
+    }
+    const userToSetIsSuperAdmin = await db.User.findByPk(
+      idOfUserToSetIsSuperAdminProp
+    );
+    if (!userToSetIsSuperAdmin) {
+      throw new Error(
+        `No se encontró en la Data Base al usuario con el id ${idOfUserToSetIsSuperAdminProp}`
+      );
+    }
+    if (newIsSuperAdminValue !== true && newIsSuperAdminValue !== false) {
+      throw new Error(
+        `El valor de newIsSuperAdmin debe ser true o false (booleanos). Usted ingresó ${newIsSuperAdminValue}, el cual no es correcto.`
+      );
+    }
+    userToSetIsSuperAdmin.isSuperAdmin = newIsSuperAdminValue;
+    await userToSetIsSuperAdmin.save();
+    console.log(
+      `Usuario con id ${idOfUserToSetIsSuperAdminProp} fue seteado a isAdmin = ${newIsSuperAdminValue}.`
+    );
+    return res.status(200).send({
+      msg: `Usuario con id ${idOfUserToSetIsSuperAdminProp} fue seteado a isAdmin = ${newIsSuperAdminValue}.`,
+    });
+  } catch (error: any) {
+    console.log(`Error en ruta admin/setIsAdmin. ${error.message}`);
+    return res.status(400).send({ error: `${error.message}` });
+  }
+});
+
+// CHEQUEAR SI USER LOGUEADO CON JWT ES ADMIN O NO
+router.get("/hasAdminPowers", jwtCheck, async (req: any, res) => {
+  console.log(`Entré a "admin/isAdmin".`);
+  try {
+    const jwtId: string = req.auth.sub;
+    const passwordFromReq: string = req.body.password;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).send({
+        error: `La password de administrador ingresada no es válida`,
+        msg: false,
+      });
+    }
+    const reqUserIsAdmin: boolean = await checkIfJWTisAdminOrSuperAdmin(jwtId);
+    if (reqUserIsAdmin !== true) {
+      return res.status(401).send({
+        error: `Se debe tener rol de Admin para realizar esta acción.`,
+        msg: false,
+      });
+    }
+    if (reqUserIsAdmin === true) {
+      return res.status(200).send({ msg: true });
+    }
+  } catch (error: any) {
+    console.log(`Error en "admin/isAdmin". ${error.message}`);
+    return res.status(400).send({ error: `${error.message}`, msg: false });
   }
 });
 
