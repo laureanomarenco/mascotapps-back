@@ -212,6 +212,66 @@ router.post("/deletePet", jwtCheck, async (req, res) => {
   }
 });
 
+async function checkIfJWTisAdmin(jwtId: string): Promise<boolean> {
+  console.log(`Chequeando si el sub del JWT es un Admin`);
+  try {
+    let userAsAdmin = await db.User.findByPk(jwtId);
+    if (userAsAdmin.isAdmin === true) {
+      console.log(`isAdmin === true`);
+      return true;
+    } else {
+      console.log(`isAdmin !== true. El id ${jwtId} NO ES ADMIN`);
+      return false;
+    }
+  } catch (error) {
+    throw new Error("Error al chequear si el JWT sub es un admin");
+  }
+}
+
+// SET isAdmin a TRUE o FALSE
+router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
+  console.log(`Entré a "admin/setIsAdmin"`);
+  try {
+    const jwtId = req.auth.sub;
+    const passwordFromReq = req.body.password;
+    const idOfUserToSetIsAdminProp = req.body.newAdminId;
+    const newIsAdminValue = req.body.newAdminValue;
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res
+        .status(403)
+        .send({ msg: `La password de administrador ingresada no es válida` });
+    }
+    const reqUserIsAdmin = await checkIfJWTisAdmin(jwtId);
+    if (!reqUserIsAdmin) {
+      return res.status(401).send({
+        error: `Se debe tener rol de Admin para realizar esta acción.`,
+      });
+    }
+    const userToSetAsAdmin = await db.User.findByPk(idOfUserToSetIsAdminProp);
+    if (!userToSetAsAdmin) {
+      throw new Error(
+        `No se encontró en la Data Base al usuario con el id ${idOfUserToSetIsAdminProp}`
+      );
+    }
+    if (newIsAdminValue !== true && newIsAdminValue !== false) {
+      throw new Error(
+        `El valor de newIsAdminValue debe ser true o false (booleanos). Ustedes ingresó ${newIsAdminValue}, el cual no es correcto.`
+      );
+    }
+    userToSetAsAdmin.isAdmin = newIsAdminValue;
+    await userToSetAsAdmin.save();
+    console.log(
+      `Usuario con id ${idOfUserToSetIsAdminProp} fue seteado a isAdmin = ${newIsAdminValue}.`
+    );
+    return res.status(200).send({
+      msg: `Usuario con id ${idOfUserToSetIsAdminProp} fue seteado a isAdmin = ${newIsAdminValue}.`,
+    });
+  } catch (error: any) {
+    console.log(`Error en ruta admin/setIsAdmin. ${error.message}`);
+    return res.status(400).send({ error: `${error.message}` });
+  }
+});
+
 // ----   RUTAS MULTIPLICADORAS:  -----------
 router.get("/createMultiplier", jwtCheck, async (req, res) => {
   try {
