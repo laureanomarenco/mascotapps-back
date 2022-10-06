@@ -425,6 +425,8 @@ router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
 router.get("/hasAdminPowers", jwtCheck, async (req: any, res) => {
   console.log(`Entré a "admin/hasAdminPowers".`);
   try {
+    console.log(req.body);
+
     const jwtId: string = req.auth.sub;
     const passwordFromReq: string = req.body.password;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
