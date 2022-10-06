@@ -422,7 +422,7 @@ router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
 });
 
 // CHEQUEAR SI USER LOGUEADO CON JWT ES ADMIN O NO
-router.post("/hasAdminPowers", jwtCheck, async (req: any, res) => {
+router.get("/hasAdminPowers", jwtCheck, async (req: any, res) => {
   console.log(`Entré a "admin/hasAdminPowers".`);
   try {
     console.log(req.body);
