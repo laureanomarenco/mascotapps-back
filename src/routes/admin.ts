@@ -373,8 +373,9 @@ router.get("/hasAdminPowers", jwtCheck, async (req: any, res) => {
     const jwtId: string = req.auth.sub;
     const passwordFromReq: string = req.body.password;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      console.log(`La password ${passwordFromReq} no es válida.`);
       return res.status(403).send({
-        error: `La password de administrador ingresada no es válida`,
+        error: `La password de administrador "${passwordFromReq}" ingresada no es válida`,
         msg: false,
       });
     }
