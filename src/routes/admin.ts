@@ -320,7 +320,7 @@ router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
   }
 });
 
-// SET IS SUPER ADMIN
+// SET IS SUPER ADMIN. SÓLO LA PUEDE USAR UN SUPER ADMIN.
 router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
   console.log(`Entré a "admin/setIsAdmin"`);
   try {
@@ -373,8 +373,9 @@ router.get("/hasAdminPowers", jwtCheck, async (req: any, res) => {
     const jwtId: string = req.auth.sub;
     const passwordFromReq: string = req.body.password;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      console.log(`La password ${passwordFromReq} no es válida.`);
       return res.status(403).send({
-        error: `La password de administrador ingresada no es válida`,
+        error: `La password de administrador "${passwordFromReq}" ingresada no es válida`,
         msg: false,
       });
     }
@@ -389,7 +390,7 @@ router.get("/hasAdminPowers", jwtCheck, async (req: any, res) => {
       return res.status(200).send({ msg: true });
     }
   } catch (error: any) {
-    console.log(`Error en "admin/isAdmin". ${error.message}`);
+    console.log(`Error en "admin/hasAdminPowers". ${error.message}`);
     return res.status(400).send({ error: `${error.message}`, msg: false });
   }
 });
