@@ -68,7 +68,12 @@ router.post("/deleteUser", jwtCheck, async (req: any, res) => {
       });
     }
     if (passwordFromReq != process.env.ADMIN_PASSWORD) {
-      return res.status(403).send(`La password de administrador no es válida`);
+      console.log(
+        `La password de administrador "${passwordFromReq}" no es válida`
+      );
+      return res
+        .status(403)
+        .send(`La password de administrador "${passwordFromReq}" no es válida`);
     }
 
     let userToBeDeleted = await db.User.findOne({
@@ -97,7 +102,7 @@ router.post("/deleteUser", jwtCheck, async (req: any, res) => {
 });
 
 router.post("/cleanPostsOfUserId", jwtCheck, async (req: any, res) => {
-  console.log(`Entré a la ruta /admin/clean`);
+  console.log(`Entré a la ruta /admin/cleanPostsOfUserId`);
   try {
     let passwordFromReq = req.body.password;
     const reqUserId = req.auth.sub;
@@ -111,7 +116,13 @@ router.post("/cleanPostsOfUserId", jwtCheck, async (req: any, res) => {
       });
     }
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
-      return res.status(403).send(`La password de administrador no es válida`);
+      console.log(
+        `La password de administrador ${passwordFromReq} no es válida`
+      );
+
+      return res
+        .status(403)
+        .send(`La password de administrador "${passwordFromReq}" no es válida`);
     }
     if (!req.body.userId) {
       throw new Error(
@@ -325,6 +336,8 @@ router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
     const idOfUserToSetIsAdminProp = req.body.userToAffect_id;
     const newIsAdminValue = req.body.newIsAdminValue;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      console.log(`La password ingresada "${passwordFromReq}" no es válida.`);
+
       return res
         .status(403)
         .send({ msg: `La password de administrador ingresada no es válida` });
@@ -362,13 +375,15 @@ router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
 
 // SET IS SUPER ADMIN. SÓLO LA PUEDE USAR UN SUPER ADMIN.
 router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
-  console.log(`Entré a "admin/setIsAdmin"`);
+  console.log(`Entré a "admin/setIsSuperAdmin"`);
   try {
     const jwtId = req.auth.sub;
     const passwordFromReq = req.body.password;
     const idOfUserToSetIsSuperAdminProp = req.body.userToAffect_id;
     const newIsSuperAdminValue = req.body.newIsSuperAdminValue;
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      console.log(`La password ingresada "${passwordFromReq}" no es válida.`);
+
       return res
         .status(403)
         .send({ msg: `La password de administrador ingresada no es válida` });
