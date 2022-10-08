@@ -12,7 +12,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
      */
     id!: string; // sub
     email!: string;
-    name: string | undefined;
+    name!: string;
     city: string | undefined;
     contact: string | undefined;
     image: string | undefined;
@@ -44,7 +44,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       name: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
         validate: {
           len: [1, 50],
         },

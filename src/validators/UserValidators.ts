@@ -5,6 +5,7 @@ import {
   isUndefinedOrNull,
   isStringBetween1And101CharsLong,
   isString,
+  isStringBetween1And50CharsLong,
 } from "./GenericValidators";
 
 export function validateNewUser(newUserFromReq: INewUser): INewUser {
@@ -34,7 +35,7 @@ export function checkUserId(idFromReq: any): string {
 
 //CHECK USER NAME
 export function checkUserName(nameFromReq: any): string {
-  if (isStringBetween1And101CharsLong(nameFromReq)) {
+  if (isStringBetween1And50CharsLong(nameFromReq)) {
     return nameFromReq;
   }
   throw new Error(`El nombre ingresado "${nameFromReq}" no es válido.`);
