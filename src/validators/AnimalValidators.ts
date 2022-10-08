@@ -15,6 +15,7 @@ import {
   isValidId,
   isValidURL,
   isEmptyString,
+  isStringBetween1And50CharsLong,
 } from "./GenericValidators";
 
 //! VALIDAR TODO EL PET ENTERO:
@@ -219,7 +220,7 @@ export function checkName(nameFromReq: any): string | undefined {
   if (isUndefinedOrNull(nameFromReq) || isEmptyString(nameFromReq)) {
     return undefined;
   }
-  if (isStringBetween1And101CharsLong(nameFromReq)) {
+  if (isStringBetween1And50CharsLong(nameFromReq)) {
     return nameFromReq;
   }
   throw new Error(`El nombre/name ingresado "${nameFromReq}" no es válido`);
