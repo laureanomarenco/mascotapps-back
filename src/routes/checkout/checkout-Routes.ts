@@ -2,7 +2,7 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
 import { Router } from "express";
-import db from "../../models";
+import db from "../../../models";
 const Stripe = require("stripe");
 const router = Router();
 
@@ -98,7 +98,9 @@ router.post("/", async (req, res) => {
                       <h1>Gracias por tu donación!</h1>
                       <p>Te damos profundas gracias desde Mascotapp por colaborar. Nuestro proyecto necesita de las financiación de los usuarios por lo cual tu aporte es muy importante.</p>
       
-                      <div>Monto donado: ${amount / 100} USD</div><div>ID de la transferencia: ${id}</div>
+                      <div>Monto donado: ${
+                        amount / 100
+                      } USD</div><div>ID de la transferencia: ${id}</div>
                       <!-- Gracias -->
                       <p style="margin-bottom: 50px;"><i>Atentamente:</i><br>El equipo de Mascotapp</p>
                   </div>
@@ -113,7 +115,7 @@ router.post("/", async (req, res) => {
               </div>
           </div>
       </body>
-      </html>`
+      </html>`,
       // `<div>${msgMail}</div><div>Monto donado: ${
       //   amount / 100
       // } USD</div><div>ID de la transferencia: ${id}</div>`,

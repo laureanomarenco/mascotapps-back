@@ -1,24 +1,11 @@
 import { Router } from "express";
-import db from "../../models/index";
-import { IReview } from "../types/reviewTypes";
-import { validateNewReview } from "../auxiliary/ReviewValidators";
-import jwtCheck from "../../config/jwtMiddleware";
+import db from "../../../models/index";
+import { IReview } from "../../types/reviewTypes";
+import { validateNewReview } from "../../auxiliary/ReviewValidators";
+import jwtCheck from "../../../config/jwtMiddleware";
+import { getAllReviews } from "./reviewAuxFn";
 
 const router = Router();
-
-//-----  FUNCIONES AUXILIARES: -------------------------------
-
-async function getAllReviews() {
-  try {
-    let allTheReviewsFromDB = await db.Review.findAll();
-    return allTheReviewsFromDB;
-  } catch (error: any) {
-    console.log(
-      `Error en function getAllReviews. Error message: ${error.message} `
-    );
-    throw new Error(error.message);
-  }
-}
 
 //------  RUTAS: -----------------------------------------------
 router.get("/allReviews", async (req, res) => {
