@@ -4,7 +4,7 @@ import { Op } from "sequelize";
 import db from "../../models/index";
 import { transactionStatus } from "../types/transactionTypes";
 import jwtCheck from "../../config/jwtMiddleware";
-import { UserAttributes } from "../types/userTypes";
+import { IUserAttributes } from "../types/userTypes";
 import { getAllUsers } from "./users";
 import { getAllPets } from "./pets";
 dotenv.config();
@@ -293,7 +293,7 @@ async function checkIfJWTisAdmin(jwtId: string): Promise<boolean> {
 async function checkIfJWTisSuperAdmin(jwtId: string): Promise<boolean> {
   console.log(`Chequeando si user id ${jwtId} es SUPER ADMIN`);
   try {
-    const userInDB: UserAttributes = await db.User.findByPk(jwtId);
+    const userInDB: IUserAttributes = await db.User.findByPk(jwtId);
     if (userInDB.isSuperAdmin === true) {
       return true;
     } else {
@@ -311,7 +311,7 @@ async function checkIfJWTisSuperAdmin(jwtId: string): Promise<boolean> {
 async function checkIfJWTisAdminOrSuperAdmin(jwtId: string): Promise<boolean> {
   console.log(`Chequeando si el user id "${jwtId}" es admin o super admin.`);
   try {
-    const userInDB: UserAttributes = await db.User.findByPk(jwtId);
+    const userInDB: IUserAttributes = await db.User.findByPk(jwtId);
     if (!userInDB) {
       throw new Error(`El usuario con id ${jwtId} no existe en la Data Base.`);
     }
@@ -597,7 +597,7 @@ router.delete("/purgePetsWithFalseUser", jwtCheck, async (req: any, res) => {
       return res.status(401).send(`Password inválida.`);
     }
     let allThePets = await getAllPets();
-    let allTheUsers: UserAttributes[] = await getAllUsers();
+    let allTheUsers: IUserAttributes[] = await getAllUsers();
     let userIds = allTheUsers.map((user) => user.id);
     console.log(`userIds = `);
     console.log(userIds);
