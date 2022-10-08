@@ -1,7 +1,7 @@
 {
   "name": "api-sqlz-ts",
   "version": "1.0.0",
-  "description": "",
+  "description": "A back-end service made with the only purpose to support the Mascotapp App.",
   "main": "index.js",
   "engines": {
     "node": "16.x"
@@ -13,7 +13,7 @@
     "start": "node build/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Roberto Spinelli, Laureano Marenco, Renzo Etari, Alejandro Juka",
   "license": "ISC",
   "devDependencies": {
     "@types/cors": "^2.8.12",
