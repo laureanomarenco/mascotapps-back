@@ -7,6 +7,7 @@ import jwtCheck from "../../config/jwtMiddleware";
 import { IUserAttributes } from "../types/userTypes";
 import { getAllUsers } from "./users";
 import { getAllPets } from "./pets";
+import { IAdminAction } from "../types/adminActionTypes";
 dotenv.config();
 
 const router = Router();
@@ -53,12 +54,20 @@ async function getPostsOfUser(id: any) {
 
 router.post("/deleteUser", jwtCheck, async (req: any, res) => {
   console.log(`Entré a /admin/deleteUser`);
+
   try {
     let idFromReq: string = req.body.id;
     let emailFromReq: string = req.body.email;
     let passwordFromReq: string = req.body.password;
     const reqUserId = req.auth.sub;
+    const newAdminAction: IAdminAction = {
+      admin_id: req.auth.sub,
+      route: `/admin/deleteUser`,
+      action: `delete User with id "${idFromReq}" and email "${emailFromReq}".`,
+      action_status: 0,
+    };
     const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
+
     if (!reqUserIsAdmin) {
       console.log(
         `El usuario con id "${reqUserId}" que realiza la request no es un admin.`
@@ -89,6 +98,7 @@ router.post("/deleteUser", jwtCheck, async (req: any, res) => {
     } else {
       await userToBeDeleted.destroy();
       console.log(`Usuario destruido suavemente.`);
+      await db.Action.create({ ...newAdminAction, action_status: 200 });
       return res
         .status(200)
         .send(
@@ -97,15 +107,30 @@ router.post("/deleteUser", jwtCheck, async (req: any, res) => {
     }
   } catch (error: any) {
     console.log(`Error en /admin/deleteUser. ${error.message}`);
+    // await db.Action.create({
+    //   admin_id: req.auth?.sub,
+    //   route: `/admin/deleteUser`,
+    //   action: `delete User with id "${req.body.id}" and email "${req.body.email}"`,
+    //   action_status: 404,
+    //   error_msg: `${error.message}`,
+    // });
     return res.status(404).send(error.message);
   }
 });
 
+// CLEAN POSTS OF USER ID
 router.post("/cleanPostsOfUserId", jwtCheck, async (req: any, res) => {
   console.log(`Entré a la ruta /admin/cleanPostsOfUserId`);
   try {
-    let passwordFromReq = req.body.password;
+    const passwordFromReq = req.body.password;
+    const userId = req.body.userId;
     const reqUserId = req.auth.sub;
+    const newAdminAction: IAdminAction = {
+      admin_id: reqUserId,
+      route: `/admin/cleanPostsOfUserId`,
+      action: `Delete posts of User with id "${req.body.userId}".`,
+      action_status: 0,
+    };
     const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
     if (!reqUserIsAdmin) {
       console.log(
@@ -130,7 +155,6 @@ router.post("/cleanPostsOfUserId", jwtCheck, async (req: any, res) => {
       );
     }
     console.log(`req.body.userId = ${req.body.userId}`);
-    let userId = req.body.userId;
 
     let postsOfUser = await getPostsOfUser(userId);
     if (!postsOfUser) {
@@ -144,6 +168,11 @@ router.post("/cleanPostsOfUserId", jwtCheck, async (req: any, res) => {
       console.log("post destruido");
       numberOfPostsDestroyed++;
     }
+    await db.Action.create({
+      ...newAdminAction,
+      status: 200,
+      action_msg: `Número de posts destruidos: ${numberOfPostsDestroyed}`,
+    });
     return res
       .status(200)
       .send(`Número de posts destruidos: ${numberOfPostsDestroyed}`);
@@ -153,25 +182,35 @@ router.post("/cleanPostsOfUserId", jwtCheck, async (req: any, res) => {
   }
 });
 
+// CLEAN REVIEWS TO USER
 router.post("/cleanReviewsToUser", jwtCheck, async (req: any, res) => {
   console.log(`En ruta /admin/cleanReviewsToUser`);
   try {
-    let passwordFromReq = req.body.password;
-    const reqUserId = req.auth.sub;
-    const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
+    const passwordFromReq = req.body.password;
+    const reqAdminId = req.auth.sub;
+    const userId = req.body.userId;
+    console.log(`userId recibido = ${userId}`);
+
+    const newAdminAction: IAdminAction = {
+      admin_id: reqAdminId,
+      route: `/admin/cleanReviewsToUser`,
+      action: `Delete Reviews of User with id "${userId}".`,
+      action_status: 0,
+      action_msg: "",
+    };
+    const reqUserIsAdmin = await checkIfJWTisAdmin(reqAdminId);
     if (!reqUserIsAdmin) {
       console.log(
-        `El usuario con id "${reqUserId}" que realiza la request no es un admin.`
+        `El usuario con id "${reqAdminId}" que realiza la request no es un admin.`
       );
       return res.status(403).send({
-        error: `El usuario con id "${reqUserId}" que realiza la request no es un admin.`,
+        error: `El usuario con id "${reqAdminId}" que realiza la request no es un admin.`,
       });
     }
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res.status(403).send(`La password de administrador no es válida`);
     }
-    let userId = req.body.userId;
-    console.log(`userId recibido = ${userId}`);
+
     let allReviewsToUser = await getAllReviewsToUser(userId);
     if (!allReviewsToUser) {
       throw new Error(`Las reviews al usuario encontradas es falso.`);
@@ -190,6 +229,11 @@ router.post("/cleanReviewsToUser", jwtCheck, async (req: any, res) => {
       reviewsErased++;
     }
     console.log("Cantidad de reviews borradas: " + reviewsErased);
+    await db.Action.create({
+      ...newAdminAction,
+      action_status: 200,
+      action_msg: `Cantidad de reviews soft destroyed: ${reviewsErased}`,
+    });
     return res
       .status(200)
       .send(`Cantidad de reviews soft destroyed: ${reviewsErased}`);
@@ -205,14 +249,23 @@ router.post("/deletePetsWithNoUserId", jwtCheck, async (req: any, res) => {
   try {
     // CHEQUEAR SI EL REQ.AUTH.SUB EXISTE EN LA DB
     let passwordFromReq = req.body.password;
-    const reqUserId = req.auth.sub;
-    const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
-    if (!reqUserIsAdmin) {
+    const reqAdminId = req.auth.sub;
+    const reqAdminIsAdmin = await checkIfJWTisAdmin(reqAdminId);
+
+    const newAdminAction: IAdminAction = {
+      admin_id: reqAdminId,
+      route: `/admin/deletePetsWithNoUserId`,
+      action: `Delete Pets with no User Id.`,
+      action_status: 0,
+      action_msg: "",
+    };
+
+    if (!reqAdminIsAdmin) {
       console.log(
-        `El usuario con id "${reqUserId}" que realiza la request no es un admin.`
+        `El usuario con id "${reqAdminId}" que realiza la request no es un admin.`
       );
       return res.status(403).send({
-        error: `El usuario con id "${reqUserId}" que realiza la request no es un admin.`,
+        error: `El usuario con id "${reqAdminId}" que realiza la request no es un admin.`,
       });
     }
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
@@ -235,6 +288,11 @@ router.post("/deletePetsWithNoUserId", jwtCheck, async (req: any, res) => {
       console.log(`Animal soft destroyed...`);
       petsDestroyed++;
     }
+    await db.Action.create({
+      ...newAdminAction,
+      action_status: 200,
+      action_msg: `Cantidad de Mascotas/Posts eliminados: ${petsDestroyed}.`,
+    });
     return res
       .status(200)
       .send(`Cantidad de Mascotas/Posts eliminados: ${petsDestroyed}.`);
@@ -247,13 +305,22 @@ router.post("/deletePet", jwtCheck, async (req: any, res) => {
   console.log(`En ruta /admin/deletePet`);
   try {
     const passwordFromReq = req.body.password;
-    const reqUserId = req.auth.sub;
+    const reqAdminId = req.auth.sub;
     const { petId } = req.body;
+
+    const newAdminAction: IAdminAction = {
+      admin_id: reqAdminId,
+      route: `/admin/deletePet`,
+      action: `Delete Pet with Id "${petId}".`,
+      action_status: 0,
+      action_msg: "",
+    };
+
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       return res.status(403).send(`La password de administrador no es válida`);
     }
-    const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
-    if (reqUserIsAdmin !== true) {
+    const reqAdminIsAdmin = await checkIfJWTisAdmin(reqAdminId);
+    if (reqAdminIsAdmin !== true) {
       return res
         .status(403)
         .send(
@@ -261,12 +328,22 @@ router.post("/deletePet", jwtCheck, async (req: any, res) => {
         );
     }
 
-    const pet = await db.Animal.findOne({ where: { id: petId } });
+    const pet = await db.Animal.findByPk(petId);
     if (pet) {
       await pet.destroy();
+      await db.Action.create({
+        ...newAdminAction,
+        action_status: 200,
+        action_msg: `La publicación fue soft destroyed`,
+      });
       return res.status(200).send("la publicación fue eliminada");
     }
-    return res.status(200).send("la publicación no existe");
+    await db.Action.create({
+      ...newAdminAction,
+      action_status: 404,
+      error_msg: `La publicación no existe`,
+    });
+    return res.status(404).send("la publicación no existe");
   } catch (error: any) {
     console.log(`Error en /admin/deletePets ${error.message}`);
   }
@@ -331,10 +408,19 @@ async function checkIfJWTisAdminOrSuperAdmin(jwtId: string): Promise<boolean> {
 router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
   console.log(`Entré a "admin/setIsAdmin"`);
   try {
-    const jwtId = req.auth.sub;
+    const reqAdminId = req.auth.sub;
     const passwordFromReq = req.body.password;
     const idOfUserToSetIsAdminProp = req.body.userToAffect_id;
     const newIsAdminValue = req.body.newIsAdminValue;
+
+    const newAdminAction: IAdminAction = {
+      admin_id: reqAdminId,
+      route: `/admin/setIsAdmin`,
+      action: `Setear/cambiar la prop "isAdmin" del user con id "${idOfUserToSetIsAdminProp}" a "${newIsAdminValue}".`,
+      action_status: 0,
+      action_msg: "",
+    };
+
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       console.log(`La password ingresada "${passwordFromReq}" no es válida.`);
 
@@ -342,7 +428,9 @@ router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
         .status(403)
         .send({ msg: `La password de administrador ingresada no es válida` });
     }
-    const reqUserIsSuperAdmin: boolean = await checkIfJWTisSuperAdmin(jwtId);
+    const reqUserIsSuperAdmin: boolean = await checkIfJWTisSuperAdmin(
+      reqAdminId
+    );
     if (!reqUserIsSuperAdmin) {
       return res.status(403).send({
         error: `Se debe tener rol de Super Admin para realizar esta acción.`,
@@ -364,6 +452,11 @@ router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
     console.log(
       `Usuario con id ${idOfUserToSetIsAdminProp} fue seteado a isAdmin = ${newIsAdminValue}.`
     );
+    await db.Action.create({
+      ...newAdminAction,
+      action_status: 200,
+      action_msg: `Usuario con id ${idOfUserToSetIsAdminProp} fue seteado a isAdmin = ${newIsAdminValue}.`,
+    });
     return res.status(200).send({
       msg: `Usuario con id ${idOfUserToSetIsAdminProp} fue seteado a isAdmin = ${newIsAdminValue}.`,
     });
@@ -377,10 +470,19 @@ router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
 router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
   console.log(`Entré a "admin/setIsSuperAdmin"`);
   try {
-    const jwtId = req.auth.sub;
+    const reqAdminId = req.auth.sub;
     const passwordFromReq = req.body.password;
     const idOfUserToSetIsSuperAdminProp = req.body.userToAffect_id;
     const newIsSuperAdminValue = req.body.newIsSuperAdminValue;
+
+    const newAdminAction: IAdminAction = {
+      admin_id: reqAdminId,
+      route: `/admin/setIsSuperAdmin`,
+      action: `Setear/cambiar la prop "isSuperAdmin" del user con id "${idOfUserToSetIsSuperAdminProp}" a "${newIsSuperAdminValue}".`,
+      action_status: 0,
+      action_msg: "",
+    };
+
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
       console.log(`La password ingresada "${passwordFromReq}" no es válida.`);
 
@@ -388,7 +490,9 @@ router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
         .status(403)
         .send({ msg: `La password de administrador ingresada no es válida` });
     }
-    const reqUserIsSuperAdmin: boolean = await checkIfJWTisSuperAdmin(jwtId);
+    const reqUserIsSuperAdmin: boolean = await checkIfJWTisSuperAdmin(
+      reqAdminId
+    );
     if (!reqUserIsSuperAdmin) {
       return res.status(403).send({
         error: `Se debe tener rol de Super Admin para realizar esta acción.`,
@@ -412,6 +516,11 @@ router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
     console.log(
       `Usuario con id ${idOfUserToSetIsSuperAdminProp} fue seteado a isAdmin = ${newIsSuperAdminValue}.`
     );
+    await db.Action.create({
+      ...newAdminAction,
+      action_status: 200,
+      action_msg: `Usuario con id ${idOfUserToSetIsSuperAdminProp} fue seteado a isAdmin = ${newIsSuperAdminValue}.`,
+    });
     return res.status(200).send({
       msg: `Usuario con id ${idOfUserToSetIsSuperAdminProp} fue seteado a isAdmin = ${newIsSuperAdminValue}.`,
     });
@@ -468,9 +577,9 @@ router.get("/createMultiplier", jwtCheck, async (req: any, res) => {
     const multiplier = await db.Multiplier.findAll();
     if (multiplier.length === 0) {
       await db.Multiplier.create({ number: 1 });
-      res.send("multiplicador creado");
+      return res.send("multiplicador creado");
     }
-    res.send("el multiplicador ya existe");
+    return res.send("el multiplicador ya existe");
   } catch (error: any) {
     console.log(`Error en /admin/changeMultiplier. ${error.message}`);
     return res.status(404).send(error.message);
@@ -483,14 +592,23 @@ router.post("/changeMultiplier", jwtCheck, async (req: any, res) => {
     // Agregar chequeo de si existe el req.auth.sub en la DB
     const { newMultiplier } = req.body;
     let passwordFromReq = req.body.password;
-    const reqUserId = req.auth.sub;
-    const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
+    const reqAdminId = req.auth.sub;
+
+    const newAdminAction: IAdminAction = {
+      admin_id: reqAdminId,
+      route: `/admin/changeMultiplier`,
+      action: `Cambiar el valor del multiplicador de puntos de la tabla Multiplier a un nuevo valor: "${newMultiplier}"`,
+      action_status: 0,
+      action_msg: "",
+    };
+
+    const reqUserIsAdmin = await checkIfJWTisAdmin(reqAdminId);
     if (!reqUserIsAdmin) {
       console.log(
-        `El usuario con id "${reqUserId}" que realiza la request no es un admin.`
+        `El usuario con id "${reqAdminId}" que realiza la request no es un admin.`
       );
       return res.status(403).send({
-        error: `El usuario con id "${reqUserId}" que realiza la request no es un admin.`,
+        error: `El usuario con id "${reqAdminId}" que realiza la request no es un admin.`,
       });
     }
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
@@ -501,7 +619,15 @@ router.post("/changeMultiplier", jwtCheck, async (req: any, res) => {
     multiplier.number = newMultiplierToNumber;
     await multiplier.save();
 
-    res.send(`multiplicador cambiado. Valor actual = ${multiplier.number}`);
+    await db.Action.create({
+      ...newAdminAction,
+      action_status: 200,
+      action_msg: `Multiplicador cambiado. Valor actual = ${multiplier.number}`,
+    });
+
+    return res
+      .status(200)
+      .send(`multiplicador cambiado. Valor actual = ${multiplier.number}`);
   } catch (error: any) {
     console.log(`Error en /admin/changeMultiplier. ${error.message}`);
     return res.status(404).send(error.message);
@@ -544,14 +670,23 @@ router.post("/banUser", jwtCheck, async (req: any, res) => {
   try {
     const { id } = req.body;
     let passwordFromReq = req.body.password;
-    const reqUserId = req.auth.sub;
-    const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
+    const reqAdminId = req.auth.sub;
+
+    const newAdminAction: IAdminAction = {
+      admin_id: reqAdminId,
+      route: `/admin/banUser`,
+      action: `Banear a usuario con id ${id}`,
+      action_status: 0,
+      action_msg: "",
+    };
+
+    const reqUserIsAdmin = await checkIfJWTisAdmin(reqAdminId);
     if (!reqUserIsAdmin) {
       console.log(
-        `El usuario con id "${reqUserId}" que realiza la request no es un admin.`
+        `El usuario con id "${reqAdminId}" que realiza la request no es un admin.`
       );
       return res.status(403).send({
-        error: `El usuario con id "${reqUserId}" que realiza la request no es un admin.`,
+        error: `El usuario con id "${reqAdminId}" que realiza la request no es un admin.`,
       });
     }
     if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
@@ -564,9 +699,23 @@ router.post("/banUser", jwtCheck, async (req: any, res) => {
       user.isBanned = "true";
       await user.save();
 
-      console.log(`usuario baneado ${ban.email}`);
-      return res.send(`usuario baneado ${ban.email}`);
+      console.log(`Usuario con email ${ban.email} ha sido banneado`);
+
+      await db.Action.create({
+        ...newAdminAction,
+        action_status: 200,
+        action_msg: `Usuario con id "${id}" e email "${ban.email}" ha sido banneado.`,
+      });
+      return res
+        .status(200)
+        .send(`Usuario con email ${ban.email} ha sido banneado.`);
     }
+
+    await db.Action.create({
+      ...newAdminAction,
+      action_status: 404,
+      error_msg: `El usuario con id "${id}" que se intenta banear no se encontró en la Data Base.`,
+    });
     return res.status(404).send("el usuario no existe");
   } catch (error: any) {
     console.log(`Error en /admin/banUser. ${error.message}`);
@@ -579,14 +728,23 @@ router.delete("/purgePetsWithFalseUser", jwtCheck, async (req: any, res) => {
   console.log(`Entré a admin/purgePetsWithFalseUser`);
   try {
     const password = req.body.password;
-    const reqUserId = req.auth.sub;
-    const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
+    const reqAdminId = req.auth.sub;
+
+    const newAdminAction: IAdminAction = {
+      admin_id: reqAdminId,
+      route: `/admin/purgePetsWithFalseUser`,
+      action: `Purgar las Pets con un UserId de un User que no existe en la DB.`,
+      action_status: 0,
+      action_msg: "",
+    };
+
+    const reqUserIsAdmin = await checkIfJWTisAdmin(reqAdminId);
     if (!reqUserIsAdmin) {
       console.log(
-        `El usuario con id "${reqUserId}" que realiza la request no es un admin.`
+        `El usuario con id "${reqAdminId}" que realiza la request no es un admin.`
       );
       return res.status(403).send({
-        error: `El usuario con id "${reqUserId}" que realiza la request no es un admin.`,
+        error: `El usuario con id "${reqAdminId}" que realiza la request no es un admin.`,
       });
     }
     if (!password) {
@@ -610,12 +768,45 @@ router.delete("/purgePetsWithFalseUser", jwtCheck, async (req: any, res) => {
       }
     }
     console.log(`Cantidad de mascotas purgadas: ${numberOfPetsPurged}`);
+
+    await db.Action.create({
+      ...newAdminAction,
+      action_status: 200,
+      action_msg: `Cantidad de mascotas purgadas: ${numberOfPetsPurged}`,
+    });
+
     return res
       .status(200)
       .send(`Cantidad de mascotas destruidas: ${numberOfPetsPurged}`);
   } catch (error: any) {
     console.log(`Error en admin/purgePetsWithFalseUser. ${error.message}`);
     return res.status(400).send(error.message);
+  }
+});
+
+router.post("/getAdminActions", jwtCheck, async (req: any, res) => {
+  console.log(`Entré a admin/getAdminActions`);
+  try {
+    const passwordFromReq = req.body.password;
+    const reqAdminId = req.auth.sub;
+    let reqAdminIsAdmin = await checkIfJWTisAdminOrSuperAdmin(reqAdminId);
+    if (!reqAdminIsAdmin) {
+      return res
+        .status(403)
+        .send({ error: "No tenés permiso para realizar esta acción." });
+    }
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).send({ error: "Password inválida" });
+    }
+
+    const allTheAdminActions: IAdminAction[] = await db.Action.findAll();
+    console.log(
+      `Cantidad de Admin Actions fetcheadas de la DB: ${allTheAdminActions.length}`
+    );
+    return res.status(200).send(allTheAdminActions);
+  } catch (error: any) {
+    console.log(`Error en "admin/getAdminActions". ${error.message}`);
+    return res.status(400).send({ error: error.message });
   }
 });
 
