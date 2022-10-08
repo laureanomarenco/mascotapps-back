@@ -29,6 +29,9 @@ module.exports = (sequelize, DataTypes) => {
         name: {
             type: DataTypes.STRING,
             allowNull: true,
+            validate: {
+                len: [1, 50],
+            },
         },
         email: {
             type: DataTypes.STRING,
@@ -44,6 +47,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
             unique: false,
+            validate: {
+                len: [6, 30],
+            },
         },
         image: {
             type: DataTypes.STRING,
@@ -79,11 +85,25 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
         endpoints: {
-            type: DataTypes.TEXT,
-            allowNull: true
+            type: DataTypes.STRING(2000),
+            allowNull: true,
         },
         linkToDonate: {
-            type: DataTypes.STRING(2000),
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        isBanned: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        isAdmin: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: true,
+        },
+        isSuperAdmin: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
             allowNull: true,
         },
     }, {

@@ -16,12 +16,12 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
 const express_1 = require("express");
-const jwtMiddleware_1 = __importDefault(require("../../config/jwtMiddleware"));
 const models_1 = __importDefault(require("../../models"));
 const Stripe = require("stripe");
 const router = (0, express_1.Router)();
 let stripe;
 stripe = new Stripe(STRIPE_KEY);
+// ---------- FUNCIONES AUXILIARES PARA LAS RUTAS: ------------
 const getAllDonations = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("en function getAllDonations");
     try {
@@ -33,14 +33,16 @@ const getAllDonations = () => __awaiter(void 0, void 0, void 0, function* () {
         return error;
     }
 });
+// ----------- RUTAS : --------------------------
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("EN LA RUTA POST DE CHECKOUT");
     console.log(req.body);
     try {
         const { id, amount, email } = req.body;
+        let amountToDonate = amount / 100;
         const user = yield models_1.default.User.findOne({ where: { email: email } });
         const multiplierPoints = yield models_1.default.Multiplier.findByPk(1);
-        user.points = Math.ceil(user.points + 10 * amount * multiplierPoints.number);
+        user.points = Math.ceil(user.points + 10 * amountToDonate * multiplierPoints.number);
         yield user.save();
         //DONACIÓN
         const payment = yield stripe.paymentIntents.create({
@@ -53,7 +55,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log("payment: " + payment);
         const donation = yield models_1.default.Donation.create({
             id,
-            amount,
+            amount: amountToDonate,
             email,
         });
         // MAILER
@@ -66,12 +68,60 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 pass: GMAIL_PASS,
             },
         });
-        const msgMail = `Te damos profundas gracias desde Mascotapp por colaborar. Nuestro proyecto necesita de las financiación de los usuarios por lo cual tu aporte es muy importante.`;
         const mailOptions = {
             from: "service.mascotapp@gmail.com",
             to: email,
             subject: "Donación recibida!",
-            html: `<div>${msgMail}</div><div>Monto donado: ${amount / 100} USD</div><div>ID de la transferencia: ${id}</div>`,
+            html: `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+          <style>
+              p, a, h1, h2, h3, h4, h5, h6 {font-family: 'Roboto', sans-serif !important;}
+              h1{ font-size: 30px !important;}
+              h2{ font-size: 25px !important;}
+              h3{ font-size: 18px !important;}
+              h4{ font-size: 16px !important;}
+              p, a{font-size: 15px !important;}
+              .imag{
+                  width: 20px;
+                  height: 20px;
+              }
+              .contA{
+                  margin: 0px 5px 0 5px;
+              }
+          </style>
+      </head>
+      <body>
+          <div style="width: 100%; background-color: #e3e3e3;">
+              <div style="padding: 20px 10px 20px 10px;">
+      
+                  <div style="background-color: #ffffff; padding: 20px 0px 5px 0px; width: 100%; text-align: center;">
+                      <h1>Gracias por tu donación!</h1>
+                      <p>Te damos profundas gracias desde Mascotapp por colaborar. Nuestro proyecto necesita de las financiación de los usuarios por lo cual tu aporte es muy importante.</p>
+      
+                      <div>Monto donado: ${amount / 100} USD</div><div>ID de la transferencia: ${id}</div>
+                      <!-- Gracias -->
+                      <p style="margin-bottom: 50px;"><i>Atentamente:</i><br>El equipo de Mascotapp</p>
+                  </div>
+                  <!-- Contenido principal -->
+      
+                  <!-- Footer -->
+                  <div style="background-color: #282828; color: #ffffff; padding: 5px 0px 0px 0px; width: 100%; text-align: center;">
+                      <!-- Redes sociales -->
+                      <a href="https://github.com/laureanomarenco/mascotapps-front" class="contA">GitHub</a>
+                      <a href="https://mascotapps.vercel.app/" class="contA">Mascotapp</a>
+                  </div>
+              </div>
+          </div>
+      </body>
+      </html>`
+            // `<div>${msgMail}</div><div>Monto donado: ${
+            //   amount / 100
+            // } USD</div><div>ID de la transferencia: ${id}</div>`,
         };
         transporter.sendMail(mailOptions, function (error, info) {
             if (error)
@@ -81,7 +131,8 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         //CHECK USER
         if (user) {
-            yield donation.setUser(user.id);
+            yield donation.setUser(user);
+            console.log(`Donación asociada al user con id "${user.id}".`);
             yield models_1.default.User.update({ isDonator: "true" }, { where: { id: user.id } });
             return res.send({ msg: "Succesfull payment from", user });
         }
@@ -95,7 +146,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.json({ msg: err.raw.message });
     }
 }));
-router.get("/balance", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/balance", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("ENTRE A LA RUTA BALANCE");
     try {
         let allTheDonations = yield getAllDonations();
