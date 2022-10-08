@@ -784,4 +784,30 @@ router.delete("/purgePetsWithFalseUser", jwtCheck, async (req: any, res) => {
   }
 });
 
+router.post("/getAdminActions", jwtCheck, async (req: any, res) => {
+  console.log(`Entré a admin/getAdminActions`);
+  try {
+    const passwordFromReq = req.body.password;
+    const reqAdminId = req.auth.sub;
+    let reqAdminIsAdmin = await checkIfJWTisAdminOrSuperAdmin(reqAdminId);
+    if (!reqAdminIsAdmin) {
+      return res
+        .status(403)
+        .send({ error: "No tenés permiso para realizar esta acción." });
+    }
+    if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).send({ error: "Password inválida" });
+    }
+
+    const allTheAdminActions: IAdminAction[] = await db.Action.findAll();
+    console.log(
+      `Cantidad de Admin Actions fetcheadas de la DB: ${allTheAdminActions.length}`
+    );
+    return res.status(200).send(allTheAdminActions);
+  } catch (error: any) {
+    console.log(`Error en "admin/getAdminActions". ${error.message}`);
+    return res.status(400).send({ error: error.message });
+  }
+});
+
 export default router;

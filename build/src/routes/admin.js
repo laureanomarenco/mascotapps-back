@@ -180,7 +180,7 @@ router.post("/cleanReviewsToUser", jwtMiddleware_1.default, (req, res) => __awai
         console.log(`userId recibido = ${userId}`);
         const newAdminAction = {
             admin_id: reqAdminId,
-            route: `/admin/cleanReviewsOfUserId`,
+            route: `/admin/cleanReviewsToUser`,
             action: `Delete Reviews of User with id "${userId}".`,
             action_status: 0,
             action_msg: "",
@@ -666,6 +666,29 @@ router.delete("/purgePetsWithFalseUser", jwtMiddleware_1.default, (req, res) => 
     catch (error) {
         console.log(`Error en admin/purgePetsWithFalseUser. ${error.message}`);
         return res.status(400).send(error.message);
+    }
+}));
+router.post("/getAdminActions", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Entré a admin/getAdminActions`);
+    try {
+        const passwordFromReq = req.body.password;
+        const reqAdminId = req.auth.sub;
+        let reqAdminIsAdmin = yield checkIfJWTisAdminOrSuperAdmin(reqAdminId);
+        if (!reqAdminIsAdmin) {
+            return res
+                .status(403)
+                .send({ error: "No tenés permiso para realizar esta acción." });
+        }
+        if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
+            return res.status(403).send({ error: "Password inválida" });
+        }
+        const allTheAdminActions = yield index_1.default.Action.findAll();
+        console.log(`Cantidad de Admin Actions fetcheadas de la DB: ${allTheAdminActions.length}`);
+        return res.status(200).send(allTheAdminActions);
+    }
+    catch (error) {
+        console.log(`Error en "admin/getAdminActions". ${error.message}`);
+        return res.status(400).send({ error: error.message });
     }
 }));
 exports.default = router;
