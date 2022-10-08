@@ -4,12 +4,16 @@ import { IPetOfUser, Pet } from "../types/petTypes";
 import { Op } from "sequelize";
 import {
   IContactInfoOfOwner,
+  IMultipleUserInfo,
+  INewUser,
   ISomeUserInfo,
-  UserAttributes,
+  IUserAttributes,
 } from "../types/userTypes";
 import { IReview } from "../types/reviewTypes";
 import { requiresAuth } from "express-openid-connect";
 import jwtCheck from "../../config/jwtMiddleware";
+import { validateNewUser } from "../auxiliary/UserValidators";
+import { ITransaction } from "../types/transactionTypes";
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 
 const router = Router();
@@ -62,7 +66,7 @@ async function getSomeUserInfo(userId: any) {
   console.log(`Ejecutando función auxiliar someUserInfo`);
   console.log(`userId = ${userId}`);
   try {
-    let userInfo: UserAttributes = await db.User.findByPk(userId);
+    let userInfo: IUserAttributes = await db.User.findByPk(userId);
     if (userInfo) {
       let someUserInfo: ISomeUserInfo = {
         name: userInfo.name,
@@ -282,7 +286,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
     let petID = req.params.petid;
     let petInDB = await db.Animal.findByPk(petID);
     let ownerID = petInDB?.UserId;
-    let ownerInDB: UserAttributes = await db.User.findByPk(ownerID);
+    let ownerInDB: IUserAttributes = await db.User.findByPk(ownerID);
     if (!ownerInDB) {
       throw new Error(
         `Usuario dueño de la mascota no fue encontrado en la Data Base.`
@@ -344,7 +348,6 @@ router.get("/getallpetsofuser", jwtCheck, async (req: any, res) => {
     }
   } catch (error: any) {
     console.log(`error en el /users/getallpetsofusers: ${error.message}`);
-    console.log(error);
     return res.status(404).send(error.message);
   }
 });
@@ -404,23 +407,22 @@ router.post("/newuser", jwtCheck, async (req: any, res) => {
       );
     }
 
-    console.log("new user..", name);
-    let [newUser, created] = await db.User.findOrCreate({
-      where: {
-        name,
-        email,
-        id,
-        city,
-        contact,
-        image,
-        linkToDonate,
-      },
-    });
-    if (!created) {
-      res.status(409).send(`El usuario con id ${id} ya existe en la DB`);
-    } else {
-      console.log(`Nuevo usuario creado con name: ${name}`);
-      res.status(200).send(newUser);
+    const newUserFromReq: INewUser = {
+      id: req.auth.id,
+      email: email,
+      name: name,
+      contact: contact,
+      city: city,
+      image: image,
+      linkToDonate: linkToDonate,
+    };
+
+    const validatedNewUser = validateNewUser(newUserFromReq);
+    console.log(`New User: ${validatedNewUser}`);
+    let newUserCreated = await db.User.create(validatedNewUser);
+    if (newUserCreated) {
+      console.log(`Nuevo usuario creado con email ${newUserCreated.email}:`);
+      return res.status(200).send(newUserCreated);
     }
   } catch (error: any) {
     console.log(error.message);
@@ -460,23 +462,24 @@ router.put("/update", jwtCheck, async (req: any, res) => {
   console.log(req.body);
   try {
     const id = req.auth?.sub;
-    const { image, contact, city, email, name, linkToDonate } = req.body;
-    const newProfile = await db.User.update(
-      {
-        image: image,
-        contact: contact,
-        city: city,
-        email: email,
-        name: name,
-        linkToDonate: linkToDonate,
+    if (!id) {
+      throw new Error(`El id del token "${id}" no es válido.`);
+    }
+    // const { image, contact, city, email, name, linkToDonate } = req.body;
+    let updatedNewProfileFromReq: INewUser = {
+      id: id,
+      ...req.body,
+    };
+    let validatedNewProfile = validateNewUser(updatedNewProfileFromReq);
+    const newProfile = await db.User.update(validatedNewProfile, {
+      where: {
+        id: id,
       },
-      {
-        where: {
-          id: id,
-        },
-      }
-    );
-    res.status(200).send(newProfile);
+    });
+
+    console.log(`Perfil de usuario actualizado: `);
+    console.log(newProfile);
+    return res.status(200).send(newProfile);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -489,12 +492,12 @@ router.get("/getMultipleUserInfo", jwtCheck, async (req: any, res) => {
     if (req.auth?.sub) {
       let userId = req.auth.sub;
       let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId); //obj con props
-      let userReviewsRecived = await getAllReviewsRecived(userId); //arreglo de objs
-      let userTransactions = await getAllTransactions(userId); //arreglo de objs
-      let postsOfUser = await getPostsOfUser(userId); //arreglo de objs
+      let userReviewsRecived: IReview[] = await getAllReviewsRecived(userId); //arreglo de objs
+      let userTransactions: ITransaction[] = await getAllTransactions(userId); //arreglo de objs
+      let postsOfUser: Pet[] = await getPostsOfUser(userId); //arreglo de objs
       console.log(`Devolviendo multipleUserInfo...`);
       //! TODO ESTO PODRÏA ESTAR ADENTRO DE UN Promise.all() ?? Sería mejor?
-      const multipleUserInfo = {
+      const multipleUserInfo: IMultipleUserInfo = {
         userProps: { ...someUserInfo },
         reviews: [...userReviewsRecived],
         transactions: [...userTransactions],
@@ -513,7 +516,7 @@ router.get("/getMultipleUserInfo", jwtCheck, async (req: any, res) => {
 router.get("/ranking", async (req, res) => {
   console.log(`Estoy en /users/ranking.`);
   try {
-    let allTheUsers = await getAllUsers();
+    let allTheUsers: IUserAttributes[] = await getAllUsers();
 
     const ranking = allTheUsers.sort(function (a: any, b: any) {
       return b.points - a.points;
@@ -532,7 +535,7 @@ router.get("/points", jwtCheck, async (req: any, res) => {
   console.log(`Estoy en /users/points.`);
   try {
     const id = req.auth?.sub;
-    const user = await db.User.findOne({ where: { id: id } });
+    const user: IUserAttributes = await db.User.findOne({ where: { id: id } });
     if (user) {
       return res.status(200).send({ points: user.points });
     }
