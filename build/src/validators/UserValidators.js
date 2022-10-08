@@ -30,7 +30,7 @@ function checkUserId(idFromReq) {
 exports.checkUserId = checkUserId;
 //CHECK USER NAME
 function checkUserName(nameFromReq) {
-    if ((0, GenericValidators_1.isStringBetween1And101CharsLong)(nameFromReq)) {
+    if ((0, GenericValidators_1.isStringBetween1And50CharsLong)(nameFromReq)) {
         return nameFromReq;
     }
     throw new Error(`El nombre ingresado "${nameFromReq}" no es válido.`);

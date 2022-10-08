@@ -189,7 +189,7 @@ function checkName(nameFromReq) {
     if ((0, GenericValidators_1.isUndefinedOrNull)(nameFromReq) || (0, GenericValidators_1.isEmptyString)(nameFromReq)) {
         return undefined;
     }
-    if ((0, GenericValidators_1.isStringBetween1And101CharsLong)(nameFromReq)) {
+    if ((0, GenericValidators_1.isStringBetween1And50CharsLong)(nameFromReq)) {
         return nameFromReq;
     }
     throw new Error(`El nombre/name ingresado "${nameFromReq}" no es válido`);
