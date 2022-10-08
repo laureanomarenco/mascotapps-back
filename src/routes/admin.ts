@@ -193,7 +193,7 @@ router.post("/cleanReviewsToUser", jwtCheck, async (req: any, res) => {
 
     const newAdminAction: IAdminAction = {
       admin_id: reqAdminId,
-      route: `/admin/cleanReviewsOfUserId`,
+      route: `/admin/cleanReviewsToUser`,
       action: `Delete Reviews of User with id "${userId}".`,
       action_status: 0,
       action_msg: "",
