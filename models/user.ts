@@ -3,17 +3,6 @@
 import { Model, UUIDV4 } from "sequelize";
 import { IUserAttributes } from "../src/types/userTypes";
 
-// export interface UserAttributes {
-//   id: string | undefined;
-//   googleId: string | undefined;
-//   displayName: string | undefined;
-//   email: string | undefined;
-//   name: string | undefined;
-//   postalCode: string | undefined;
-//   aditionalContactInfo: string | undefined;
-//   thumbnail: string | undefined;
-// }
-
 module.exports = (sequelize: any, DataTypes: any) => {
   class User extends Model<IUserAttributes> implements IUserAttributes {
     /**
