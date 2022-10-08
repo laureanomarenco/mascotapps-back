@@ -10,9 +10,9 @@ import {
   IUserAttributes,
 } from "../../types/userTypes";
 import { IReview } from "../../types/reviewTypes";
-import { requiresAuth } from "express-openid-connect";
+// import { requiresAuth } from "express-openid-connect";
 import jwtCheck from "../../../config/jwtMiddleware";
-import { validateNewUser } from "../../auxiliary/UserValidators";
+import { validateNewUser } from "../../validators/UserValidators";
 import { ITransaction } from "../../types/transactionTypes";
 import {
   emailExistsInDB,

@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const sequelize_1 = require("sequelize");
 const index_1 = __importDefault(require("../../../models/index"));
-const TransactionValidators_1 = require("../../auxiliary/TransactionValidators");
+const TransactionValidators_1 = require("../../validators/TransactionValidators");
 const transactionTypes_1 = require("../../types/transactionTypes");
 const petTypes_1 = require("../../types/petTypes");
 const jwtMiddleware_1 = __importDefault(require("../../../config/jwtMiddleware"));

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Op } from "sequelize";
 import db from "../../../models/index";
-import { validateNewTransaction } from "../../auxiliary/TransactionValidators";
+import { validateNewTransaction } from "../../validators/TransactionValidators";
 import { ITransaction, transactionStatus } from "../../types/transactionTypes";
 import { postStatus, Status } from "../../types/petTypes";
 import jwtCheck from "../../../config/jwtMiddleware";

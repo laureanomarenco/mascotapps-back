@@ -1,10 +1,11 @@
 import { INewUser } from "../types/userTypes";
 import {
-  isString,
-  isStringBetween1And101CharsLong,
+  isEmail,
+  isEmptyString,
   isUndefinedOrNull,
-} from "./AnimalValidators";
-import { isEmptyString } from "./ReviewValidators";
+  isStringBetween1And101CharsLong,
+  isString,
+} from "./GenericValidators";
 
 export function validateNewUser(newUserFromReq: INewUser): INewUser {
   try {
@@ -50,14 +51,6 @@ export function checkCity(contactFromReq: any): string | undefined {
   throw new Error(`La ciudad ingresada "${contactFromReq}" no es válida.`);
 }
 
-//IS EMAIL:
-export function isEmail(argumento: any): boolean {
-  let regex = new RegExp(
-    "([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|[[\t -Z^-~]*])"
-  );
-  return regex.test(argumento);
-}
-
 //CHECK VALID EMAIL
 export function checkValidEmail(emailFromReq: any): string {
   if (!isEmail(emailFromReq)) {
@@ -97,7 +90,7 @@ export function checkAditionalContactInfo(
   );
 }
 
-//CHECK Thumbnail:
+//CHECK THUMBNAIL / IMAGE:
 export function checkThumbnail(thumbnailFromReq: any): string | undefined {
   if (isUndefinedOrNull(thumbnailFromReq)) {
     return undefined;

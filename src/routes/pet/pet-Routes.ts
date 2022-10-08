@@ -4,12 +4,26 @@ import db from "../../../models/index";
 import {
   validateNewPet,
   validateUpdatedPet,
-} from "../../auxiliary/AnimalValidators";
+} from "../../validators/AnimalValidators";
 import { Pet, postStatus, Species, updatedPet } from "../../types/petTypes";
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 import webPush from "../../../config/web_push";
 import jwtCheck from "../../../config/jwtMiddleware";
-import { excludePetsTransacted, getAllActivePets, getAllBy, getAllCats, getAllDogs, getAllFound, getAllInAdoption, getAllLost, getAllOtherSpecie, getNumberOfPetsInDB, getPetById, idExistsInDataBase, mapSpecies } from "./petAuxFn";
+import {
+  excludePetsTransacted,
+  getAllActivePets,
+  getAllBy,
+  getAllCats,
+  getAllDogs,
+  getAllFound,
+  getAllInAdoption,
+  getAllLost,
+  getAllOtherSpecie,
+  getNumberOfPetsInDB,
+  getPetById,
+  idExistsInDataBase,
+  mapSpecies,
+} from "./petAuxFn";
 
 const router = Router();
 

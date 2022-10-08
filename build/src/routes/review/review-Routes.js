@@ -14,9 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../../models/index"));
-const ReviewValidators_1 = require("../../auxiliary/ReviewValidators");
+const ReviewValidators_1 = require("../../validators/ReviewValidators");
 const jwtMiddleware_1 = __importDefault(require("../../../config/jwtMiddleware"));
 const reviewAuxFn_1 = require("./reviewAuxFn");
+const GenericValidators_1 = require("../../validators/GenericValidators");
 const router = (0, express_1.Router)();
 //------  RUTAS: -----------------------------------------------
 router.get("/allReviews", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -37,6 +38,9 @@ router.post("/newReview", jwtMiddleware_1.default, (req, res) => __awaiter(void 
         console.log(`req.body = ${req.body}`);
         const idOfToken = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.sub;
         let { reviewed_id, reviewer_id, transaction_id } = req.body;
+        if (!(0, GenericValidators_1.isValidId)(reviewed_id)) {
+            throw new Error(`El ID del reviewed_id "${reviewed_id}" no es válido`);
+        }
         if (idOfToken !== reviewer_id) {
             throw new Error(`El id del reviewer es distinto al id del reviewer_id del body`);
         }

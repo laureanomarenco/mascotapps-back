@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../../models/index"));
-const CommentValidators_1 = require("../../auxiliary/CommentValidators");
+const CommentValidators_1 = require("../../validators/CommentValidators");
 const router = (0, express_1.Router)();
 //----- FUNCIONES AUXILIARES PARA LAS RUTAS: ------
 // ---- RUTAS: ---------

@@ -1,9 +1,10 @@
 import { Router } from "express";
 import db from "../../../models/index";
 import { IReview } from "../../types/reviewTypes";
-import { validateNewReview } from "../../auxiliary/ReviewValidators";
+import { validateNewReview } from "../../validators/ReviewValidators";
 import jwtCheck from "../../../config/jwtMiddleware";
 import { getAllReviews } from "./reviewAuxFn";
+import { isValidId } from "../../validators/GenericValidators";
 
 const router = Router();
 
@@ -25,6 +26,10 @@ router.post("/newReview", jwtCheck, async (req: any, res) => {
     console.log(`req.body = ${req.body}`);
     const idOfToken = req.auth?.sub;
     let { reviewed_id, reviewer_id, transaction_id } = req.body;
+
+    if (!isValidId(reviewed_id)) {
+      throw new Error(`El ID del reviewed_id "${reviewed_id}" no es válido`);
+    }
     if (idOfToken !== reviewer_id) {
       throw new Error(
         `El id del reviewer es distinto al id del reviewer_id del body`

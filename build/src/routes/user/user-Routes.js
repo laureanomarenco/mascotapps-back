@@ -14,8 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../../models/index"));
+// import { requiresAuth } from "express-openid-connect";
 const jwtMiddleware_1 = __importDefault(require("../../../config/jwtMiddleware"));
-const UserValidators_1 = require("../../auxiliary/UserValidators");
+const UserValidators_1 = require("../../validators/UserValidators");
 const userAuxFn_1 = require("./userAuxFn");
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 const router = (0, express_1.Router)();

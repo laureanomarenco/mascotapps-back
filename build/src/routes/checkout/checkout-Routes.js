@@ -13,26 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "../../../config/config.js")[env];
+// const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
 const express_1 = require("express");
 const models_1 = __importDefault(require("../../../models"));
+const checkoutAuxFn_1 = require("./checkoutAuxFn");
 const Stripe = require("stripe");
 const router = (0, express_1.Router)();
 let stripe;
 stripe = new Stripe(STRIPE_KEY);
-// ---------- FUNCIONES AUXILIARES PARA LAS RUTAS: ------------
-const getAllDonations = () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("en function getAllDonations");
-    try {
-        const allDonations = yield models_1.default.Donation.findAll();
-        return allDonations;
-    }
-    catch (error) {
-        console.log(error.message);
-        return error;
-    }
-});
 // ----------- RUTAS : --------------------------
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("EN LA RUTA POST DE CHECKOUT");
@@ -149,7 +138,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 router.get("/balance", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("ENTRE A LA RUTA BALANCE");
     try {
-        let allTheDonations = yield getAllDonations();
+        let allTheDonations = yield (0, checkoutAuxFn_1.getAllDonations)();
         console.log("All the donations: " + allTheDonations);
         return res.status(200).send(allTheDonations);
     }

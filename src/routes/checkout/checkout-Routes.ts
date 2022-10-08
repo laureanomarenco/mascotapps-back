@@ -1,25 +1,14 @@
 const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "../../../config/config.js")[env];
+// const config = require(__dirname + "../../../config/config.js")[env];
 const { GMAIL_PASS, GMAIL_USER, STRIPE_KEY } = process.env;
 import { Router } from "express";
 import db from "../../../models";
+import { getAllDonations } from "./checkoutAuxFn";
 const Stripe = require("stripe");
 const router = Router();
 
 let stripe: any;
 stripe = new Stripe(STRIPE_KEY);
-
-// ---------- FUNCIONES AUXILIARES PARA LAS RUTAS: ------------
-const getAllDonations = async () => {
-  console.log("en function getAllDonations");
-  try {
-    const allDonations = await db.Donation.findAll();
-    return allDonations;
-  } catch (error: any) {
-    console.log(error.message);
-    return error;
-  }
-};
 
 // ----------- RUTAS : --------------------------
 

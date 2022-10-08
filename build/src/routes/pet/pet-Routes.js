@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const index_1 = __importDefault(require("../../../models/index"));
-const AnimalValidators_1 = require("../../auxiliary/AnimalValidators");
+const AnimalValidators_1 = require("../../validators/AnimalValidators");
 const petTypes_1 = require("../../types/petTypes");
 // import { Ages, Genders, Pet, Species, Status } from "../types/petTypes";
 const web_push_1 = __importDefault(require("../../../config/web_push"));
