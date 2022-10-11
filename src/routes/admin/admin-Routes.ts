@@ -8,7 +8,13 @@ import { IUserAttributes } from "../../types/userTypes";
 import { transactionStatus } from "../../types/transactionTypes";
 import { getAllPets } from "../pet/petAuxFn";
 import { getAllUsers } from "../user/userAuxFn";
-import { getAllReviewsToUser, getPostsOfUser } from "./adminAuxFn";
+import {
+  checkIfJWTisAdmin,
+  checkIfJWTisAdminOrSuperAdmin,
+  checkIfJWTisSuperAdmin,
+  getAllReviewsToUser,
+  getPostsOfUser,
+} from "./adminAuxFn";
 
 dotenv.config();
 
@@ -95,7 +101,7 @@ router.post("/cleanPostsOfUserId", jwtCheck, async (req: any, res) => {
     const newAdminAction: IAdminAction = {
       admin_id: reqUserId,
       route: `/admin/cleanPostsOfUserId`,
-      action: `Delete posts of User with id "${req.body.userId}".`,
+      action: `Delete posts of User with id "${req.body.userId}". IP: ${req.ip}`,
       action_status: 0,
     };
     const reqUserIsAdmin = await checkIfJWTisAdmin(reqUserId);
@@ -160,7 +166,7 @@ router.post("/cleanReviewsToUser", jwtCheck, async (req: any, res) => {
     const newAdminAction: IAdminAction = {
       admin_id: reqAdminId,
       route: `/admin/cleanReviewsToUser`,
-      action: `Delete Reviews of User with id "${userId}".`,
+      action: `Delete Reviews of User with id "${userId}". IP: ${req.ip}`,
       action_status: 0,
       action_msg: "",
     };
@@ -207,6 +213,7 @@ router.post("/cleanReviewsToUser", jwtCheck, async (req: any, res) => {
     return res.status(404).send(error.message);
   }
 });
+
 // DELETE PETS WITH NO UserId
 router.post("/deletePetsWithNoUserId", jwtCheck, async (req: any, res) => {
   console.log(`En ruta /admin/deletePetsWithNoUserId`);
@@ -264,6 +271,8 @@ router.post("/deletePetsWithNoUserId", jwtCheck, async (req: any, res) => {
     console.log(`Error en /admin/deletePetsWithNoUserId. ${error.message}`);
   }
 });
+
+// DELETE PET
 router.post("/deletePet", jwtCheck, async (req: any, res) => {
   console.log(`En ruta /admin/deletePet`);
   try {
@@ -311,58 +320,7 @@ router.post("/deletePet", jwtCheck, async (req: any, res) => {
     console.log(`Error en /admin/deletePets ${error.message}`);
   }
 });
-// AUX FN: CHECK IF LOGGED USER IS ADMIN
-async function checkIfJWTisAdmin(jwtId: string): Promise<boolean> {
-  console.log(`Chequeando si el sub del JWT es un Admin`);
-  try {
-    let userAsAdmin = await db.User.findByPk(jwtId);
-    if (userAsAdmin.isAdmin === true) {
-      console.log(`isAdmin === true`);
-      return true;
-    } else {
-      console.log(`isAdmin !== true. El id ${jwtId} NO ES ADMIN`);
-      return false;
-    }
-  } catch (error) {
-    throw new Error("Error al chequear si el JWT sub es un admin");
-  }
-}
-// AUX FN: CHECK IF USER IS SUPER ADMIN
-async function checkIfJWTisSuperAdmin(jwtId: string): Promise<boolean> {
-  console.log(`Chequeando si user id ${jwtId} es SUPER ADMIN`);
-  try {
-    const userInDB: IUserAttributes = await db.User.findByPk(jwtId);
-    if (userInDB.isSuperAdmin === true) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error: any) {
-    console.log(`Error en function checkIfJWTisSuperAdmin`);
-    throw new Error(
-      `Error en function checkIfJWTisSuperAdmin. ${error.message}`
-    );
-  }
-}
-// AUX FN: CHECK IF USER IS ADMIN OR SUPER ADMIN
-async function checkIfJWTisAdminOrSuperAdmin(jwtId: string): Promise<boolean> {
-  console.log(`Chequeando si el user id "${jwtId}" es admin o super admin.`);
-  try {
-    const userInDB: IUserAttributes = await db.User.findByPk(jwtId);
-    if (!userInDB) {
-      throw new Error(`El usuario con id ${jwtId} no existe en la Data Base.`);
-    }
-    if (userInDB.isAdmin === true || userInDB.isSuperAdmin === true) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error: any) {
-    throw new Error(
-      `Error en function checkIfJWTisAdminOrSuperAdmin. ${error.message}`
-    );
-  }
-}
+
 // SET isAdmin a TRUE o FALSE. Sólo la puede usar el SUPER ADMIN.
 router.put("/setIsAdmin", jwtCheck, async (req: any, res) => {
   console.log(`Entré a "admin/setIsAdmin"`);
@@ -487,6 +445,7 @@ router.put("/setIsSuperAdmin", jwtCheck, async (req: any, res) => {
     return res.status(400).send({ error: `${error.message}` });
   }
 });
+
 // CHEQUEAR SI USER LOGUEADO CON JWT ES ADMIN O NO
 router.post("/hasAdminPowers", jwtCheck, async (req: any, res) => {
   console.log(`Entré a "admin/hasAdminPowers".`);
@@ -516,6 +475,7 @@ router.post("/hasAdminPowers", jwtCheck, async (req: any, res) => {
     return res.status(400).send({ error: `${error.message}`, msg: false });
   }
 });
+
 // ----   RUTAS MULTIPLICADORAS:  -----------
 router.get("/createMultiplier", jwtCheck, async (req: any, res) => {
   try {
@@ -587,6 +547,7 @@ router.post("/changeMultiplier", jwtCheck, async (req: any, res) => {
     return res.status(404).send(error.message);
   }
 });
+
 // ------ RUTAS DEPRECADAS O YA SIN SENTIDO : ------
 router.post("/mutateActiveToActivo", jwtCheck, async (req, res) => {
   console.log(`Entré a /admin/mutateActiveToActivo`);
@@ -671,6 +632,7 @@ router.post("/banUser", jwtCheck, async (req: any, res) => {
     return res.status(404).send(error.message);
   }
 });
+
 //BORRAR PETS QUE TIENEN UN UserId de un User que no existe en la DB
 router.delete("/purgePetsWithFalseUser", jwtCheck, async (req: any, res) => {
   console.log(`Entré a admin/purgePetsWithFalseUser`);
