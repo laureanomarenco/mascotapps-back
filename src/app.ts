@@ -1,4 +1,4 @@
-import db from "../models/index";
+const morgan = require("morgan");
 import express from "express";
 import usersRouter from "./routes/user/user-Routes";
 import animalRouter from "./routes/pet/pet-Routes";
@@ -10,10 +10,12 @@ import commentRouter from "./routes/comment/comment-Routes";
 import adminRouter from "./routes/admin/admin-Routes";
 import dotenv from "dotenv";
 import cors from "cors";
-dotenv.config();
 
+dotenv.config();
 const app = express();
+
 app.use(express.json());
+app.use(morgan("dev"));
 
 // var jwt = require("express-jwt");
 const { expressjwt: jwt } = require("express-jwt");
@@ -30,8 +32,6 @@ const jwtCheck = jwt({
   issuer: "https://dev-nxuk8wmn.us.auth0.com/",
   algorithms: ["RS256"],
 });
-
-// app.use(jwtCheck);
 
 var corsOptions = {
   origin: [
@@ -58,21 +58,6 @@ app.use("/reviews", reviewsRouter);
 app.use("/transactions", transactionsRouter);
 app.use("/comments", commentRouter);
 app.use("/admin", adminRouter);
-
-//! rutas de prueba:
-
-app.get("/testauth", jwtCheck, async (req: any, res) => {
-  console.log(`entré a /TESTAUTH`);
-  try {
-    console.log("REQ : ");
-    console.log(req.user);
-    console.log(req.auth);
-    console.log(req.auth?.sub);
-    return res.status(200).send("RECIBIDOO!!");
-  } catch (error: any) {
-    console.log(`error! ${error.message}`);
-  }
-});
 
 module.exports = app;
 
