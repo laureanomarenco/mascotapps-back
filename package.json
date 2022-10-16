@@ -20,7 +20,7 @@
     "mascotas",
     "Soy Henry"
   ],
-  "author": "Roberto Spinelli, Laureano Marenco, Renzo Etari, Alejandro Juka",
+  "author": "Roberto Spinelli, Laureano Marenco, Renzo Tari, Alejandro Juka",
   "license": "ISC",
   "devDependencies": {
     "@types/cors": "^2.8.12",
