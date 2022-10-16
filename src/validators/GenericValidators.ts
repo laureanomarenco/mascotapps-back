@@ -1,5 +1,5 @@
 // IS VALID URL:
-export function isValidURL(argumento: any): boolean {
+export function isValidURLImage(argumento: any): boolean {
   if (typeof argumento !== "string") {
     return false;
   }
