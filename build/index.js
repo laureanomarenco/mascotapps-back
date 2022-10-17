@@ -13,6 +13,7 @@ models_1.default.sequelize.sync({ alter: true }).then(() => {
         console.log("**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** ");
         console.log(`App listening on port ${config.server.port}`);
         console.log("**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** ");
+        console.log("**** **** **** **** **** Creando Animals con las semillas... :  **** **** **** ****");
         console.log("**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** ");
         // animalSeeds.forEach(async (pet) => {
         //   let validatedPet = validateNewPet(pet);

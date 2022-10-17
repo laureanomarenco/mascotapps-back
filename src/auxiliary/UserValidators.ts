@@ -1,4 +1,3 @@
-"use strict";
 // import { UserAttributes } from "../types/userTypes";
 // import {
 //   checkId,
@@ -7,6 +6,7 @@
 //   isStringBetween1And101CharsLong,
 //   isUndefinedOrNull,
 // } from "./AnimalValidators";
+
 // // interface UserAttributes {
 // //   id: string | undefined;
 // //   googleId: string | undefined;
@@ -17,6 +17,7 @@
 // //   aditionalContactInfo: string | undefined;
 // //   thumbnail: string | undefined;
 // // }
+
 // export function validateNewUser(profile: any): UserAttributes {
 //   try {
 //     let userFromReqChecked: UserAttributes = {
@@ -36,6 +37,7 @@
 //     throw new Error(error.message);
 //   }
 // }
+
 // // Check givenName + familyName:
 // export function checkFullName(
 //   givenName: any,
@@ -52,6 +54,7 @@
 //     `El nombre completo "${namesConcatenated}" no es un nombre válido. Debe tener un máximo de 100 characteres y ser una cadena de texto.`
 //   );
 // }
+
 // // Validate email:
 // export function isEmail(argumento: any): boolean {
 //   let regex = new RegExp(
@@ -59,6 +62,7 @@
 //   );
 //   return regex.test(argumento);
 // }
+
 // export function checkEmail(emailFromReq: any): string | undefined {
 //   if (isUndefinedOrNull(emailFromReq)) {
 //     return undefined;
@@ -70,6 +74,7 @@
 //     `El email ingresado "${emailFromReq}" no es un email válido para el registro.`
 //   );
 // }
+
 // // Validate aditionalContactInfo
 // export function checkAditionalContactInfo(
 //   aditionalContactInfoFromReq: any
@@ -84,6 +89,7 @@
 //     `La información de contacto adicional ingresada no es válida. Por favor, o deje el input completamente vacío o ingrese una cadena de texto.`
 //   );
 // }
+
 // // Validate Thumbnail:
 // export function checkThumbnail(thumbnailFromReq: any): string | undefined {
 //   if (isUndefinedOrNull(thumbnailFromReq)) {

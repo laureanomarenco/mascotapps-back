@@ -1,12 +1,6 @@
 import { IComment, INewComment } from "../types/commentTypes";
-
-import {
-  isStringBetween1And50CharsLong,
-  isEmptyString,
-  isUndefinedOrNull,
-  isString,
-  isStringBetween1And101CharsLong,
-} from "./GenericValidators";
+import { isString, isStringBetween1And101CharsLong } from "./AnimalValidators";
+import { isEmptyString, isUndefinedOrNull } from "./ReviewValidators";
 
 export function validateNewComment(reqBody: any): INewComment {
   try {
@@ -79,6 +73,18 @@ function checkLugar(lugarFromReq: any): string {
     throw new Error(
       `Error al validar lugar. Ingrese una cadena de texto entre 1 y 100 caracteres de largo`
     );
+  }
+}
+
+function isStringBetween1And50CharsLong(argumento: any): boolean {
+  if (
+    typeof argumento === "string" &&
+    argumento.length > 0 &&
+    argumento.length <= 50
+  ) {
+    return true;
+  } else {
+    return false;
   }
 }
 

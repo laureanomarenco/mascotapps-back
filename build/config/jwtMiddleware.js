@@ -6,7 +6,7 @@ const jwtCheck = jwt({
     secret: jwks.expressJwtSecret({
         cache: true,
         rateLimit: true,
-        jwksRequestsPerMinute: 15,
+        jwksRequestsPerMinute: 5,
         jwksUri: "https://dev-nxuk8wmn.us.auth0.com/.well-known/jwks.json",
     }),
     audience: "https://juka-production.up.railway.app/",

@@ -43,15 +43,10 @@ router.get("/allReviews", (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 }));
 router.post("/newReview", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     console.log(`Entré a la ruta POST /reviews/newReview`);
     try {
         console.log(`req.body = ${req.body}`);
-        const idOfToken = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.sub;
         let { reviewed_id, reviewer_id, transaction_id } = req.body;
-        if (idOfToken !== reviewer_id) {
-            throw new Error(`El id del reviewer es distinto al id del reviewer_id del body`);
-        }
         const transaction = yield index_1.default.Transaction.findOne({
             where: { id: transaction_id },
         });
@@ -66,8 +61,7 @@ router.post("/newReview", jwtMiddleware_1.default, (req, res) => __awaiter(void 
             if (reviewer_id === transaction.user_offering_id) {
                 if (transaction.user_offering_check === "finalizado") {
                     let newReview = yield index_1.default.Review.create(validatedReview);
-                    let reviewedUser = yield index_1.default.User.findByPk(reviewed_id);
-                    yield newReview.setUser(reviewedUser);
+                    yield newReview.setUser(reviewed_id);
                     console.log(newReview);
                     console.log(`Review creada y asociada al user ${reviewed_id}`);
                     transaction.user_offering_check = "calificado";
@@ -78,8 +72,7 @@ router.post("/newReview", jwtMiddleware_1.default, (req, res) => __awaiter(void 
             if (reviewer_id === transaction.user_demanding_id) {
                 if (transaction.user_demanding_check === "finalizado") {
                     let newReview = yield index_1.default.Review.create(validatedReview);
-                    let reviewedUser = yield index_1.default.User.findByPk(reviewed_id);
-                    yield newReview.setUser(reviewedUser);
+                    yield newReview.setUser(reviewed_id);
                     console.log(`Review creada y asociada al user ${reviewed_id}`);
                     transaction.user_demanding_check = "calificado";
                     yield transaction.save();
