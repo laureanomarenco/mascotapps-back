@@ -49,12 +49,58 @@ function mailer(userOffering, userDemanding, offeringPet) {
         let demandingMail = userDemanding.email;
         let offeringMail = userOffering.email;
         console.log(userDemanding.email, userOffering.email);
-        const msgMailDemanding = `Registramos que ${userOffering.name} quiere contactarte por ${offeringPet.name}. Te deseamos suerte en tu busqueda y te facilitamos los siguientes datos para contactarte con ${userOffering.name}. Un saludo de parte del equipo de Mascotapp`;
+        //const msgMailDemanding = `Registramos que ${userOffering.name} quiere contactarte por ${offeringPet.name}. Te deseamos suerte en tu busqueda y te facilitamos los siguientes datos para contactarte con ${userOffering.name}. Un saludo de parte del equipo de Mascotapp`;
         const mailOptionsDemanding = {
             from: "service.mascotapp@gmail.com",
             to: demandingMail,
             subject: "Alguien está interesado en una mascota tuya",
-            html: `<div>${msgMailDemanding}</div><div>${userOffering.email}</div><div>${userOffering.contact}</div>`,
+            html: `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+        <style>
+            p, a, h1, h2, h3, h4, h5, h6 {font-family: 'Roboto', sans-serif !important;}
+            h1{ font-size: 30px !important;}
+            h2{ font-size: 25px !important;}
+            h3{ font-size: 18px !important;}
+            h4{ font-size: 16px !important;}
+            p, a{font-size: 15px !important;}
+            .imag{
+                width: 20px;
+                height: 20px;
+            }
+            .contA{
+                margin: 0px 5px 0 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="width: 100%; background-color: #e3e3e3;">
+            <div style="padding: 20px 10px 20px 10px;">
+    
+                <div style="background-color: #ffffff; padding: 20px 0px 5px 0px; width: 100%; text-align: center;">
+                    <h1>Hemos registrado interes en una de tus publicacions</h1>
+                    <p>Registramos que ${userOffering.name} quiere contactarte por ${offeringPet.name}. Te deseamos suerte en tu busqueda y te facilitamos los siguientes datos para contactarte con ${userOffering.name}. Un saludo de parte del equipo de Mascotapp</p>
+                    <div>${userOffering.email}</div><div>${userOffering.contact}</div>
+    
+                    <p style="margin-bottom: 50px;"><i>Atentamente:</i><br>El equipo de Mascotapp</p>
+                </div>
+                <!-- Contenido principal -->
+    
+                <!-- Footer -->
+                <div style="background-color: #282828; color: #ffffff; padding: 5px 0px 0px 0px; width: 100%; text-align: center;">
+                    <!-- Redes sociales -->
+                    <a href="https://github.com/laureanomarenco/mascotapps-front" class="contA">GitHub</a>
+                    <a href="https://mascotapps.vercel.app/" class="contA">Mascotapp</a>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>`
+            //`<div>${msgMailDemanding}</div><div>${userOffering.email}</div><div>${userOffering.contact}</div>`,
         };
         transporter.sendMail(mailOptionsDemanding, function (error, info) {
             if (error)
@@ -78,7 +124,7 @@ function mailer(userOffering, userDemanding, offeringPet) {
         });
     });
 }
-//------  RUTAS: -----------------------------------------------
+//------------- RUTAS: ---------------------------------------
 router.get("/allTransactions", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a la ruta /transactions/allTransactions`);
     try {
@@ -103,10 +149,12 @@ router.get("/transactionsCompleted", (req, res) => __awaiter(void 0, void 0, voi
         return res.status(404).send(error.message);
     }
 }));
-router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/postSuccess", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     console.log(`Entré a la ruta /transactions/postsuccess`);
     try {
-        const { id } = req.body;
+        const id = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.sub;
+        // const { id } = req.body;
         const { petId } = req.body;
         const { id_demanding } = req.body; // el usuario selecciona al usuario con el que realizó existosamente la transacción
         const pet = yield index_1.default.Animal.findOne({ where: { id: petId } });
@@ -160,6 +208,10 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
                 }
                 console.log("se acutalizo backWithItsOwner y postStatus de la mascota");
             }
+            console.log(`En ELSE Z de no-adopción`);
+            console.log(`user_demanding_id: ${id_demanding}`);
+            console.log(`user_offering_id: ${id}`);
+            console.log(`pet_id: ${petId}`);
             const transaction = yield index_1.default.Transaction.findOne({
                 where: {
                     [sequelize_1.Op.and]: [
@@ -169,6 +221,8 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
                     ],
                 },
             });
+            console.log("Transaction encontrada: ");
+            console.log(transaction);
             transaction.status = transactionTypes_1.transactionStatus.Success;
             if (transaction.user_demanding_check !== "calificado") {
                 transaction.user_demanding_check = "finalizado";
@@ -211,10 +265,12 @@ router.post("/postSuccess", (req, res) => __awaiter(void 0, void 0, void 0, func
         return res.status(404).send(error.message);
     }
 }));
-router.post("/cancelPost", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/cancelPost", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
     console.log(`Entré a la ruta /transactions/cancelPost`);
     try {
-        const { id } = req.body;
+        const id = (_b = req.auth) === null || _b === void 0 ? void 0 : _b.sub;
+        // const { id } = req.body;
         const { petId } = req.body;
         const pet = yield index_1.default.Animal.findOne({ where: { id: petId } });
         const transactionsWithPetId = yield index_1.default.Transaction.findAll({
@@ -247,10 +303,13 @@ router.post("/cancelPost", (req, res) => __awaiter(void 0, void 0, void 0, funct
         return res.status(404).send(error.message);
     }
 }));
-router.post("/getUserTransactions", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+//! DEPRECATED
+router.post("/getUserTransactions", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
     console.log(`Entré a la ruta /Transactions/getUserTransactions`);
     try {
-        const { id } = req.body;
+        const id = (_c = req.auth) === null || _c === void 0 ? void 0 : _c.sub;
+        // const { id } = req.body;
         const userTransactions = yield index_1.default.Transaction.findAll({
             where: {
                 [sequelize_1.Op.or]: [{ user_offering_id: id }, { user_demanding_id: id }],
@@ -264,10 +323,10 @@ router.post("/getUserTransactions", (req, res) => __awaiter(void 0, void 0, void
     }
 }));
 router.post("/newTransaction", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _d;
     console.log(`Entré a la ruta /Transactions/newTransaction`);
     try {
-        const id = (_a = req.auth) === null || _a === void 0 ? void 0 : _a.sub;
+        const id = (_d = req.auth) === null || _d === void 0 ? void 0 : _d.sub;
         // const { id } = req.body;
         const { petId } = req.query;
         if (!id || !petId) {
@@ -321,11 +380,11 @@ router.post("/newTransaction", jwtMiddleware_1.default, (req, res) => __awaiter(
     }
 }));
 router.put("/transactionCheck", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+    var _e;
     console.log("en la ruta /Transactions/transactionCheck");
     try {
         const { transactionId } = req.query;
-        const id = (_b = req.auth) === null || _b === void 0 ? void 0 : _b.sub;
+        const id = (_e = req.auth) === null || _e === void 0 ? void 0 : _e.sub;
         // const { id } = req.body;
         const transaction = yield index_1.default.Transaction.findOne({
             where: { id: transactionId },

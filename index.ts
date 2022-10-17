@@ -2,7 +2,6 @@ import db from "./models";
 const config = require(__dirname + "/config/config.js");
 const app = require("./src/app");
 
-import { validateNewPet } from "./src/auxiliary/AnimalValidators";
 import { animalSeeds } from "./seeders/animal-seeds";
 import { users } from "./seeders/users-seed";
 
@@ -17,9 +16,6 @@ db.sequelize.sync({ alter: true }).then(() => {
     console.log(`App listening on port ${config.server.port}`);
     console.log(
       "**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** "
-    );
-    console.log(
-      "**** **** **** **** **** Creando Animals con las semillas... :  **** **** **** ****"
     );
     console.log(
       "**** **** **** **** **** **** **** **** **** **** **** **** **** **** **** "
