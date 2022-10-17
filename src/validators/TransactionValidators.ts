@@ -5,7 +5,7 @@ import {
   isStringBetween1And50CharsLong,
   isUndefinedOrNull,
   isValidId,
-  isValidURL,
+  isValidURLImage,
 } from "./GenericValidators";
 import { isValidString } from "./GenericValidators";
 
@@ -39,7 +39,7 @@ export function validateNewTransaction(obj: any): ITransaction {
 }
 
 function checkPetImage(arg: any): string | undefined {
-  if (isValidURL(arg)) {
+  if (isValidURLImage(arg)) {
     return arg;
   }
   if (isUndefinedOrNull(arg)) {

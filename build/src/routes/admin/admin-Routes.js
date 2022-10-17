@@ -37,7 +37,7 @@ router.post("/deleteUser", jwtMiddleware_1.default, (req, res) => __awaiter(void
             action: `delete User with id "${idFromReq}" and email "${emailFromReq}".`,
             action_status: 0,
         };
-        const reqUserIsAdmin = yield checkIfJWTisAdmin(reqUserId);
+        const reqUserIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdmin)(reqUserId);
         if (!reqUserIsAdmin) {
             console.log(`El usuario con id "${reqUserId}" que realiza la request no es un admin.`);
             return res.status(403).send({
@@ -90,10 +90,10 @@ router.post("/cleanPostsOfUserId", jwtMiddleware_1.default, (req, res) => __awai
         const newAdminAction = {
             admin_id: reqUserId,
             route: `/admin/cleanPostsOfUserId`,
-            action: `Delete posts of User with id "${req.body.userId}".`,
+            action: `Delete posts of User with id "${req.body.userId}". IP: ${req.ip}`,
             action_status: 0,
         };
-        const reqUserIsAdmin = yield checkIfJWTisAdmin(reqUserId);
+        const reqUserIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdmin)(reqUserId);
         if (!reqUserIsAdmin) {
             console.log(`El usuario con id "${reqUserId}" que realiza la request no es un admin.`);
             return res.status(403).send({
@@ -143,11 +143,11 @@ router.post("/cleanReviewsToUser", jwtMiddleware_1.default, (req, res) => __awai
         const newAdminAction = {
             admin_id: reqAdminId,
             route: `/admin/cleanReviewsToUser`,
-            action: `Delete Reviews of User with id "${userId}".`,
+            action: `Delete Reviews of User with id "${userId}". IP: ${req.ip}`,
             action_status: 0,
             action_msg: "",
         };
-        const reqUserIsAdmin = yield checkIfJWTisAdmin(reqAdminId);
+        const reqUserIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdmin)(reqAdminId);
         if (!reqUserIsAdmin) {
             console.log(`El usuario con id "${reqAdminId}" que realiza la request no es un admin.`);
             return res.status(403).send({
@@ -189,7 +189,7 @@ router.post("/deletePetsWithNoUserId", jwtMiddleware_1.default, (req, res) => __
         // CHEQUEAR SI EL REQ.AUTH.SUB EXISTE EN LA DB
         let passwordFromReq = req.body.password;
         const reqAdminId = req.auth.sub;
-        const reqAdminIsAdmin = yield checkIfJWTisAdmin(reqAdminId);
+        const reqAdminIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdmin)(reqAdminId);
         const newAdminAction = {
             admin_id: reqAdminId,
             route: `/admin/deletePetsWithNoUserId`,
@@ -230,6 +230,7 @@ router.post("/deletePetsWithNoUserId", jwtMiddleware_1.default, (req, res) => __
         console.log(`Error en /admin/deletePetsWithNoUserId. ${error.message}`);
     }
 }));
+// DELETE PET
 router.post("/deletePet", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`En ruta /admin/deletePet`);
     try {
@@ -246,7 +247,7 @@ router.post("/deletePet", jwtMiddleware_1.default, (req, res) => __awaiter(void 
         if (passwordFromReq !== process.env.ADMIN_PASSWORD) {
             return res.status(403).send(`La password de administrador no es válida`);
         }
-        const reqAdminIsAdmin = yield checkIfJWTisAdmin(reqAdminId);
+        const reqAdminIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdmin)(reqAdminId);
         if (reqAdminIsAdmin !== true) {
             return res
                 .status(403)
@@ -265,66 +266,6 @@ router.post("/deletePet", jwtMiddleware_1.default, (req, res) => __awaiter(void 
         console.log(`Error en /admin/deletePets ${error.message}`);
     }
 }));
-// AUX FN: CHECK IF LOGGED USER IS ADMIN
-function checkIfJWTisAdmin(jwtId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.log(`Chequeando si el sub del JWT es un Admin`);
-        try {
-            let userAsAdmin = yield models_1.default.User.findByPk(jwtId);
-            if (userAsAdmin.isAdmin === true) {
-                console.log(`isAdmin === true`);
-                return true;
-            }
-            else {
-                console.log(`isAdmin !== true. El id ${jwtId} NO ES ADMIN`);
-                return false;
-            }
-        }
-        catch (error) {
-            throw new Error("Error al chequear si el JWT sub es un admin");
-        }
-    });
-}
-// AUX FN: CHECK IF USER IS SUPER ADMIN
-function checkIfJWTisSuperAdmin(jwtId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.log(`Chequeando si user id ${jwtId} es SUPER ADMIN`);
-        try {
-            const userInDB = yield models_1.default.User.findByPk(jwtId);
-            if (userInDB.isSuperAdmin === true) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        catch (error) {
-            console.log(`Error en function checkIfJWTisSuperAdmin`);
-            throw new Error(`Error en function checkIfJWTisSuperAdmin. ${error.message}`);
-        }
-    });
-}
-// AUX FN: CHECK IF USER IS ADMIN OR SUPER ADMIN
-function checkIfJWTisAdminOrSuperAdmin(jwtId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.log(`Chequeando si el user id "${jwtId}" es admin o super admin.`);
-        try {
-            const userInDB = yield models_1.default.User.findByPk(jwtId);
-            if (!userInDB) {
-                throw new Error(`El usuario con id ${jwtId} no existe en la Data Base.`);
-            }
-            if (userInDB.isAdmin === true || userInDB.isSuperAdmin === true) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        catch (error) {
-            throw new Error(`Error en function checkIfJWTisAdminOrSuperAdmin. ${error.message}`);
-        }
-    });
-}
 // SET isAdmin a TRUE o FALSE. Sólo la puede usar el SUPER ADMIN.
 router.put("/setIsAdmin", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Entré a "admin/setIsAdmin"`);
@@ -346,7 +287,7 @@ router.put("/setIsAdmin", jwtMiddleware_1.default, (req, res) => __awaiter(void 
                 .status(403)
                 .send({ msg: `La password de administrador ingresada no es válida` });
         }
-        const reqUserIsSuperAdmin = yield checkIfJWTisSuperAdmin(reqAdminId);
+        const reqUserIsSuperAdmin = yield (0, adminAuxFn_1.checkIfJWTisSuperAdmin)(reqAdminId);
         if (!reqUserIsSuperAdmin) {
             return res.status(403).send({
                 error: `Se debe tener rol de Super Admin para realizar esta acción.`,
@@ -393,7 +334,7 @@ router.put("/setIsSuperAdmin", jwtMiddleware_1.default, (req, res) => __awaiter(
                 .status(403)
                 .send({ msg: `La password de administrador ingresada no es válida` });
         }
-        const reqUserIsSuperAdmin = yield checkIfJWTisSuperAdmin(reqAdminId);
+        const reqUserIsSuperAdmin = yield (0, adminAuxFn_1.checkIfJWTisSuperAdmin)(reqAdminId);
         if (!reqUserIsSuperAdmin) {
             return res.status(403).send({
                 error: `Se debe tener rol de Super Admin para realizar esta acción.`,
@@ -433,7 +374,7 @@ router.post("/hasAdminPowers", jwtMiddleware_1.default, (req, res) => __awaiter(
                 msg: false,
             });
         }
-        const reqUserIsAdmin = yield checkIfJWTisAdminOrSuperAdmin(jwtId);
+        const reqUserIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdminOrSuperAdmin)(jwtId);
         if (reqUserIsAdmin !== true) {
             return res.status(403).send({
                 error: `Se debe tener rol de Admin para realizar esta acción.`,
@@ -453,7 +394,7 @@ router.post("/hasAdminPowers", jwtMiddleware_1.default, (req, res) => __awaiter(
 router.get("/createMultiplier", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const reqUserId = req.auth.sub;
-        const reqUserIsAdmin = yield checkIfJWTisAdmin(reqUserId);
+        const reqUserIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdmin)(reqUserId);
         if (!reqUserIsAdmin) {
             console.log(`El usuario con id "${reqUserId}" que realiza la request no es un admin.`);
             return res.status(403).send({
@@ -486,7 +427,7 @@ router.post("/changeMultiplier", jwtMiddleware_1.default, (req, res) => __awaite
             action_status: 0,
             action_msg: "",
         };
-        const reqUserIsAdmin = yield checkIfJWTisAdmin(reqAdminId);
+        const reqUserIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdmin)(reqAdminId);
         if (!reqUserIsAdmin) {
             console.log(`El usuario con id "${reqAdminId}" que realiza la request no es un admin.`);
             return res.status(403).send({
@@ -550,7 +491,7 @@ router.post("/banUser", jwtMiddleware_1.default, (req, res) => __awaiter(void 0,
             action_status: 0,
             action_msg: "",
         };
-        const reqUserIsAdmin = yield checkIfJWTisAdmin(reqAdminId);
+        const reqUserIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdmin)(reqAdminId);
         if (!reqUserIsAdmin) {
             console.log(`El usuario con id "${reqAdminId}" que realiza la request no es un admin.`);
             return res.status(403).send({
@@ -592,7 +533,7 @@ router.delete("/purgePetsWithFalseUser", jwtMiddleware_1.default, (req, res) => 
             action_status: 0,
             action_msg: "",
         };
-        const reqUserIsAdmin = yield checkIfJWTisAdmin(reqAdminId);
+        const reqUserIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdmin)(reqAdminId);
         if (!reqUserIsAdmin) {
             console.log(`El usuario con id "${reqAdminId}" que realiza la request no es un admin.`);
             return res.status(403).send({
@@ -635,7 +576,7 @@ router.post("/getAdminActions", jwtMiddleware_1.default, (req, res) => __awaiter
     try {
         const passwordFromReq = req.body.password;
         const reqAdminId = req.auth.sub;
-        let reqAdminIsAdmin = yield checkIfJWTisAdminOrSuperAdmin(reqAdminId);
+        let reqAdminIsAdmin = yield (0, adminAuxFn_1.checkIfJWTisAdminOrSuperAdmin)(reqAdminId);
         if (!reqAdminIsAdmin) {
             return res
                 .status(403)
