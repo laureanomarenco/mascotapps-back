@@ -1,33 +1,238 @@
 import { Router } from "express";
-import db from "../../../models/index";
-import { IPetOfUser, Pet } from "../../types/petTypes";
+import db from "../../models/index";
+import { IPetOfUser, Pet } from "../types/petTypes";
 import { Op } from "sequelize";
 import {
   IContactInfoOfOwner,
-  IMultipleUserInfo,
-  INewUser,
   ISomeUserInfo,
-  IUserAttributes,
-} from "../../types/userTypes";
-import { IReview } from "../../types/reviewTypes";
-// import { requiresAuth } from "express-openid-connect";
-import jwtCheck from "../../../config/jwtMiddleware";
-import { validateNewUser } from "../../validators/UserValidators";
-import { ITransaction } from "../../types/transactionTypes";
-import {
-  emailExistsInDB,
-  getAllReviewsRecived,
-  getAllTransactions,
-  getAllUsers,
-  getParsedReviewsToOwner,
-  getPostsOfUser,
-  getSomeUserInfo,
-  parsePetsPostedByUser,
-} from "./userAuxFn";
+  UserAttributes,
+} from "../types/userTypes";
+import { IReview } from "../types/reviewTypes";
+import { requiresAuth } from "express-openid-connect";
+import jwtCheck from "../../config/jwtMiddleware";
 const { GMAIL_PASS, GMAIL_USER } = process.env;
 
 const router = Router();
 const multiplierPoints = 1;
+// ----- ------ ------ FUNCIONES AUXILIARES PARA LAS RUTAS: ------- -------- --------
+
+//!------------
+
+export const getAllUsers = async () => {
+  try {
+    const allUsers = await db.User.findAll();
+    // console.log(allUsers);
+    return allUsers;
+  } catch (error: any) {
+    console.log(error.message);
+    return error;
+  }
+};
+
+const getAllReviewsRecived = async (userId: any) => {
+  try {
+    const allReviews = await db.Review.findAll({
+      where: {
+        UserId: userId,
+      },
+    });
+    return allReviews;
+  } catch (error: any) {
+    console.log(error.message);
+    return error;
+  }
+};
+
+const getAllTransactions = async (userId: any) => {
+  try {
+    const allTransactions = await db.Transaction.findAll({
+      where: {
+        [Op.or]: [{ user_offering_id: userId }, { user_demanding_id: userId }],
+      },
+    });
+    return allTransactions;
+  } catch (error: any) {
+    console.log(error.message);
+    return error;
+  }
+};
+
+// get Some User Info:
+async function getSomeUserInfo(userId: any) {
+  console.log(`Ejecutando función auxiliar someUserInfo`);
+  console.log(`userId = ${userId}`);
+  try {
+    let userInfo: UserAttributes = await db.User.findByPk(userId);
+    if (userInfo) {
+      let someUserInfo: ISomeUserInfo = {
+        name: userInfo.name,
+        city: userInfo.city,
+        image: userInfo.image,
+        contact: userInfo.contact,
+        isDonator: userInfo.isDonator,
+        isAdopter: userInfo.isAdopter,
+        gaveUpForAdoption: userInfo.gaveUpForAdoption,
+        foundAPet: userInfo.foundAPet,
+        gotAPetBack: userInfo.gotAPetBack,
+        points: userInfo.points,
+        linkToDonate: userInfo.linkToDonate,
+        endpoints: userInfo.endpoints,
+        isBanned: userInfo.isBanned,
+        isAdmin: userInfo.isAdmin,
+      };
+      console.log(`retornando someUserInfo: ${someUserInfo}`);
+      return someUserInfo;
+    } else {
+      throw new Error(`usuario no encontrado`);
+    }
+  } catch (error: any) {
+    console.log(`Error en la función auxiliar someUserInfo: ${error.message}`);
+    return error.message;
+  }
+}
+
+//Parse Pets Posted By User ---> deja afuera el UserId
+function parsePetsPostedByUser(petsPostedByUser: Pet[]): IPetOfUser[] {
+  console.log(`En function auxiliary parsePetsPostedByUser`);
+  try {
+    let parsedPets: IPetOfUser[] = petsPostedByUser.map((pet) => {
+      return {
+        id: pet.id,
+        name: pet.name,
+        city: pet.city,
+        specie: pet.specie,
+        race: pet.race,
+        age: pet.age,
+        gender: pet.gender,
+        status: pet.status,
+        vaccinationSchemeStatus: pet.vaccinationSchemeStatus,
+        image: pet.image,
+        comments: pet.comments,
+        withNewOwner: pet.withNewOwner,
+        backWithItsOwner: pet.backWithItsOwner,
+        postStatus: pet.postStatus,
+      };
+    });
+    console.log(
+      `Retornando parsedPets. parsedPets.length = ${parsedPets.length}`
+    );
+    return parsedPets;
+  } catch (error: any) {
+    return error;
+  }
+}
+
+//GET POSTS OF USER:
+async function getPostsOfUser(id: any) {
+  console.log(`Buscando los posteos de user con id: ${id}`);
+  try {
+    let postsOfUser = await db.Animal.findAll({
+      where: {
+        UserId: id,
+      },
+    });
+    console.log(`${postsOfUser?.length} posts encontrados`);
+    return postsOfUser;
+  } catch (error: any) {
+    return error.message;
+  }
+}
+
+async function getParsedReviewsToOwner(id: string) {
+  try {
+    let reviewsToUser = await db.Review.findAll({
+      where: {
+        UserId: id,
+      },
+    });
+    let parsedReviewsWithMoreData = await parseReviewsToOwner(reviewsToUser);
+    return parsedReviewsWithMoreData;
+  } catch (error: any) {
+    console.log(`Error en function getReviewsToOwner`);
+    return error.message;
+  }
+}
+
+function parseReviewerName(reviewerName: any) {
+  console.log(`Parseando reviewer name`);
+  try {
+    if (!reviewerName) {
+      return "Anónimo";
+    } else {
+      return reviewerName;
+    }
+  } catch (error: any) {
+    console.log(`Error en el parseReviewerName. ${error.message}`);
+    return error.message;
+  }
+}
+
+function parseReviewerImage(reviewerImage: any) {
+  try {
+    if (!reviewerImage) {
+      return "https://www.utas.edu.au/__data/assets/image/0013/210811/varieties/profile_image.png";
+    } else {
+      return reviewerImage;
+    }
+  } catch (error: any) {
+    console.log(`Error en la function parseReviewerImage. ${error.message}`);
+    return error.message;
+  }
+}
+
+async function parseReviewsToOwner(arrayOfReviews: any) {
+  console.log(`Parseando las reviews...`);
+  // console.log(arrayOfReviews);
+  try {
+    let parsedReviews = await Promise.all(
+      arrayOfReviews.map(async (review: any) => {
+        // console.log("review:");
+        // console.log(review);
+        let reviewer = await db.User.findByPk(review.reviewer_id);
+        // console.log(reviewer.name);
+        // console.log(reviewer.image);
+        return {
+          id: review.dataValues.id,
+          transaction_id: review.dataValues.transaction_id,
+          reviewer_id: review.dataValues.reviewer_id,
+          comments: review.dataValues.comments,
+          starts: review.dataValues.stars,
+          createdAt: review.dataValues.createdAt,
+          updatedAt: review.dataValues.updatedAt,
+          UserId: review.dataValues.UserId,
+          reviewer_name: parseReviewerName(reviewer?.name),
+          reviewer_image: parseReviewerImage(reviewer?.image),
+        };
+      })
+    );
+    console.log(`Devolviendo las parsedReviews:`);
+    // console.log(parsedReviews);
+    return parsedReviews;
+  } catch (error: any) {
+    console.log(`Error en el parseReviewsToOwner. ${error.message}`);
+    return error.message;
+  }
+}
+
+// EMAIL EXISTS IN DATABASE:
+async function emailExistsInDB(emailFromReq: any): Promise<boolean> {
+  console.log(`Chequeando si el email "${emailFromReq} existe en la DB`);
+  try {
+    let userWithEmail = await db.User.findOne({
+      where: {
+        email: emailFromReq,
+      },
+    });
+    if (userWithEmail) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error: any) {
+    console.log(`Error en function emailExistsInDB`);
+    return error.message;
+  }
+}
 
 //! ----- MIDDLEWARE PARA AUTH : ------
 const authCheck = (req: any, res: any, next: any) => {
@@ -77,7 +282,7 @@ router.get("/contactinfo/:petid", async (req, res) => {
     let petID = req.params.petid;
     let petInDB = await db.Animal.findByPk(petID);
     let ownerID = petInDB?.UserId;
-    let ownerInDB: IUserAttributes = await db.User.findByPk(ownerID);
+    let ownerInDB: UserAttributes = await db.User.findByPk(ownerID);
     if (!ownerInDB) {
       throw new Error(
         `Usuario dueño de la mascota no fue encontrado en la Data Base.`
@@ -139,6 +344,7 @@ router.get("/getallpetsofuser", jwtCheck, async (req: any, res) => {
     }
   } catch (error: any) {
     console.log(`error en el /users/getallpetsofusers: ${error.message}`);
+    console.log(error);
     return res.status(404).send(error.message);
   }
 });
@@ -198,22 +404,23 @@ router.post("/newuser", jwtCheck, async (req: any, res) => {
       );
     }
 
-    const newUserFromReq: INewUser = {
-      id: req.auth.id,
-      email: email,
-      name: name,
-      contact: contact,
-      city: city,
-      image: image,
-      linkToDonate: linkToDonate,
-    };
-
-    const validatedNewUser = validateNewUser(newUserFromReq);
-    console.log(`New User: ${validatedNewUser}`);
-    let newUserCreated = await db.User.create(validatedNewUser);
-    if (newUserCreated) {
-      console.log(`Nuevo usuario creado con email ${newUserCreated.email}:`);
-      return res.status(200).send(newUserCreated);
+    console.log("new user..", name);
+    let [newUser, created] = await db.User.findOrCreate({
+      where: {
+        name,
+        email,
+        id,
+        city,
+        contact,
+        image,
+        linkToDonate,
+      },
+    });
+    if (!created) {
+      res.status(409).send(`El usuario con id ${id} ya existe en la DB`);
+    } else {
+      console.log(`Nuevo usuario creado con name: ${name}`);
+      res.status(200).send(newUser);
     }
   } catch (error: any) {
     console.log(error.message);
@@ -253,24 +460,23 @@ router.put("/update", jwtCheck, async (req: any, res) => {
   console.log(req.body);
   try {
     const id = req.auth?.sub;
-    if (!id) {
-      throw new Error(`El id del token "${id}" no es válido.`);
-    }
-    // const { image, contact, city, email, name, linkToDonate } = req.body;
-    let updatedNewProfileFromReq: INewUser = {
-      id: id,
-      ...req.body,
-    };
-    let validatedNewProfile = validateNewUser(updatedNewProfileFromReq);
-    const newProfile = await db.User.update(validatedNewProfile, {
-      where: {
-        id: id,
+    const { image, contact, city, email, name, linkToDonate } = req.body;
+    const newProfile = await db.User.update(
+      {
+        image: image,
+        contact: contact,
+        city: city,
+        email: email,
+        name: name,
+        linkToDonate: linkToDonate,
       },
-    });
-
-    console.log(`Perfil de usuario actualizado: `);
-    console.log(newProfile);
-    return res.status(200).send(newProfile);
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+    res.status(200).send(newProfile);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -283,12 +489,12 @@ router.get("/getMultipleUserInfo", jwtCheck, async (req: any, res) => {
     if (req.auth?.sub) {
       let userId = req.auth.sub;
       let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId); //obj con props
-      let userReviewsRecived: IReview[] = await getAllReviewsRecived(userId); //arreglo de objs
-      let userTransactions: ITransaction[] = await getAllTransactions(userId); //arreglo de objs
-      let postsOfUser: Pet[] = await getPostsOfUser(userId); //arreglo de objs
+      let userReviewsRecived = await getAllReviewsRecived(userId); //arreglo de objs
+      let userTransactions = await getAllTransactions(userId); //arreglo de objs
+      let postsOfUser = await getPostsOfUser(userId); //arreglo de objs
       console.log(`Devolviendo multipleUserInfo...`);
       //! TODO ESTO PODRÏA ESTAR ADENTRO DE UN Promise.all() ?? Sería mejor?
-      const multipleUserInfo: IMultipleUserInfo = {
+      const multipleUserInfo = {
         userProps: { ...someUserInfo },
         reviews: [...userReviewsRecived],
         transactions: [...userTransactions],
@@ -307,7 +513,7 @@ router.get("/getMultipleUserInfo", jwtCheck, async (req: any, res) => {
 router.get("/ranking", async (req, res) => {
   console.log(`Estoy en /users/ranking.`);
   try {
-    let allTheUsers: IUserAttributes[] = await getAllUsers();
+    let allTheUsers = await getAllUsers();
 
     const ranking = allTheUsers.sort(function (a: any, b: any) {
       return b.points - a.points;
@@ -326,7 +532,7 @@ router.get("/points", jwtCheck, async (req: any, res) => {
   console.log(`Estoy en /users/points.`);
   try {
     const id = req.auth?.sub;
-    const user: IUserAttributes = await db.User.findOne({ where: { id: id } });
+    const user = await db.User.findOne({ where: { id: id } });
     if (user) {
       return res.status(200).send({ points: user.points });
     }

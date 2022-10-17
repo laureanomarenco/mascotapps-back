@@ -1,10 +1,21 @@
 "use strict";
 
 import { Model, UUIDV4 } from "sequelize";
-import { IUserAttributes } from "../src/types/userTypes";
+import { UserAttributes } from "../src/types/userTypes";
+
+// export interface UserAttributes {
+//   id: string | undefined;
+//   googleId: string | undefined;
+//   displayName: string | undefined;
+//   email: string | undefined;
+//   name: string | undefined;
+//   postalCode: string | undefined;
+//   aditionalContactInfo: string | undefined;
+//   thumbnail: string | undefined;
+// }
 
 module.exports = (sequelize: any, DataTypes: any) => {
-  class User extends Model<IUserAttributes> implements IUserAttributes {
+  class User extends Model<UserAttributes> implements UserAttributes {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -12,7 +23,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
      */
     id!: string; // sub
     email!: string;
-    name!: string;
+    name: string | undefined;
     city: string | undefined;
     contact: string | undefined;
     image: string | undefined;
@@ -44,7 +55,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       name: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         validate: {
           len: [1, 50],
         },
