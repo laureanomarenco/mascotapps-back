@@ -13,7 +13,7 @@ import {
   isStringBetween1And101CharsLong,
   isUndefinedOrNull,
   isValidId,
-  isValidURL,
+  isValidURLImage,
   isEmptyString,
   isStringBetween1And50CharsLong,
 } from "./GenericValidators";
@@ -189,7 +189,7 @@ export function checkImageURL(imageFromReq: any): string | undefined {
   if (isUndefinedOrNull(imageFromReq) || isEmptyString(imageFromReq)) {
     return undefined;
   }
-  if (isValidURL(imageFromReq)) {
+  if (isValidURLImage(imageFromReq)) {
     return imageFromReq;
   }
   throw new Error(`la URL de imagen ingresada "${imageFromReq}" no es válida`);
