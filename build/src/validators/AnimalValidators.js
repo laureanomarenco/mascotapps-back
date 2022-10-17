@@ -162,7 +162,7 @@ function checkImageURL(imageFromReq) {
     if ((0, GenericValidators_1.isUndefinedOrNull)(imageFromReq) || (0, GenericValidators_1.isEmptyString)(imageFromReq)) {
         return undefined;
     }
-    if ((0, GenericValidators_1.isValidURL)(imageFromReq)) {
+    if ((0, GenericValidators_1.isValidURLImage)(imageFromReq)) {
         return imageFromReq;
     }
     throw new Error(`la URL de imagen ingresada "${imageFromReq}" no es válida`);

@@ -27,7 +27,7 @@ function validateNewTransaction(obj) {
 }
 exports.validateNewTransaction = validateNewTransaction;
 function checkPetImage(arg) {
-    if ((0, GenericValidators_1.isValidURL)(arg)) {
+    if ((0, GenericValidators_1.isValidURLImage)(arg)) {
         return arg;
     }
     if ((0, GenericValidators_1.isUndefinedOrNull)(arg)) {

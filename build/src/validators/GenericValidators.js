@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isValidId = exports.isUndefinedOrNull = exports.isStringBetween1And50CharsLong = exports.isStringBetween1And101CharsLong = exports.isEmptyString = exports.isValidString = exports.isString = exports.isEmail = exports.isValidURL = void 0;
+exports.isValidId = exports.isUndefinedOrNull = exports.isStringBetween1And50CharsLong = exports.isStringBetween1And101CharsLong = exports.isEmptyString = exports.isValidString = exports.isString = exports.isEmail = exports.isValidURLImage = void 0;
 // IS VALID URL:
-function isValidURL(argumento) {
+function isValidURLImage(argumento) {
     if (typeof argumento !== "string") {
         return false;
     }
     return (argumento.match(/^http[^\?]*.(jpg|jpeg|gif|png|tiff|bmp)(\?(.*))?$/gim) !==
         null);
 }
-exports.isValidURL = isValidURL;
+exports.isValidURLImage = isValidURLImage;
 //IS EMAIL:
 function isEmail(argumento) {
     let regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|[[\t -Z^-~]*])");
