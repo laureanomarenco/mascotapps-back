@@ -35,7 +35,7 @@ const jwtCheck = jwt({
 
 var corsOptions = {
   origin: [
-    "https://mascotapps.vercel.app/",
+    "https://mascotapps.vercel.app",
     "http://localhost:3000",
     "http://localhost:3000/home",
     "https://checkout.stripe.com",
