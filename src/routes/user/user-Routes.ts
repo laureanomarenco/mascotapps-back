@@ -199,7 +199,7 @@ router.post("/newuser", jwtCheck, async (req: any, res) => {
     }
 
     const newUserFromReq: INewUser = {
-      id: req.auth.sub,
+      id: id,
       email: email,
       name: name,
       contact: contact,
