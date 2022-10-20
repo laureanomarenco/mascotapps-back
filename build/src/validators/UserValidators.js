@@ -83,7 +83,10 @@ function checkThumbnail(thumbnailFromReq) {
     if ((0, GenericValidators_1.isUndefinedOrNull)(thumbnailFromReq)) {
         return undefined;
     }
-    if ((0, GenericValidators_1.isString)(thumbnailFromReq)) {
+    // if (isString(thumbnailFromReq)) {
+    //   return thumbnailFromReq;
+    // }
+    if ((0, GenericValidators_1.isValidURLImage)(thumbnailFromReq)) {
         return thumbnailFromReq;
     }
     throw new Error(`El thumbnail no es válido. Por favor, ingrese una cadena de texto, o deje el input completamente vacío.`);
