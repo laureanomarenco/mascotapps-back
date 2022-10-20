@@ -254,7 +254,10 @@ router.put("/update", jwtCheck, async (req: any, res) => {
   console.log(`Me llegó por body: `);
   console.log(req.body);
   try {
-    const id = req.auth?.sub;
+    const reqAuth: IReqAuth = req.auth;
+    console.log(reqAuth);
+
+    const id = reqAuth?.sub;
     if (!id) {
       throw new Error(`El id del token "${id}" no es válido.`);
     }
@@ -273,8 +276,9 @@ router.put("/update", jwtCheck, async (req: any, res) => {
     console.log(`Perfil de usuario actualizado: `);
     console.log(newProfile);
     return res.status(200).send(newProfile);
-  } catch (error) {
-    res.status(400).send(error);
+  } catch (error: any) {
+    console.log(`Error en "users/update". ${error.message}`);
+    res.status(400).send({ error: error.message });
   }
 });
 
