@@ -227,7 +227,11 @@ router.get("/exists", jwtCheck, async (req: any, res) => {
   console.log(`Entré al GET users/exists`);
 
   try {
-    const id = req.auth?.sub;
+    const reqAuth: IReqAuth = req.auth;
+    const id = reqAuth?.sub;
+    if (!id) {
+      throw new Error(`reqAuth.sub es false/undefined`);
+    }
     console.log(`Buscando si existe el usuario con id ${id}`);
     let user = await db.User.findByPk(id);
     //chequeo si está baneado:
@@ -255,8 +259,6 @@ router.put("/update", jwtCheck, async (req: any, res) => {
   console.log(req.body);
   try {
     const reqAuth: IReqAuth = req.auth;
-    console.log(reqAuth);
-
     const id = reqAuth?.sub;
     if (!id) {
       throw new Error(`El id del token "${id}" no es válido.`);
@@ -286,8 +288,9 @@ router.get("/getMultipleUserInfo", jwtCheck, async (req: any, res) => {
   console.log(`Entré a la ruta /users/getMultipleUserInfo`);
   console.log(`req.auth.sub = ${req.auth?.sub}`);
   try {
-    if (req.auth?.sub) {
-      let userId = req.auth.sub;
+    const reqAuth: IReqAuth = req.auth;
+    if (reqAuth?.sub) {
+      let userId = reqAuth.sub;
       let someUserInfo: ISomeUserInfo = await getSomeUserInfo(userId); //obj con props
       let userReviewsRecived: IReview[] = await getAllReviewsRecived(userId); //arreglo de objs
       let userTransactions: ITransaction[] = await getAllTransactions(userId); //arreglo de objs
