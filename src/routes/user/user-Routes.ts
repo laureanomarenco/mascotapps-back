@@ -6,6 +6,7 @@ import {
   IContactInfoOfOwner,
   IMultipleUserInfo,
   INewUser,
+  IReqAuth,
   ISomeUserInfo,
   IUserAttributes,
 } from "../../types/userTypes";
@@ -179,7 +180,8 @@ router.delete("/deletePet", jwtCheck, async (req: any, res) => {
 router.post("/newuser", jwtCheck, async (req: any, res) => {
   console.log(`Entré en /user/newUser`);
   try {
-    const id = req.auth?.sub;
+    const reqAuth: IReqAuth = req.auth;
+    const id = reqAuth.sub;
     if (!id) {
       throw new Error(`El id por token "${id}" es falso`);
     }
