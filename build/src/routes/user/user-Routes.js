@@ -194,10 +194,13 @@ router.post("/newuser", jwtMiddleware_1.default, (req, res) => __awaiter(void 0,
     }
 }));
 router.get("/exists", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e;
     console.log(`Entré al GET users/exists`);
     try {
-        const id = (_e = req.auth) === null || _e === void 0 ? void 0 : _e.sub;
+        const reqAuth = req.auth;
+        const id = reqAuth === null || reqAuth === void 0 ? void 0 : reqAuth.sub;
+        if (!id) {
+            throw new Error(`reqAuth.sub es false/undefined`);
+        }
         console.log(`Buscando si existe el usuario con id ${id}`);
         let user = yield index_1.default.User.findByPk(id);
         //chequeo si está baneado:
@@ -226,7 +229,6 @@ router.put("/update", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, v
     console.log(req.body);
     try {
         const reqAuth = req.auth;
-        console.log(reqAuth);
         const id = reqAuth === null || reqAuth === void 0 ? void 0 : reqAuth.sub;
         if (!id) {
             throw new Error(`El id del token "${id}" no es válido.`);
@@ -249,12 +251,13 @@ router.put("/update", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, v
     }
 }));
 router.get("/getMultipleUserInfo", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f, _g;
+    var _e;
     console.log(`Entré a la ruta /users/getMultipleUserInfo`);
-    console.log(`req.auth.sub = ${(_f = req.auth) === null || _f === void 0 ? void 0 : _f.sub}`);
+    console.log(`req.auth.sub = ${(_e = req.auth) === null || _e === void 0 ? void 0 : _e.sub}`);
     try {
-        if ((_g = req.auth) === null || _g === void 0 ? void 0 : _g.sub) {
-            let userId = req.auth.sub;
+        const reqAuth = req.auth;
+        if (reqAuth === null || reqAuth === void 0 ? void 0 : reqAuth.sub) {
+            let userId = reqAuth.sub;
             let someUserInfo = yield (0, userAuxFn_1.getSomeUserInfo)(userId); //obj con props
             let userReviewsRecived = yield (0, userAuxFn_1.getAllReviewsRecived)(userId); //arreglo de objs
             let userTransactions = yield (0, userAuxFn_1.getAllTransactions)(userId); //arreglo de objs
@@ -294,10 +297,10 @@ router.get("/ranking", (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 }));
 router.get("/points", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _h;
+    var _f;
     console.log(`Estoy en /users/points.`);
     try {
-        const id = (_h = req.auth) === null || _h === void 0 ? void 0 : _h.sub;
+        const id = (_f = req.auth) === null || _f === void 0 ? void 0 : _f.sub;
         const user = yield index_1.default.User.findOne({ where: { id: id } });
         if (user) {
             return res.status(200).send({ points: user.points });
@@ -326,11 +329,11 @@ router.get("/rankingGaveAdoption", (req, res) => __awaiter(void 0, void 0, void 
     }
 }));
 router.post("/buyProducts", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _j;
+    var _g;
     console.log(`Estoy en /users/buyProducts.`);
     try {
         const { name, items, totalPoints, mail, direccion } = req.body;
-        let userID = (_j = req.auth) === null || _j === void 0 ? void 0 : _j.sub;
+        let userID = (_g = req.auth) === null || _g === void 0 ? void 0 : _g.sub;
         const user = yield index_1.default.User.findOne({ where: { id: userID } });
         if (user) {
             console.log(user, totalPoints, items);
@@ -422,10 +425,10 @@ router.post("/buyProducts", jwtMiddleware_1.default, (req, res) => __awaiter(voi
 }));
 // DONATE POINTS:
 router.post("/donatePoints", jwtMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _k;
+    var _h;
     console.log(`Estoy en /users/donatePoints.`);
     try {
-        const id = (_k = req.auth) === null || _k === void 0 ? void 0 : _k.sub;
+        const id = (_h = req.auth) === null || _h === void 0 ? void 0 : _h.sub;
         if (!id) {
             throw new Error(`El req.auth.sub es falso`);
         }
