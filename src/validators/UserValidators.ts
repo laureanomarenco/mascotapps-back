@@ -6,6 +6,7 @@ import {
   isStringBetween1And101CharsLong,
   isString,
   isStringBetween1And50CharsLong,
+  isValidURLImage,
 } from "./GenericValidators";
 
 export function validateNewUser(newUserFromReq: INewUser): INewUser {
@@ -96,7 +97,10 @@ export function checkThumbnail(thumbnailFromReq: any): string | undefined {
   if (isUndefinedOrNull(thumbnailFromReq)) {
     return undefined;
   }
-  if (isString(thumbnailFromReq)) {
+  // if (isString(thumbnailFromReq)) {
+  //   return thumbnailFromReq;
+  // }
+  if (isValidURLImage(thumbnailFromReq)) {
     return thumbnailFromReq;
   }
   throw new Error(
