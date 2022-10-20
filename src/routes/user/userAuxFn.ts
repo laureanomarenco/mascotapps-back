@@ -112,7 +112,7 @@ export function parsePetsPostedByUser(petsPostedByUser: Pet[]): IPetOfUser[] {
 }
 
 //GET POSTS OF USER:
-export async function getPostsOfUser(id: any) {
+export async function getPostsOfUser(id: any): Promise<IPetOfUser[] | []> {
   console.log(`Buscando los posteos de user con id: ${id}`);
   try {
     let postsOfUser = await db.Animal.findAll({
