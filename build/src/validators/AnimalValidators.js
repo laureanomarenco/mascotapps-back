@@ -170,15 +170,10 @@ function checkImageURL(imageFromReq) {
 exports.checkImageURL = checkImageURL;
 // CHECK COMMENTS:
 function checkComments(commentsFromReq) {
-    if ((0, GenericValidators_1.isUndefinedOrNull)(commentsFromReq)) {
+    if ((0, GenericValidators_1.isFalsyArgument)(commentsFromReq)) {
         return undefined;
     }
-    if ((0, GenericValidators_1.isEmptyString)(commentsFromReq)) {
-        return undefined;
-    }
-    if ((0, GenericValidators_1.isString)(commentsFromReq) &&
-        commentsFromReq.length >= 1 &&
-        commentsFromReq.length < 3001) {
+    if ((0, GenericValidators_1.isStringBetween1AndXCharsLong)(3000, commentsFromReq)) {
         return commentsFromReq;
     }
     throw new Error(`El comentario ingresado no es válido. Ingrese únicamente texto de entre 1 y 3000 caracteres de largo.`);

@@ -9,13 +9,14 @@ import {
   updatedPet,
 } from "../types/petTypes";
 import {
-  isString,
   isStringBetween1And101CharsLong,
   isUndefinedOrNull,
   isValidId,
   isValidURLImage,
   isEmptyString,
   isStringBetween1And50CharsLong,
+  isFalsyArgument,
+  isStringBetween1AndXCharsLong,
 } from "./GenericValidators";
 
 //! VALIDAR TODO EL PET ENTERO:
@@ -197,17 +198,10 @@ export function checkImageURL(imageFromReq: any): string | undefined {
 
 // CHECK COMMENTS:
 export function checkComments(commentsFromReq: any): string | undefined {
-  if (isUndefinedOrNull(commentsFromReq)) {
+  if (isFalsyArgument(commentsFromReq)) {
     return undefined;
   }
-  if (isEmptyString(commentsFromReq)) {
-    return undefined;
-  }
-  if (
-    isString(commentsFromReq) &&
-    commentsFromReq.length >= 1 &&
-    commentsFromReq.length < 3001
-  ) {
+  if (isStringBetween1AndXCharsLong(3000, commentsFromReq)) {
     return commentsFromReq;
   }
   throw new Error(
