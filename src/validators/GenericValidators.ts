@@ -1,4 +1,4 @@
-// IS VALID URL:
+// IS VALID URL IMAGE:
 export function isValidURLImage(argumento: any): boolean {
   if (typeof argumento !== "string") {
     return false;
@@ -43,7 +43,7 @@ export function isEmptyString(argumento: any): boolean {
   }
 }
 
-// funcion auxiliar para chequear strings y su largo
+// IS STRING BETWEEN 1 AND 101 CHARS LONG
 export function isStringBetween1And101CharsLong(argumento: any): boolean {
   if (
     typeof argumento === "string" &&
@@ -85,4 +85,34 @@ export function isValidId(argumento: any): boolean {
     return true;
   }
   return false;
+}
+
+// IS STRING BETWEEN 1 AND X CHARACTERS LONG:
+export function isStringBetween1AndXCharsLong(
+  x: number,
+  argumento: any
+): boolean {
+  let error = `The argument "x" must be a positive number`;
+  if (!x || typeof x !== "number" || x < 1) {
+    throw new Error(error);
+  }
+  let maxCharsLong = x;
+  if (
+    typeof argumento === "string" &&
+    argumento.length >= 1 &&
+    argumento.length <= maxCharsLong
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// IS FALSY ARGUMENT
+export function isFalsyArgument(argumento: any): boolean {
+  if (!argumento) {
+    return true;
+  } else {
+    return false;
+  }
 }

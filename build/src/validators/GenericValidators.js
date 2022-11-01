@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isValidId = exports.isUndefinedOrNull = exports.isStringBetween1And50CharsLong = exports.isStringBetween1And101CharsLong = exports.isEmptyString = exports.isValidString = exports.isString = exports.isEmail = exports.isValidURLImage = void 0;
-// IS VALID URL:
+exports.isFalsyArgument = exports.isStringBetween1AndXCharsLong = exports.isValidId = exports.isUndefinedOrNull = exports.isStringBetween1And50CharsLong = exports.isStringBetween1And101CharsLong = exports.isEmptyString = exports.isValidString = exports.isString = exports.isEmail = exports.isValidURLImage = void 0;
+// IS VALID URL IMAGE:
 function isValidURLImage(argumento) {
     if (typeof argumento !== "string") {
         return false;
@@ -44,7 +44,7 @@ function isEmptyString(argumento) {
     }
 }
 exports.isEmptyString = isEmptyString;
-// funcion auxiliar para chequear strings y su largo
+// IS STRING BETWEEN 1 AND 101 CHARS LONG
 function isStringBetween1And101CharsLong(argumento) {
     if (typeof argumento === "string" &&
         argumento.length >= 1 &&
@@ -83,3 +83,30 @@ function isValidId(argumento) {
     return false;
 }
 exports.isValidId = isValidId;
+// IS STRING BETWEEN 1 AND X CHARACTERS LONG:
+function isStringBetween1AndXCharsLong(x, argumento) {
+    let error = `The argument "x" must be a positive number`;
+    if (!x || typeof x !== "number" || x < 1) {
+        throw new Error(error);
+    }
+    let maxCharsLong = x;
+    if (typeof argumento === "string" &&
+        argumento.length >= 1 &&
+        argumento.length <= maxCharsLong) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+exports.isStringBetween1AndXCharsLong = isStringBetween1AndXCharsLong;
+// IS FALSY ARGUMENT
+function isFalsyArgument(argumento) {
+    if (!argumento) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+exports.isFalsyArgument = isFalsyArgument;

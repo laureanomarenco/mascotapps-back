@@ -1,13 +1,11 @@
 import { ITransaction } from "../types/transactionTypes";
 import {
   isEmptyString,
-  isStringBetween1And101CharsLong,
   isStringBetween1And50CharsLong,
   isUndefinedOrNull,
   isValidId,
   isValidURLImage,
 } from "./GenericValidators";
-import { isValidString } from "./GenericValidators";
 
 export function validateNewTransaction(obj: any): ITransaction {
   console.log(`validateNewTransaction...`);
